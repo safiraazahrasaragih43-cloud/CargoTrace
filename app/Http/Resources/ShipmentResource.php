@@ -24,6 +24,8 @@ class ShipmentResource extends JsonResource
             'destination' => new LocationResource($this->whenLoaded('destination')),
             'current_location' => new LocationResource($this->whenLoaded('currentLocation')),
             'items' => ShipmentItemResource::collection($this->whenLoaded('items')),
+            'tracking_events' => TrackingEventResource::collection($this->whenLoaded('trackingEvents')),
+            'latest_tracking_event' => new TrackingEventResource($this->whenLoaded('latestTrackingEvent')),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

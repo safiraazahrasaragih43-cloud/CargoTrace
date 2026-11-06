@@ -93,6 +93,7 @@ class ShipmentController extends Controller
     public function track(string $trackingNumber): JsonResponse
     {
         $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
+        $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location']);
 
         return $this->successResponse(
             new ShipmentResource($shipment),

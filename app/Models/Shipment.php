@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Shipment extends Model
@@ -107,6 +108,16 @@ class Shipment extends Model
         return $this->hasMany(ShipmentItem::class);
     }
 
+    public function trackingEvents(): HasMany
+    {
+        return $this->hasMany(TrackingEvent::class)->orderBy('event_time', 'asc');
+    }
+
+    public function latestTrackingEvent(): HasOne
+    {
+        return $this->hasOne(TrackingEvent::class)->latestOfMany('event_time');
+    }
+
     public function isTerminal(): bool
     {
         return in_array($this->status, self::TERMINAL_STATUSES, true);
@@ -116,6 +127,10 @@ class Shipment extends Model
     {
         if ($this->isTerminal()) {
             return false;
+        }
+
+        if ($targetStatus === $this->status) {
+            return true;
         }
 
         $allowed = self::ALLOWED_TRANSITIONS[$this->status] ?? [];

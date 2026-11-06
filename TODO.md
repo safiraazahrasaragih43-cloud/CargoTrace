@@ -16,9 +16,9 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Create Seeders for base data.
 
 ## Milestone P10: Tracking & Lifecycle
-- [ ] Create Migrations/Models for Tracking_Events.
-- [ ] Implement strict business rules for Shipment Status transitions.
-- [ ] Build the timeline UI (chronological sorting, distinct event types).
+- [x] Create Migrations/Models for Tracking_Events.
+- [x] Implement strict business rules for Shipment Status transitions.
+- [x] Build the timeline UI (chronological sorting, distinct event types).
 
 ## Milestone P11: Business Logic & APIs
 - [ ] Implement ETA calculation logic (Expected vs Actual).
