@@ -57,3 +57,4 @@ class CarrierSeeder extends Seeder
         }
     }
 }
+

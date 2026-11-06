@@ -23,9 +23,9 @@ return new class extends Migration
             $table->string('status', 30)->default('CREATED')->index();
             // Status: CREATED, BOOKED, PICKED_UP, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, EXCEPTION, CANCELLED
 
-            $table->timestamp('departure_at')->nullable();
-            $table->timestamp('estimated_delivery_at');
-            $table->timestamp('actual_delivery_at')->nullable();
+            $table->dateTime('departure_at')->nullable();
+            $table->dateTime('estimated_delivery_at')->nullable();
+            $table->dateTime('actual_delivery_at')->nullable();
             $table->integer('delay_hours')->default(0);
             $table->text('notes')->nullable();
 
@@ -42,3 +42,4 @@ return new class extends Migration
         Schema::dropIfExists('shipments');
     }
 };
+

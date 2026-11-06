@@ -81,3 +81,4 @@ class LocationCrudTest extends TestCase
             ->assertStatus(403);
     }
 }
+

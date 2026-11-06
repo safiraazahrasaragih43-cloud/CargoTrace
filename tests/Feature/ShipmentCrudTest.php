@@ -126,3 +126,4 @@ class ShipmentCrudTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 }
+

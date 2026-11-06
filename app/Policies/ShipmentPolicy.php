@@ -36,3 +36,4 @@ class ShipmentPolicy
         return $user->isAdmin();
     }
 }
+

@@ -80,3 +80,4 @@ class CarrierController extends Controller
         return $this->successResponse(null, 'Carrier deleted successfully');
     }
 }
+

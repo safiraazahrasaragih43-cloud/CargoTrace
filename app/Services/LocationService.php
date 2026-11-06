@@ -60,3 +60,4 @@ class LocationService
         return (bool) $location->delete();
     }
 }
+

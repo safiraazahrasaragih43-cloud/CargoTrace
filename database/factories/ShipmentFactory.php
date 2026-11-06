@@ -30,3 +30,4 @@ class ShipmentFactory extends Factory
         ];
     }
 }
+

@@ -80,3 +80,4 @@ class LocationController extends Controller
         return $this->successResponse(null, 'Location deleted successfully');
     }
 }
+

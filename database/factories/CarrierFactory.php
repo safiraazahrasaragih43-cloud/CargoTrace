@@ -21,3 +21,4 @@ class CarrierFactory extends Factory
         ];
     }
 }
+
