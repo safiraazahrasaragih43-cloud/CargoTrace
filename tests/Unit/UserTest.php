@@ -30,3 +30,4 @@ class UserTest extends TestCase
         $this->assertFalse($customer->hasRole(['admin', 'operator']));
     }
 }
+

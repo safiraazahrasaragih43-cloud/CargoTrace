@@ -70,3 +70,4 @@ class AuthService
         $user->tokens()->delete();
     }
 }
+

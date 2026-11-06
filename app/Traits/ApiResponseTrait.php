@@ -40,3 +40,4 @@ trait ApiResponseTrait
         return response()->json($payload, $statusCode);
     }
 }
+

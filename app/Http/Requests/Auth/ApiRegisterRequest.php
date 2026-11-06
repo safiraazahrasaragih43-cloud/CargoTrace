@@ -25,3 +25,4 @@ class ApiRegisterRequest extends FormRequest
         ];
     }
 }
+

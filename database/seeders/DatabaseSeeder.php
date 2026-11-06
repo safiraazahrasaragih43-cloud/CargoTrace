@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Administrator
+        // 1. Core Users (Admin, Operator, Customer)
         User::updateOrCreate(
             ['email' => 'admin@cargotrace.com'],
             [
@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Logistics Operator
         User::updateOrCreate(
             ['email' => 'operator@cargotrace.com'],
             [
@@ -42,7 +41,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Customer
         User::updateOrCreate(
             ['email' => 'customer@cargotrace.com'],
             [
@@ -54,5 +52,12 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        // 2. Base Entities (Carriers, Locations, Shipments)
+        $this->call([
+            CarrierSeeder::class,
+            LocationSeeder::class,
+            ShipmentSeeder::class,
+        ]);
     }
 }

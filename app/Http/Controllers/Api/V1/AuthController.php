@@ -80,3 +80,4 @@ class AuthController extends Controller
         return $this->successResponse(null, 'Logged out successfully');
     }
 }
+

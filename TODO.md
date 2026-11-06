@@ -10,10 +10,10 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Implement Authentication (Login/Register/Logout) using Sanctum/Session.
 
 ## Milestone P9: Core Entities & Roles
-- [ ] Create Migrations and Models for Users, Roles, Shipments, Carriers, and Locations.
-- [ ] Develop Role-Based Access Control (Policies/Gates for Admin, Operator, Customer).
-- [ ] Implement CRUD for Shipments, Carriers, and Locations.
-- [ ] Create Seeders for base data.
+- [x] Create Migrations and Models for Users, Roles, Shipments, Carriers, and Locations.
+- [x] Develop Role-Based Access Control (Policies/Gates for Admin, Operator, Customer).
+- [x] Implement CRUD for Shipments, Carriers, and Locations.
+- [x] Create Seeders for base data.
 
 ## Milestone P10: Tracking & Lifecycle
 - [ ] Create Migrations/Models for Tracking_Events.
