@@ -43,7 +43,7 @@ class CarrierWebController extends Controller
 
         return redirect()
             ->route('carriers.index')
-            ->with('status', "Carrier {$carrier->name} ({$carrier->code}) added successfully.");
+            ->with('status', "Ekspedisi {$carrier->name} ({$carrier->code}) berhasil ditambahkan.");
     }
 
     /**
@@ -58,6 +58,7 @@ class CarrierWebController extends Controller
 
         return redirect()
             ->route('carriers.index')
-            ->with('status', "Carrier {$name} removed.");
+            ->with('status', "Ekspedisi {$name} berhasil dihapus.");
     }
 }
+

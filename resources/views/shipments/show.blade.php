@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Shipment ' . $shipment->tracking_number)
-@section('page_title', 'Consignment Detail & Timeline')
+@section('title', 'Pengiriman ' . $shipment->tracking_number)
+@section('page_title', 'Detail Pengiriman & Timeline')
 
 @section('content')
 <div class="space-y-6 max-w-7xl mx-auto">
@@ -13,13 +13,13 @@
             </a>
             <div>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Consignment Tracking</span>
+                    <span class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Detail Pelacakan Pengiriman</span>
                     <span class="text-xs text-espresso-400">&bull;</span>
-                    <span class="text-xs font-mono font-bold text-apricot-600">{{ $shipment->carrier?->name ?? 'Carrier' }} ({{ $shipment->carrier?->code ?? 'N/A' }})</span>
+                    <span class="text-xs font-mono font-bold text-apricot-600">{{ $shipment->carrier?->name ?? 'Ekspedisi' }} ({{ $shipment->carrier?->code ?? 'N/A' }})</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-espresso-900 font-mono tracking-tight flex items-center gap-3">
                     {{ $shipment->tracking_number }}
-                    <button onclick="navigator.clipboard.writeText('{{ $shipment->tracking_number }}'); alert('Tracking number copied to clipboard');" title="Copy tracking number" class="text-espresso-400 hover:text-espresso-800 transition-colors cursor-pointer">
+                    <button onclick="navigator.clipboard.writeText('{{ $shipment->tracking_number }}'); alert('Nomor resi berhasil disalin ke clipboard');" title="Salin nomor resi" class="text-espresso-400 hover:text-espresso-800 transition-colors cursor-pointer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </h1>
@@ -50,7 +50,7 @@
             @if(auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isOperator()) && !$shipment->isTerminal())
                 <button onclick="document.getElementById('eventModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/25 transition-all flex items-center gap-1.5 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span>Log Checkpoint</span>
+                    <span>Catat Checkpoint</span>
                 </button>
             @endif
         </div>
@@ -66,7 +66,7 @@
 
     @if($errors->any())
         <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-sm space-y-1">
-            <div class="font-bold">Please correct the following errors:</div>
+            <div class="font-bold">Harap periksa kembali kesalahan berikut:</div>
             <ul class="list-disc list-inside text-xs">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -77,17 +77,17 @@
 
     <!-- OVERVIEW STATS & ROUTE PIPELINE -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Origin to Destination Route Card (with Nestopia Orbital Highlight) -->
+        <!-- Origin to Destination Route Card -->
         <div class="md:col-span-2 p-6 sm:p-7 rounded-3xl bg-white border border-cream-200/80 shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)] space-y-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Transit Corridor</span>
+                <span class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Jalur Transit Pengiriman</span>
                 <span class="px-2.5 py-0.5 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">ID: #{{ $shipment->id }}</span>
             </div>
 
             <div class="relative grid grid-cols-1 sm:grid-cols-3 items-center gap-4 py-4 px-3 rounded-3xl bg-cream-50 border border-cream-200/80">
                 <!-- Origin -->
                 <div class="space-y-1 text-center sm:text-left">
-                    <div class="text-[10px] font-bold text-espresso-500 uppercase tracking-wider">Origin Port</div>
+                    <div class="text-[10px] font-bold text-espresso-500 uppercase tracking-wider">Pelabuhan Asal</div>
                     <div class="text-base sm:text-lg font-extrabold text-espresso-900">{{ $shipment->origin?->name ?? 'N/A' }}</div>
                     <div class="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-espresso-600">
                         <span class="font-mono font-bold text-sage-700">{{ $shipment->origin?->code ?? '---' }}</span>
@@ -105,12 +105,12 @@
                         </div>
                         <div class="h-0.5 bg-apricot-200 flex-1"></div>
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Direct Route</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rute Langsung</span>
                 </div>
 
                 <!-- Destination -->
                 <div class="space-y-1 text-center sm:text-right">
-                    <div class="text-[10px] font-bold text-espresso-500 uppercase tracking-wider">Final Destination</div>
+                    <div class="text-[10px] font-bold text-espresso-500 uppercase tracking-wider">Tujuan Akhir</div>
                     <div class="text-base sm:text-lg font-extrabold text-espresso-900">{{ $shipment->destination?->name ?? 'N/A' }}</div>
                     <div class="flex items-center justify-center sm:justify-end gap-1.5 text-xs text-espresso-600">
                         <span class="font-mono font-bold text-sage-700">{{ $shipment->destination?->code ?? '---' }}</span>
@@ -124,14 +124,14 @@
             <div class="p-4 rounded-2xl bg-sage-50 border border-sage-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-2.5">
                     <div class="w-2.5 h-2.5 rounded-full bg-sage-600 animate-ping"></div>
-                    <span class="text-espresso-600 font-semibold">Current Position:</span>
-                    <span class="font-extrabold text-sage-700">{{ $shipment->currentLocation ? $shipment->currentLocation->name : 'At Origin Depot' }}</span>
+                    <span class="text-espresso-600 font-semibold">Posisi Saat Ini:</span>
+                    <span class="font-extrabold text-sage-700">{{ $shipment->currentLocation ? $shipment->currentLocation->name : 'Di Gudang Asal' }}</span>
                 </div>
                 <div class="text-espresso-500 font-mono text-[11px]">
                     @if($shipment->departure_at)
-                        Departed: <strong class="text-espresso-900">{{ $shipment->departure_at->format('M d, Y H:i') }}</strong>
+                        Berangkat: <strong class="text-espresso-900">{{ $shipment->departure_at->format('d M Y H:i') }}</strong>
                     @else
-                        Awaiting departure
+                        Menunggu keberangkatan
                     @endif
                 </div>
             </div>
@@ -139,37 +139,37 @@
 
         <!-- Schedule & Customer Meta -->
         <div class="p-6 sm:p-7 rounded-3xl bg-white border border-cream-200/80 shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)] space-y-4">
-            <h3 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Schedule &amp; Ownership</h3>
+            <h3 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Jadwal &amp; Kepemilikan</h3>
 
             <div class="space-y-3 text-xs">
                 <div class="p-3 rounded-2xl bg-cream-50 border border-cream-200/70">
-                    <div class="text-espresso-500 font-semibold">Estimated Delivery:</div>
+                    <div class="text-espresso-500 font-semibold">Estimasi Pengiriman:</div>
                     <div class="text-sm font-extrabold text-espresso-900 mt-0.5">
-                        {{ $shipment->estimated_delivery_at ? $shipment->estimated_delivery_at->format('l, M d, Y H:i') : 'Pending Calculation' }}
+                        {{ $shipment->estimated_delivery_at ? $shipment->estimated_delivery_at->format('d M Y · H:i') : 'Menunggu Kalkulasi' }}
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between px-1">
                     <div>
-                        <div class="text-espresso-500">Actual Delivery:</div>
+                        <div class="text-espresso-500">Aktual Diterima:</div>
                         <div class="text-xs font-bold text-espresso-800 mt-0.5">
-                            {{ $shipment->actual_delivery_at ? $shipment->actual_delivery_at->format('M d, Y H:i') : 'In Progress' }}
+                            {{ $shipment->actual_delivery_at ? $shipment->actual_delivery_at->format('d M Y H:i') : 'Dalam Proses' }}
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-espresso-500">Delay Variance:</div>
+                        <div class="text-espresso-500">Selisih Waktu:</div>
                         <div class="text-xs font-mono font-bold mt-0.5">
                             @if($shipment->delay_hours > 0)
-                                <span class="text-rose-600">+{{ $shipment->delay_hours }} hrs</span>
+                                <span class="text-rose-600">+{{ $shipment->delay_hours }} jam (Terlambat)</span>
                             @else
-                                <span class="text-sage-700">On Schedule</span>
+                                <span class="text-sage-700">Tepat Waktu</span>
                             @endif
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-3 border-t border-cream-200">
-                    <div class="text-espresso-500">Customer Consignee:</div>
+                    <div class="text-espresso-500">Pelanggan Penerima:</div>
                     <div class="text-sm font-extrabold text-espresso-900 mt-0.5">{{ $shipment->customer?->name ?? 'N/A' }}</div>
                     <div class="text-[11px] text-espresso-500">{{ $shipment->customer?->email ?? '' }}</div>
                 </div>
@@ -186,16 +186,16 @@
                     <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-700 flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <h2 class="text-base font-extrabold text-espresso-900">Immutable Tracking Ledger</h2>
+                    <h2 class="text-base font-extrabold text-espresso-900">Catatan Riwayat Pengiriman (Timeline)</h2>
                 </div>
-                <span class="px-3 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $timeline->count() }} checkpoints logged</span>
+                <span class="px-3 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $timeline->count() }} checkpoint tercatat</span>
             </div>
 
             <!-- Vertical Timeline Track -->
             @if($timeline->isEmpty())
                 <div class="py-12 text-center text-espresso-500 space-y-2">
                     <svg class="w-8 h-8 mx-auto text-espresso-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    <p class="text-sm font-medium">No checkpoints recorded yet for this consignment.</p>
+                    <p class="text-sm font-medium">Belum ada catatan riwayat checkpoint untuk pengiriman ini.</p>
                 </div>
             @else
                 <div class="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-cream-200">
@@ -234,7 +234,7 @@
                                         <span class="text-sm font-extrabold text-espresso-900">{{ $event->location_name }}</span>
                                     </div>
                                     <div class="text-[11px] font-mono font-semibold text-espresso-500">
-                                        {{ $event->event_time->format('M d, Y · H:i:s') }} UTC
+                                        {{ $event->event_time->format('d M Y · H:i:s') }} UTC
                                     </div>
                                 </div>
 
@@ -254,7 +254,7 @@
                                     </div>
 
                                     @if($event->creator)
-                                        <span class="text-espresso-500">Logged by: <strong class="text-espresso-900">{{ $event->creator->name }}</strong></span>
+                                        <span class="text-espresso-500">Dicatat oleh: <strong class="text-espresso-900">{{ $event->creator->name }}</strong></span>
                                     @endif
                                 </div>
                             </div>
@@ -268,8 +268,8 @@
         <div class="space-y-6">
             <div class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)] space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-cream-200">
-                    <h3 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Itemized Cargo Manifest</h3>
-                    <span class="px-2.5 py-0.5 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $shipment->items->count() }} item(s)</span>
+                    <h3 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Rincian Muatan Barang</h3>
+                    <span class="px-2.5 py-0.5 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $shipment->items->count() }} barang</span>
                 </div>
 
                 <div class="space-y-3">
@@ -277,24 +277,24 @@
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200 space-y-2 text-xs">
                             <div class="flex items-start justify-between gap-2">
                                 <span class="font-extrabold text-espresso-900">{{ $item->description }}</span>
-                                <span class="font-mono font-bold text-espresso-600 text-[11px]">{{ $item->quantity }} pcs</span>
+                                <span class="font-mono font-bold text-espresso-600 text-[11px]">{{ $item->quantity }} unit</span>
                             </div>
                             <div class="flex items-center justify-between text-espresso-600 text-[11px] pt-1.5 border-t border-cream-200/80">
-                                <span>Weight: <strong class="text-espresso-900">{{ number_format($item->weight_kg, 1) }} kg</strong></span>
-                                <span>Declared: <strong class="text-apricot-600">${{ number_format($item->value_amount, 2) }}</strong></span>
+                                <span>Berat: <strong class="text-espresso-900">{{ number_format($item->weight_kg, 1) }} kg</strong></span>
+                                <span>Nilai: <strong class="text-apricot-600">${{ number_format($item->value_amount, 2) }}</strong></span>
                             </div>
                             @if($item->hs_code)
-                                <div class="text-[10px] font-mono text-espresso-500">HS Code: {{ $item->hs_code }}</div>
+                                <div class="text-[10px] font-mono text-espresso-500">Kode HS: {{ $item->hs_code }}</div>
                             @endif
                         </div>
                     @empty
-                        <div class="text-xs text-espresso-500 py-3 text-center">No cargo items registered.</div>
+                        <div class="text-xs text-espresso-500 py-3 text-center">Tidak ada data barang tercatat.</div>
                     @endforelse
                 </div>
 
                 @if($shipment->notes)
                     <div class="pt-3 border-t border-cream-200 space-y-1.5">
-                        <span class="text-[11px] font-bold text-espresso-500 uppercase tracking-wider">Operational Remarks</span>
+                        <span class="text-[11px] font-bold text-espresso-500 uppercase tracking-wider">Catatan Operasional</span>
                         <p class="text-xs text-espresso-800 italic bg-cream-50 p-3 rounded-2xl border border-cream-200">{{ $shipment->notes }}</p>
                     </div>
                 @endif
@@ -304,9 +304,9 @@
             <div class="p-6 rounded-3xl bg-sage-500 text-white shadow-[0_14px_35px_-15px_rgba(135,152,128,0.45)] space-y-3 text-xs">
                 <div class="flex items-center gap-2 font-extrabold">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                    <span>Developer REST API Access</span>
+                    <span>Akses REST API Developer</span>
                 </div>
-                <p class="text-sage-100 text-[11px]">Query this consignment programmatically using JSON endpoints:</p>
+                <p class="text-sage-100 text-[11px]">Ambil data pengiriman ini secara terprogram menggunakan endpoint JSON:</p>
                 <div class="p-3 rounded-2xl bg-white/15 backdrop-blur-xs font-mono text-[10px] text-white break-all select-all">
                     GET /api/v1/tracking/{{ $shipment->tracking_number }}
                 </div>
@@ -321,8 +321,8 @@
     <div class="relative w-full max-w-lg rounded-3xl bg-white border border-cream-200 shadow-2xl p-6 sm:p-7 space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-cream-200">
             <div class="space-y-0.5">
-                <h3 class="text-lg font-extrabold text-espresso-900">Log Tracking Checkpoint</h3>
-                <p class="text-xs text-espresso-500">Append immutable milestone to <span class="font-mono font-bold text-sage-700">{{ $shipment->tracking_number }}</span></p>
+                <h3 class="text-lg font-extrabold text-espresso-900">Catat Titik Checkpoint Baru</h3>
+                <p class="text-xs text-espresso-500">Tambahkan riwayat permanen untuk <span class="font-mono font-bold text-sage-700">{{ $shipment->tracking_number }}</span></p>
             </div>
             <button onclick="document.getElementById('eventModal').classList.add('hidden')" class="p-1.5 rounded-full bg-cream-100 text-espresso-600 hover:text-espresso-900 transition-colors cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -334,20 +334,20 @@
 
             <!-- Status Transition -->
             <div>
-                <label for="eventStatus" class="block text-xs font-bold text-espresso-800 mb-1.5">Checkpoint Status *</label>
+                <label for="eventStatus" class="block text-xs font-bold text-espresso-800 mb-1.5">Status Checkpoint *</label>
                 <select id="eventStatus" name="status" required class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
-                    <option value="{{ $shipment->status }}">{{ $shipment->status }} (Keep status &bull; In-Transit Scan)</option>
+                    <option value="{{ $shipment->status }}">{{ $shipment->status }} (Pertahankan status &bull; Pemindaian Transit)</option>
                     @foreach(\App\Models\Shipment::ALLOWED_TRANSITIONS[$shipment->status] ?? [] as $nextStatus)
-                        <option value="{{ $nextStatus }}">&rarr; Transition to {{ $nextStatus }}</option>
+                        <option value="{{ $nextStatus }}">&rarr; Ubah status ke {{ $nextStatus }}</option>
                     @endforeach
                 </select>
             </div>
 
             <!-- Predefined Logistics Location -->
             <div>
-                <label for="eventLocationId" class="block text-xs font-bold text-espresso-800 mb-1.5">Logistics Hub / Location</label>
+                <label for="eventLocationId" class="block text-xs font-bold text-espresso-800 mb-1.5">Hub / Lokasi Logistik</label>
                 <select id="eventLocationId" name="location_id" onchange="onLocationChange(this)" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
-                    <option value="">-- Select Hub or Enter Custom Waypoint Below --</option>
+                    <option value="">-- Pilih Hub atau Masukkan Nama Lokasi Kustom --</option>
                     @foreach($locations as $loc)
                         <option value="{{ $loc->id }}" data-name="{{ $loc->name }}" data-lat="{{ $loc->latitude }}" data-lng="{{ $loc->longitude }}">
                             {{ $loc->name }} ({{ $loc->code }}) - {{ $loc->country }}
@@ -358,40 +358,40 @@
 
             <!-- Custom Location Name -->
             <div>
-                <label for="eventLocationName" class="block text-xs font-bold text-espresso-800 mb-1.5">Waypoint Name (Optional Override)</label>
-                <input id="eventLocationName" type="text" name="location_name" placeholder="e.g. Berth 04, Singapore Anchorage" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                <label for="eventLocationName" class="block text-xs font-bold text-espresso-800 mb-1.5">Nama Titik Lokasi (Opsional)</label>
+                <input id="eventLocationName" type="text" name="location_name" placeholder="cth: Dermaga 04, Pelabuhan Singapura" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
             </div>
 
             <!-- Coordinates -->
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label for="eventLat" class="block text-xs font-bold text-espresso-800 mb-1.5">Latitude</label>
-                    <input id="eventLat" type="number" step="0.000001" name="latitude" placeholder="e.g. 1.290270" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <label for="eventLat" class="block text-xs font-bold text-espresso-800 mb-1.5">Lintang (Latitude)</label>
+                    <input id="eventLat" type="number" step="0.000001" name="latitude" placeholder="cth: 1.290270" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
                 <div>
-                    <label for="eventLng" class="block text-xs font-bold text-espresso-800 mb-1.5">Longitude</label>
-                    <input id="eventLng" type="number" step="0.000001" name="longitude" placeholder="e.g. 103.851959" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <label for="eventLng" class="block text-xs font-bold text-espresso-800 mb-1.5">Bujur (Longitude)</label>
+                    <input id="eventLng" type="number" step="0.000001" name="longitude" placeholder="cth: 103.851959" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
             </div>
 
             <!-- Timestamp -->
             <div>
-                <label for="eventTime" class="block text-xs font-bold text-espresso-800 mb-1.5">Timestamp</label>
+                <label for="eventTime" class="block text-xs font-bold text-espresso-800 mb-1.5">Waktu Kejadian</label>
                 <input id="eventTime" type="datetime-local" name="event_time" value="{{ now()->format('Y-m-d\TH:i') }}" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
             </div>
 
             <!-- Description -->
             <div>
-                <label for="eventDesc" class="block text-xs font-bold text-espresso-800 mb-1.5">Checkpoint Description *</label>
-                <textarea id="eventDesc" name="description" rows="3" required placeholder="Describe milestone (e.g. Cargo cleared customs inspection and released to feeder carrier)" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500"></textarea>
+                <label for="eventDesc" class="block text-xs font-bold text-espresso-800 mb-1.5">Keterangan Checkpoint *</label>
+                <textarea id="eventDesc" name="description" rows="3" required placeholder="Jelaskan status kejadian (cth: Kargo telah lolos pemeriksaan bea cukai dan diteruskan ke kapal feeder)" class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-sm text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500"></textarea>
             </div>
 
             <div class="pt-3 flex items-center justify-end gap-3 border-t border-cream-200">
                 <button type="button" onclick="document.getElementById('eventModal').classList.add('hidden')" class="px-4 py-2 rounded-full bg-cream-100 hover:bg-cream-200 text-espresso-800 text-xs font-bold transition-colors cursor-pointer">
-                    Cancel
+                    Batal
                 </button>
                 <button type="submit" class="px-5 py-2.5 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/25 transition-all cursor-pointer">
-                    Commit Checkpoint
+                    Simpan Checkpoint
                 </button>
             </div>
         </form>

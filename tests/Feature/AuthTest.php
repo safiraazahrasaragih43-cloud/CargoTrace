@@ -14,7 +14,7 @@ class AuthTest extends TestCase
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
-        $response->assertSee('Log in to CargoTrace');
+        $response->assertSee('Masuk ke CargoTrace');
     }
 
     public function test_user_can_authenticate_via_web_form(): void
@@ -55,7 +55,7 @@ class AuthTest extends TestCase
     {
         $response = $this->get('/register');
         $response->assertStatus(200);
-        $response->assertSee('Create an Account');
+        $response->assertSee('Buat Akun Baru');
     }
 
     public function test_user_can_register_via_web_form(): void

@@ -58,7 +58,7 @@ class ShipmentWebController extends Controller
 
         return redirect()
             ->route('shipments.show', $shipment->tracking_number)
-            ->with('status', "Shipment {$shipment->tracking_number} created successfully.");
+            ->with('status', "Pengiriman {$shipment->tracking_number} berhasil dibuat.");
     }
 
     /**
@@ -87,7 +87,7 @@ class ShipmentWebController extends Controller
         // RBAC: If authenticated as customer, verify shipment ownership
         if ($request->user() && $request->user()->isCustomer()) {
             if ($request->user()->id !== $shipment->customer_id) {
-                abort(403, 'Unauthorized access to consignment data.');
+                abort(403, 'Akses tidak diizinkan untuk melihat data pengiriman ini.');
             }
         }
 
@@ -129,6 +129,6 @@ class ShipmentWebController extends Controller
 
         return redirect()
             ->route('shipments.show', $shipment->tracking_number)
-            ->with('status', 'Tracking event successfully logged into immutable ledger.');
+            ->with('status', 'Titik checkpoint pelacakan berhasil dicatat.');
     }
 }

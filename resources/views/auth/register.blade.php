@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Register')
+@section('title', 'Daftar Akun')
 
 @section('content')
 <div class="min-h-[75vh] flex flex-col justify-center items-center py-8 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
         <div class="inline-flex items-center px-3 py-1 rounded-full bg-sage-100 text-sage-700 text-xs font-bold">
-            Customer Onboarding
+            Registrasi Pelanggan
         </div>
         <h2 class="text-3xl font-extrabold tracking-tight text-espresso-900">
-            Create an Account
+            Buat Akun Baru
         </h2>
         <p class="text-sm text-espresso-500">
-            Sign up to track and manage shipments on CargoTrace
+            Daftar untuk melacak dan memantau pengiriman di CargoTrace
         </p>
     </div>
 
@@ -22,64 +22,64 @@
                 @csrf
 
                 <div>
-                    <label for="name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Full Name</label>
+                    <label for="name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
                     <input id="name" name="name" type="text" autocomplete="name" required
                            value="{{ old('name') }}"
-                           placeholder="e.g. John Doe"
+                           placeholder="cth: Budi Santoso"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Email Address</label>
+                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Alamat Email</label>
                     <input id="email" name="email" type="email" autocomplete="email" required
                            value="{{ old('email') }}"
-                           placeholder="user@example.com"
+                           placeholder="nama@perusahaan.com"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label for="phone" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Phone</label>
+                        <label for="phone" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">No. Telepon</label>
                         <input id="phone" name="phone" type="text"
                                value="{{ old('phone') }}"
                                placeholder="+62 812..."
                                class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                     </div>
                     <div>
-                        <label for="company_name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Company</label>
+                        <label for="company_name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Perusahaan</label>
                         <input id="company_name" name="company_name" type="text"
                                value="{{ old('company_name') }}"
-                               placeholder="Acme Logistics"
+                               placeholder="PT Logistik Nusantara"
                                class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Password</label>
+                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Kata Sandi</label>
                     <input id="password" name="password" type="password" required
-                           placeholder="Minimum 8 characters"
+                           placeholder="Minimal 8 karakter"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Confirm Password</label>
+                    <label for="password_confirmation" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Konfirmasi Kata Sandi</label>
                     <input id="password_confirmation" name="password_confirmation" type="password" required
-                           placeholder="Repeat password"
+                           placeholder="Ulangi kata sandi"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div class="pt-2">
                     <button type="submit"
                             class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg shadow-apricot-500/25 text-sm font-bold text-white bg-apricot-500 hover:bg-apricot-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apricot-500 transition-all cursor-pointer">
-                        Complete Registration
+                        Selesaikan Pendaftaran
                     </button>
                 </div>
             </form>
 
             <div class="mt-5 text-center text-xs text-espresso-500">
-                Already registered?
+                Sudah memiliki akun?
                 <a href="{{ route('login') }}" class="font-bold text-apricot-600 hover:text-apricot-500">
-                    Sign in here
+                    Masuk di sini
                 </a>
             </div>
         </div>

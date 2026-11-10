@@ -18,10 +18,10 @@ class WebPagesNavigationTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         $this->actingAs($admin)->get('/dashboard')->assertStatus(200);
-        $this->actingAs($admin)->get('/shipments')->assertStatus(200)->assertSee('Global Shipments Manifest');
-        $this->actingAs($admin)->get('/track')->assertStatus(200)->assertSee('Trace any shipment');
-        $this->actingAs($admin)->get('/carriers')->assertStatus(200)->assertSee('Global Carriers');
-        $this->actingAs($admin)->get('/locations')->assertStatus(200)->assertSee('Global Ports');
+        $this->actingAs($admin)->get('/shipments')->assertStatus(200)->assertSee('Daftar Pengiriman Global');
+        $this->actingAs($admin)->get('/track')->assertStatus(200)->assertSee('Lacak pengiriman apa pun');
+        $this->actingAs($admin)->get('/carriers')->assertStatus(200)->assertSee('Daftar Ekspedisi');
+        $this->actingAs($admin)->get('/locations')->assertStatus(200)->assertSee('Daftar Pelabuhan');
     }
 
     public function test_operator_can_create_shipment_from_web_manifest(): void
@@ -100,3 +100,4 @@ class WebPagesNavigationTest extends TestCase
         $this->actingAs($customer)->get('/carriers')->assertStatus(403);
     }
 }
+

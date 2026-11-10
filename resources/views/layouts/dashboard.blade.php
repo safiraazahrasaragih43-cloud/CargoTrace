@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-cream-50 text-espresso-900">
+<html lang="id" class="h-full bg-cream-50 text-espresso-900">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>CargoTrace - @yield('title', 'Operations Console')</title>
+    <title>CargoTrace - @yield('title', 'Konsol Operasional')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
                 </div>
                 <div>
                     <span class="text-base font-extrabold tracking-tight text-espresso-900">CargoTrace</span>
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-sage-600">Control Panel</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-sage-600">Panel Kontrol</span>
                 </div>
             </a>
             <button onclick="toggleSidebar()" class="md:hidden text-espresso-500 hover:text-espresso-900 p-1 cursor-pointer">
@@ -49,35 +49,35 @@
 
             <!-- Group: Operations -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Logistics &amp; Tracking</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Logistik &amp; Pelacakan</p>
                 <nav class="mt-2.5 space-y-1.5">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('dashboard') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        <span>Operations Dashboard</span>
+                        <span>Dashboard Operasional</span>
                     </a>
                     <a href="{{ route('shipments.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('shipments.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 {{ request()->routeIs('shipments.*') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <span>Shipments Manifest</span>
+                            <span>Daftar Pengiriman</span>
                         </div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('shipments.*') ? 'bg-white/25 text-white' : 'bg-sage-100 text-sage-700' }}">{{ $totalShipmentsCount }}</span>
                     </a>
                     <a href="{{ route('tracking.page') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('tracking.page') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <svg class="w-4 h-4 {{ request()->routeIs('tracking.page') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <span>Live Quick Track</span>
+                        <span>Lacak Kargo Cepat</span>
                     </a>
                 </nav>
             </div>
 
             <!-- Group: Master Data -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Master Data</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Data Master</p>
                 <nav class="mt-2.5 space-y-1.5">
                     @if(auth()->check() && auth()->user()->can('viewAny', \App\Models\Carrier::class))
                         <a href="{{ route('carriers.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('carriers.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                             <div class="flex items-center gap-3">
                                 <svg class="w-4 h-4 {{ request()->routeIs('carriers.*') ? 'text-white' : 'text-apricot-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                <span>Carriers &amp; Lines</span>
+                                <span>Ekspedisi &amp; Maskapai</span>
                             </div>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('carriers.*') ? 'bg-white/25 text-white' : 'bg-cream-100 text-espresso-600' }}">{{ $totalCarriersCount }}</span>
                         </a>
@@ -85,7 +85,7 @@
                     <a href="{{ route('locations.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('locations.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 {{ request()->routeIs('locations.*') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-                            <span>Ports &amp; Locations</span>
+                            <span>Pelabuhan &amp; Lokasi</span>
                         </div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('locations.*') ? 'bg-white/25 text-white' : 'bg-cream-100 text-espresso-600' }}">{{ $totalLocationsCount }}</span>
                     </a>
@@ -94,18 +94,18 @@
 
             <!-- Group: System & API -->
             <div>
-                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Developer &amp; Integration</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Sistem &amp; Integrasi</p>
                 <nav class="mt-2.5 space-y-1.5">
                     <a href="{{ url('/api/v1/health') }}" target="_blank" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-espresso-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                            <span>REST API Health</span>
+                            <span>Status REST API</span>
                         </div>
                         <span class="w-2 h-2 rounded-full bg-sage-500 animate-pulse"></span>
                     </a>
                     <a href="{{ url('/') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
                         <svg class="w-4 h-4 text-espresso-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        <span>Public Landing Page</span>
+                        <span>Halaman Depan</span>
                     </a>
                 </nav>
             </div>
@@ -137,16 +137,16 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-[11px] font-bold text-rose-600 hover:text-rose-700 transition-colors cursor-pointer">
-                            Sign Out
+                            Keluar
                         </button>
                     </form>
                 </div>
             </div>
             @else
             <div class="p-3.5 rounded-2xl bg-white border border-cream-200 text-center space-y-2.5 shadow-xs">
-                <p class="text-xs font-medium text-espresso-500">Viewing as Public Guest</p>
+                <p class="text-xs font-medium text-espresso-500">Mode Tamu Publik</p>
                 <a href="{{ route('login') }}" class="block w-full py-2 px-4 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-md shadow-apricot-500/20 transition-all">
-                    Sign In
+                    Masuk ke Akun
                 </a>
             </div>
             @endauth
@@ -162,8 +162,8 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-extrabold text-espresso-900">@yield('page_title', 'Operations Overview')</span>
-                    <span class="hidden sm:inline-block text-[11px] font-medium text-espresso-400">| Logistics Visibility &amp; Tracking</span>
+                    <span class="text-sm font-extrabold text-espresso-900">@yield('page_title', 'Ringkasan Operasional')</span>
+                    <span class="hidden sm:inline-block text-[11px] font-medium text-espresso-400">| Sistem Visibilitas &amp; Pelacakan</span>
                 </div>
             </div>
 
@@ -171,11 +171,11 @@
             <div class="flex items-center gap-2.5">
                 <a href="{{ url('/') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-espresso-700 hover:text-espresso-900 bg-white border border-cream-200 hover:bg-cream-100 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    <span>Landing Page</span>
+                    <span>Halaman Depan</span>
                 </a>
                 <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sage-100 text-sage-700 text-xs font-bold">
                     <span class="w-2 h-2 rounded-full bg-sage-600 animate-pulse"></span>
-                    <span>System Operational</span>
+                    <span>Sistem Normal</span>
                 </div>
             </div>
         </header>

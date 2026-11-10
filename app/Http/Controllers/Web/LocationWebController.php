@@ -43,7 +43,7 @@ class LocationWebController extends Controller
 
         return redirect()
             ->route('locations.index')
-            ->with('status', "Location {$location->name} ({$location->code}) added successfully.");
+            ->with('status', "Lokasi {$location->name} ({$location->code}) berhasil ditambahkan.");
     }
 
     /**
@@ -58,6 +58,7 @@ class LocationWebController extends Controller
 
         return redirect()
             ->route('locations.index')
-            ->with('status', "Location {$name} removed.");
+            ->with('status', "Lokasi {$name} berhasil dihapus.");
     }
 }
+
