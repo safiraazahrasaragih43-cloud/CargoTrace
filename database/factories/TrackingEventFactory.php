@@ -27,3 +27,4 @@ class TrackingEventFactory extends Factory
         ];
     }
 }
+

@@ -27,3 +27,4 @@ class TrackingEventPolicy
         return $user->isAdmin() || $user->isOperator();
     }
 }
+

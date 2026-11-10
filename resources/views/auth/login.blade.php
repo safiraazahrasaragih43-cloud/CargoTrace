@@ -3,79 +3,78 @@
 @section('title', 'Sign In')
 
 @section('content')
-<div class="min-h-[70vh] flex flex-col justify-center items-center py-6 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="text-center text-3xl font-extrabold tracking-tight text-white">
+<div class="min-h-[75vh] flex flex-col justify-center items-center py-8 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-sage-100 text-sage-700 text-xs font-bold">
+            CargoTrace Portal
+        </div>
+        <h2 class="text-3xl font-extrabold tracking-tight text-espresso-900">
             Log in to CargoTrace
         </h2>
-        <p class="mt-2 text-center text-sm text-slate-400">
-            Real-time shipment visibility & logistics operations
+        <p class="text-sm text-espresso-500">
+            Real-time shipment visibility &amp; logistics operations
         </p>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-slate-950/80 border border-slate-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+    <div class="mt-7 sm:mx-auto sm:w-full sm:max-w-md w-full">
+        <div class="bg-white border border-cream-200/80 py-8 px-6 shadow-[0_16px_40px_-14px_rgba(44,39,36,0.08)] rounded-3xl sm:px-10">
             <form class="space-y-5" method="POST" action="{{ route('login') }}">
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-slate-300">Email Address</label>
-                    <div class="mt-1">
-                        <input id="email" name="email" type="email" autocomplete="email" required
-                               value="{{ old('email') }}"
-                               placeholder="user@example.com"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-all">
-                    </div>
+                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Email Address</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           value="{{ old('email') }}"
+                           placeholder="user@example.com"
+                           class="block w-full px-4 py-3 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 focus:border-transparent text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-slate-300">Password</label>
-                    <div class="mt-1">
-                        <input id="password" name="password" type="password" autocomplete="current-password" required
-                               placeholder="••••••••"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition-all">
-                    </div>
+                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required
+                           placeholder="••••••••"
+                           class="block w-full px-4 py-3 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 focus:border-transparent text-sm transition-all">
                 </div>
 
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between pt-1">
                     <div class="flex items-center">
                         <input id="remember" name="remember" type="checkbox"
-                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-700 rounded bg-slate-900">
-                        <label for="remember" class="ml-2 block text-xs text-slate-400">
+                               class="h-4 w-4 text-sage-600 focus:ring-sage-500 border-cream-300 rounded bg-cream-50">
+                        <label for="remember" class="ml-2 block text-xs font-medium text-espresso-600">
                             Remember me
                         </label>
                     </div>
 
                     <div class="text-xs">
-                        <a href="{{ route('register') }}" class="font-medium text-indigo-400 hover:text-indigo-300">
+                        <a href="{{ route('register') }}" class="font-bold text-apricot-600 hover:text-apricot-500">
                             Need an account?
                         </a>
                     </div>
                 </div>
 
-                <div>
+                <div class="pt-1">
                     <button type="submit"
-                            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-600/30 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 transition-all">
+                            class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg shadow-apricot-500/25 text-sm font-bold text-white bg-apricot-500 hover:bg-apricot-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apricot-500 transition-all cursor-pointer">
                         Sign In
                     </button>
                 </div>
             </form>
 
             <!-- Quick Demo Credentials Box -->
-            <div class="mt-6 pt-6 border-t border-slate-800/80">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center">Demo Accounts (After Seeding)</p>
-                <div class="grid grid-cols-1 gap-1.5 text-xs text-slate-400">
-                    <button type="button" onclick="fillCreds('admin@cargotrace.com', 'password')" class="text-left p-2 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-800 transition-colors flex items-center justify-between">
-                        <span class="font-medium text-rose-300">Admin: admin@cargotrace.com</span>
-                        <span class="text-slate-500 font-mono text-[10px]">password</span>
+            <div class="mt-7 pt-6 border-t border-cream-200">
+                <p class="text-[11px] font-bold text-espresso-500 uppercase tracking-wider mb-3 text-center">Quick Demo Accounts</p>
+                <div class="grid grid-cols-1 gap-2 text-xs">
+                    <button type="button" onclick="fillCreds('admin@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-apricot-50 border border-cream-200 hover:border-apricot-200 transition-all flex items-center justify-between cursor-pointer">
+                        <span class="font-bold text-apricot-600">Admin: admin@cargotrace.com</span>
+                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
                     </button>
-                    <button type="button" onclick="fillCreds('operator@cargotrace.com', 'password')" class="text-left p-2 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-800 transition-colors flex items-center justify-between">
-                        <span class="font-medium text-amber-300">Operator: operator@cargotrace.com</span>
-                        <span class="text-slate-500 font-mono text-[10px]">password</span>
+                    <button type="button" onclick="fillCreds('operator@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-sage-50 border border-cream-200 hover:border-sage-200 transition-all flex items-center justify-between cursor-pointer">
+                        <span class="font-bold text-sage-700">Operator: operator@cargotrace.com</span>
+                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
                     </button>
-                    <button type="button" onclick="fillCreds('customer@cargotrace.com', 'password')" class="text-left p-2 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-800 transition-colors flex items-center justify-between">
-                        <span class="font-medium text-emerald-300">Customer: customer@cargotrace.com</span>
-                        <span class="text-slate-500 font-mono text-[10px]">password</span>
+                    <button type="button" onclick="fillCreds('customer@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-cream-100 border border-cream-200 transition-all flex items-center justify-between cursor-pointer">
+                        <span class="font-bold text-espresso-800">Customer: customer@cargotrace.com</span>
+                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
                     </button>
                 </div>
             </div>
@@ -90,4 +89,3 @@ function fillCreds(email, password) {
 }
 </script>
 @endsection
-

@@ -195,3 +195,4 @@ class TrackingEventSeeder extends Seeder
         }
     }
 }
+

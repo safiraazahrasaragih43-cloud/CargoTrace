@@ -75,3 +75,4 @@ class ShipmentWebController extends Controller
             ->with('status', 'Tracking event successfully logged into immutable ledger.');
     }
 }
+

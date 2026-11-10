@@ -32,3 +32,4 @@ class StoreTrackingEventRequest extends FormRequest
         ];
     }
 }
+

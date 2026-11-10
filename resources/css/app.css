@@ -6,6 +6,37 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Earthy Cream & Linen Canvas Palette */
+    --color-cream-50: #FAF6F0;
+    --color-cream-100: #F3ECE2;
+    --color-cream-200: #EAE0D2;
+    --color-cream-300: #DED1BE;
+
+    /* Sage Olive Accent (Primary Brand) */
+    --color-sage-50: #F2F5F0;
+    --color-sage-100: #E4EBE1;
+    --color-sage-200: #C8D5C2;
+    --color-sage-300: #B2C2AB;
+    --color-sage-400: #9BAB94;
+    --color-sage-500: #879880;
+    --color-sage-600: #6B7D64;
+    --color-sage-700: #4F5E4A;
+
+    /* Warm Apricot / Terracotta Orange (CTAs & Highlights) */
+    --color-apricot-50: #FFF5EB;
+    --color-apricot-100: #FEEAD6;
+    --color-apricot-200: #FCD5AE;
+    --color-apricot-400: #F7B16C;
+    --color-apricot-500: #F2994A;
+    --color-apricot-600: #DE7E2B;
+
+    /* Warm Espresso Charcoal (Typography) */
+    --color-espresso-900: #2C2724;
+    --color-espresso-800: #403A35;
+    --color-espresso-600: #665E57;
+    --color-espresso-500: #877E75;
+    --color-espresso-400: #AAA096;
 }

@@ -3,91 +3,82 @@
 @section('title', 'Register')
 
 @section('content')
-<div class="min-h-[70vh] flex flex-col justify-center items-center py-6 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="text-center text-3xl font-extrabold tracking-tight text-white">
+<div class="min-h-[75vh] flex flex-col justify-center items-center py-8 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-sage-100 text-sage-700 text-xs font-bold">
+            Customer Onboarding
+        </div>
+        <h2 class="text-3xl font-extrabold tracking-tight text-espresso-900">
             Create an Account
         </h2>
-        <p class="mt-2 text-center text-sm text-slate-400">
+        <p class="text-sm text-espresso-500">
             Sign up to track and manage shipments on CargoTrace
         </p>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-slate-950/80 border border-slate-800 py-8 px-6 shadow-2xl rounded-2xl sm:px-10">
+    <div class="mt-7 sm:mx-auto sm:w-full sm:max-w-md w-full">
+        <div class="bg-white border border-cream-200/80 py-8 px-6 shadow-[0_16px_40px_-14px_rgba(44,39,36,0.08)] rounded-3xl sm:px-10">
             <form class="space-y-4" method="POST" action="{{ route('register') }}">
                 @csrf
 
                 <div>
-                    <label for="name" class="block text-sm font-medium text-slate-300">Full Name</label>
-                    <div class="mt-1">
-                        <input id="name" name="name" type="text" autocomplete="name" required
-                               value="{{ old('name') }}"
-                               placeholder="e.g. John Doe"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                    </div>
+                    <label for="name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Full Name</label>
+                    <input id="name" name="name" type="text" autocomplete="name" required
+                           value="{{ old('name') }}"
+                           placeholder="e.g. John Doe"
+                           class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-slate-300">Email Address</label>
-                    <div class="mt-1">
-                        <input id="email" name="email" type="email" autocomplete="email" required
-                               value="{{ old('email') }}"
-                               placeholder="user@example.com"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                    </div>
+                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Email Address</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           value="{{ old('email') }}"
+                           placeholder="user@example.com"
+                           class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label for="phone" class="block text-sm font-medium text-slate-300">Phone</label>
-                        <div class="mt-1">
-                            <input id="phone" name="phone" type="text"
-                                   value="{{ old('phone') }}"
-                                   placeholder="+62 812..."
-                                   class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                        </div>
+                        <label for="phone" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Phone</label>
+                        <input id="phone" name="phone" type="text"
+                               value="{{ old('phone') }}"
+                               placeholder="+62 812..."
+                               class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                     </div>
                     <div>
-                        <label for="company_name" class="block text-sm font-medium text-slate-300">Company</label>
-                        <div class="mt-1">
-                            <input id="company_name" name="company_name" type="text"
-                                   value="{{ old('company_name') }}"
-                                   placeholder="Acme Logistics"
-                                   class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                        </div>
+                        <label for="company_name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Company</label>
+                        <input id="company_name" name="company_name" type="text"
+                               value="{{ old('company_name') }}"
+                               placeholder="Acme Logistics"
+                               class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-slate-300">Password</label>
-                    <div class="mt-1">
-                        <input id="password" name="password" type="password" required
-                               placeholder="Minimum 8 characters"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                    </div>
+                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Password</label>
+                    <input id="password" name="password" type="password" required
+                           placeholder="Minimum 8 characters"
+                           class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-slate-300">Confirm Password</label>
-                    <div class="mt-1">
-                        <input id="password_confirmation" name="password_confirmation" type="password" required
-                               placeholder="Repeat password"
-                               class="appearance-none block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl shadow-inner placeholder-slate-500 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
-                    </div>
+                    <label for="password_confirmation" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Confirm Password</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                           placeholder="Repeat password"
+                           class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div class="pt-2">
                     <button type="submit"
-                            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-lg shadow-indigo-600/30 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                            class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg shadow-apricot-500/25 text-sm font-bold text-white bg-apricot-500 hover:bg-apricot-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apricot-500 transition-all cursor-pointer">
                         Complete Registration
                     </button>
                 </div>
             </form>
 
-            <div class="mt-5 text-center text-xs text-slate-400">
+            <div class="mt-5 text-center text-xs text-espresso-500">
                 Already registered?
-                <a href="{{ route('login') }}" class="font-medium text-indigo-400 hover:text-indigo-300">
+                <a href="{{ route('login') }}" class="font-bold text-apricot-600 hover:text-apricot-500">
                     Sign in here
                 </a>
             </div>
@@ -95,4 +86,3 @@
     </div>
 </div>
 @endsection
-
