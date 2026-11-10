@@ -109,8 +109,11 @@
                     @endif
                 </p>
             </div>
-            <div class="flex items-center gap-3">
-                <span class="px-3.5 py-1.5 rounded-full bg-cream-100 text-xs font-bold text-espresso-700">Total Consignments: <strong class="text-espresso-900">{{ $shipments->total() }}</strong></span>
+            <div class="flex items-center gap-2.5">
+                <span class="px-3.5 py-1.5 rounded-full bg-cream-100 text-xs font-bold text-espresso-700">Total: <strong class="text-espresso-900">{{ $shipments->total() }}</strong></span>
+                <a href="{{ route('shipments.index') }}" class="px-4 py-1.5 rounded-full bg-sage-500 hover:bg-sage-600 text-white text-xs font-bold transition-colors">
+                    Open Full Manifest &rarr;
+                </a>
             </div>
         </div>
 
@@ -208,7 +211,12 @@
                     </div>
                     <h3 class="text-sm font-extrabold text-espresso-900">Active Ocean &amp; Air Carriers</h3>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $carriersCount ?? 5 }} registered</span>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $carriersCount ?? 5 }} registered</span>
+                    @if(Auth::user()->can('viewAny', \App\Models\Carrier::class))
+                        <a href="{{ route('carriers.index') }}" class="px-3 py-1 rounded-full bg-apricot-100 hover:bg-apricot-500 hover:text-white text-apricot-600 text-[11px] font-bold transition-colors">Manage &rarr;</a>
+                    @endif
+                </div>
             </div>
             <p class="text-xs text-espresso-500">Integrated global lines with standardized prefix codes &amp; automated tracking URL templates.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
@@ -240,7 +248,10 @@
                     </div>
                     <h3 class="text-sm font-extrabold text-espresso-900">Global Logistics Ports &amp; Hubs</h3>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $locationsCount ?? 8 }} hubs</span>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $locationsCount ?? 8 }} hubs</span>
+                    <a href="{{ route('locations.index') }}" class="px-3 py-1 rounded-full bg-sage-100 hover:bg-sage-500 hover:text-white text-sage-700 text-[11px] font-bold transition-colors">Explore &rarr;</a>
+                </div>
             </div>
             <p class="text-xs text-espresso-500">UN/LOCODE standard hubs with latitude/longitude ready for Leaflet.js interactive maps.</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">

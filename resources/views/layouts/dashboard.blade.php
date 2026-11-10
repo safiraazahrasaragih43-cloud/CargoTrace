@@ -39,6 +39,14 @@
 
         <!-- Sidebar Navigation Items -->
         <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+            @php
+                $totalShipmentsCount = auth()->check() && auth()->user()->isCustomer()
+                    ? \App\Models\Shipment::where('customer_id', auth()->id())->count()
+                    : \App\Models\Shipment::count();
+                $totalCarriersCount = $carriersCount ?? \App\Models\Carrier::count();
+                $totalLocationsCount = $locationsCount ?? \App\Models\Location::count();
+            @endphp
+
             <!-- Group: Operations -->
             <div>
                 <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Logistics &amp; Tracking</p>
@@ -47,15 +55,15 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                         <span>Operations Dashboard</span>
                     </a>
-                    <a href="{{ route('dashboard') }}#shipments-section" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
+                    <a href="{{ route('shipments.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('shipments.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-sage-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            <svg class="w-4 h-4 {{ request()->routeIs('shipments.*') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             <span>Shipments Manifest</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sage-100 text-sage-700">{{ isset($shipments) && method_exists($shipments, 'total') ? $shipments->total() : \App\Models\Shipment::count() }}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('shipments.*') ? 'bg-white/25 text-white' : 'bg-sage-100 text-sage-700' }}">{{ $totalShipmentsCount }}</span>
                     </a>
-                    <a href="{{ route('dashboard') }}#quick-track" onclick="if(document.getElementById('trackInput')) document.getElementById('trackInput').focus();" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
-                        <svg class="w-4 h-4 text-sage-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <a href="{{ route('tracking.page') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('tracking.page') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
+                        <svg class="w-4 h-4 {{ request()->routeIs('tracking.page') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         <span>Live Quick Track</span>
                     </a>
                 </nav>
@@ -65,19 +73,21 @@
             <div>
                 <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-espresso-400">Master Data</p>
                 <nav class="mt-2.5 space-y-1.5">
-                    <a href="{{ route('dashboard') }}#carriers-section" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
+                    @if(auth()->check() && auth()->user()->can('viewAny', \App\Models\Carrier::class))
+                        <a href="{{ route('carriers.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('carriers.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-4 h-4 {{ request()->routeIs('carriers.*') ? 'text-white' : 'text-apricot-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span>Carriers &amp; Lines</span>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('carriers.*') ? 'bg-white/25 text-white' : 'bg-cream-100 text-espresso-600' }}">{{ $totalCarriersCount }}</span>
+                        </a>
+                    @endif
+                    <a href="{{ route('locations.index') }}" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold {{ request()->routeIs('locations.*') ? 'bg-apricot-500 text-white shadow-md shadow-apricot-500/25' : 'text-espresso-600 hover:text-espresso-900 hover:bg-cream-100' }} transition-all">
                         <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-apricot-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                            <span>Carriers &amp; Lines</span>
-                        </div>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cream-100 text-espresso-600">{{ $carriersCount ?? 5 }}</span>
-                    </a>
-                    <a href="{{ route('dashboard') }}#locations-section" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-espresso-600 hover:text-espresso-900 hover:bg-cream-100 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-sage-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                            <svg class="w-4 h-4 {{ request()->routeIs('locations.*') ? 'text-white' : 'text-sage-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                             <span>Ports &amp; Locations</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cream-100 text-espresso-600">{{ $locationsCount ?? 8 }}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold {{ request()->routeIs('locations.*') ? 'bg-white/25 text-white' : 'bg-cream-100 text-espresso-600' }}">{{ $totalLocationsCount }}</span>
                     </a>
                 </nav>
             </div>

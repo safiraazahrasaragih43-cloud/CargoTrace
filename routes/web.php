@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\CarrierWebController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\LocationWebController;
 use App\Http\Controllers\Web\ShipmentWebController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,8 +12,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Consignment Detail & Public/Auth Tracking Timeline View
-Route::get('/shipments/{trackingNumber}', [ShipmentWebController::class, 'show'])->name('shipments.show');
+// Public Live Quick Track Page
+Route::get('/track', [ShipmentWebController::class, 'trackPage'])->name('tracking.page');
 
 // Guest Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -27,6 +29,21 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Add Tracking Checkpoint (Admin / Operator)
+    // Shipments Manifest Management
+    Route::get('/shipments', [ShipmentWebController::class, 'index'])->name('shipments.index');
+    Route::post('/shipments', [ShipmentWebController::class, 'store'])->name('shipments.store');
     Route::post('/shipments/{trackingNumber}/events', [ShipmentWebController::class, 'storeEvent'])->name('shipments.events.store');
+
+    // Carriers Management (Admin / Operator)
+    Route::get('/carriers', [CarrierWebController::class, 'index'])->name('carriers.index');
+    Route::post('/carriers', [CarrierWebController::class, 'store'])->name('carriers.store');
+    Route::delete('/carriers/{carrier}', [CarrierWebController::class, 'destroy'])->name('carriers.destroy');
+
+    // Ports & Locations Management
+    Route::get('/locations', [LocationWebController::class, 'index'])->name('locations.index');
+    Route::post('/locations', [LocationWebController::class, 'store'])->name('locations.store');
+    Route::delete('/locations/{location}', [LocationWebController::class, 'destroy'])->name('locations.destroy');
 });
+
+// Consignment Detail & Public/Auth Tracking Timeline View
+Route::get('/shipments/{trackingNumber}', [ShipmentWebController::class, 'show'])->name('shipments.show');
