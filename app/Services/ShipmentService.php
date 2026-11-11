@@ -33,6 +33,10 @@ class ShipmentService
             $query->where('carrier_id', $filters['carrier_id']);
         }
 
+        if (isset($filters['is_delayed']) && $filters['is_delayed'] !== '') {
+            $query->where('is_delayed', filter_var($filters['is_delayed'], FILTER_VALIDATE_BOOLEAN));
+        }
+
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
@@ -83,6 +87,10 @@ class ShipmentService
 
             if (empty($data['status'])) {
                 $data['status'] = Shipment::STATUS_CREATED;
+            }
+
+            if (empty($data['expected_delivery_at']) && ! empty($data['estimated_delivery_at'])) {
+                $data['expected_delivery_at'] = $data['estimated_delivery_at'];
             }
 
             $shipment = Shipment::create($data);

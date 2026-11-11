@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipment\StoreShipmentRequest;
+use App\Http\Requests\Shipment\UpdateEtaRequest;
 use App\Http\Requests\Shipment\UpdateShipmentRequest;
 use App\Http\Resources\ShipmentResource;
 use App\Models\Shipment;
+use App\Services\EtaService;
 use App\Services\ShipmentService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,8 @@ class ShipmentController extends Controller
     use ApiResponseTrait;
 
     public function __construct(
-        protected ShipmentService $shipmentService
+        protected ShipmentService $shipmentService,
+        protected EtaService $etaService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -26,7 +29,7 @@ class ShipmentController extends Controller
 
         $shipments = $this->shipmentService->getShipments(
             $request->user(),
-            $request->only(['search', 'status', 'carrier_id', 'customer_id']),
+            $request->only(['search', 'status', 'carrier_id', 'customer_id', 'is_delayed']),
             $request->integer('per_page', 15)
         );
 
@@ -60,7 +63,7 @@ class ShipmentController extends Controller
     {
         $this->authorize('view', $shipment);
 
-        $loaded = $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items']);
+        $loaded = $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'exceptions']);
 
         return $this->successResponse(
             new ShipmentResource($loaded),
@@ -88,12 +91,53 @@ class ShipmentController extends Controller
     }
 
     /**
+     * Evaluate deterministic ETA & delay rules for a shipment.
+     */
+    public function evaluateEta(Shipment $shipment): JsonResponse
+    {
+        $this->authorize('view', $shipment);
+
+        $evaluation = $this->etaService->evaluateShipment($shipment);
+
+        return $this->successResponse($evaluation, 'ETA evaluation completed');
+    }
+
+    /**
+     * Update estimated arrival date and recalculate deterministic delay metrics.
+     */
+    public function updateEta(UpdateEtaRequest $request, Shipment $shipment): JsonResponse
+    {
+        $this->authorize('update', $shipment);
+
+        $evaluation = $this->etaService->recalculateEta(
+            $shipment,
+            $request->validated('estimated_delivery_at'),
+            $request->validated('reason')
+        );
+
+        return $this->successResponse([
+            'evaluation' => $evaluation,
+            'shipment' => new ShipmentResource($shipment->fresh(['origin', 'destination', 'carrier'])),
+        ], 'ETA updated and delay rules recalculated');
+    }
+
+    /**
+     * Retrieve global combined operational KPIs across all corridors.
+     */
+    public function kpis(): JsonResponse
+    {
+        $kpis = $this->etaService->calculateGlobalKpis();
+
+        return $this->successResponse($kpis, 'Global operational KPIs retrieved');
+    }
+
+    /**
      * Public tracking endpoint (accessible without authentication).
      */
     public function track(string $trackingNumber): JsonResponse
     {
         $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
-        $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location']);
+        $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location', 'exceptions']);
 
         return $this->successResponse(
             new ShipmentResource($shipment),
@@ -101,4 +145,3 @@ class ShipmentController extends Controller
         );
     }
 }
-

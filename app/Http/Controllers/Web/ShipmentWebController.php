@@ -3,13 +3,19 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Exception\StoreExceptionRequest;
+use App\Http\Requests\Exception\UpdateExceptionRequest;
 use App\Http\Requests\Shipment\StoreShipmentRequest;
+use App\Http\Requests\Shipment\UpdateEtaRequest;
 use App\Http\Requests\Tracking\StoreTrackingEventRequest;
 use App\Models\Carrier;
 use App\Models\Location;
 use App\Models\Shipment;
+use App\Models\ShipmentException;
 use App\Models\TrackingEvent;
 use App\Models\User;
+use App\Services\EtaService;
+use App\Services\ExceptionService;
 use App\Services\ShipmentService;
 use App\Services\TrackingService;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +26,9 @@ class ShipmentWebController extends Controller
 {
     public function __construct(
         protected ShipmentService $shipmentService,
-        protected TrackingService $trackingService
+        protected TrackingService $trackingService,
+        protected EtaService $etaService,
+        protected ExceptionService $exceptionService
     ) {}
 
     /**
@@ -32,13 +40,13 @@ class ShipmentWebController extends Controller
 
         $shipments = $this->shipmentService->getShipments(
             $request->user(),
-            $request->only(['search', 'status', 'carrier_id']),
+            $request->only(['search', 'status', 'carrier_id', 'is_delayed']),
             12
         );
 
         return view('shipments.index', [
             'shipments' => $shipments,
-            'filters' => $request->only(['search', 'status', 'carrier_id']),
+            'filters' => $request->only(['search', 'status', 'carrier_id', 'is_delayed']),
             'customers' => User::where('role', User::ROLE_CUSTOMER)->orderBy('name')->get(),
             'carriers' => Carrier::where('is_active', true)->orderBy('name')->get(),
             'locations' => Location::orderBy('name')->get(),
@@ -78,7 +86,7 @@ class ShipmentWebController extends Controller
     }
 
     /**
-     * Display the shipment detail and tracking timeline page.
+     * Display the shipment detail, ETA rule evaluation, exceptions, and tracking timeline page.
      */
     public function show(Request $request, string $trackingNumber): View
     {
@@ -100,13 +108,29 @@ class ShipmentWebController extends Controller
             'items',
             'trackingEvents.location',
             'trackingEvents.creator',
+            'exceptions.reporter',
+            'exceptions.resolver',
         ]);
 
+        $etaEvaluation = $this->etaService->evaluateShipment($shipment);
         $locations = Location::orderBy('name')->get();
 
         return view('shipments.show', [
-            'shipment' => $shipment,
+            'shipment' => $shipment->fresh([
+                'customer',
+                'carrier',
+                'origin',
+                'destination',
+                'currentLocation',
+                'items',
+                'trackingEvents.location',
+                'trackingEvents.creator',
+                'exceptions.reporter',
+                'exceptions.resolver',
+            ]),
             'timeline' => $shipment->trackingEvents,
+            'exceptions' => $shipment->exceptions,
+            'etaEvaluation' => $etaEvaluation,
             'locations' => $locations,
             'user' => $request->user(),
         ]);
@@ -130,5 +154,63 @@ class ShipmentWebController extends Controller
         return redirect()
             ->route('shipments.show', $shipment->tracking_number)
             ->with('status', 'Titik checkpoint pelacakan berhasil dicatat.');
+    }
+
+    /**
+     * Report a shipment exception from the web detail page.
+     */
+    public function storeException(StoreExceptionRequest $request, string $trackingNumber): RedirectResponse
+    {
+        $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
+
+        $this->authorize('create', [ShipmentException::class, $shipment]);
+
+        $this->exceptionService->reportException(
+            $shipment,
+            $request->validated(),
+            $request->user()
+        );
+
+        return redirect()
+            ->route('shipments.show', $shipment->tracking_number)
+            ->with('status', 'Kendala pengiriman (Exception) berhasil dilaporkan dan status diperbarui.');
+    }
+
+    /**
+     * Update or resolve a shipment exception from the web detail page.
+     */
+    public function updateException(UpdateExceptionRequest $request, ShipmentException $exception): RedirectResponse
+    {
+        $this->authorize('update', $exception);
+
+        $updated = $this->exceptionService->updateException(
+            $exception,
+            $request->validated(),
+            $request->user()
+        );
+
+        return redirect()
+            ->route('shipments.show', $updated->shipment->tracking_number)
+            ->with('status', "Status kendala ({$updated->type}) diperbarui menjadi {$updated->status}.");
+    }
+
+    /**
+     * Recalculate ETA from web modal.
+     */
+    public function updateEta(UpdateEtaRequest $request, string $trackingNumber): RedirectResponse
+    {
+        $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
+
+        $this->authorize('update', $shipment);
+
+        $this->etaService->recalculateEta(
+            $shipment,
+            $request->validated('estimated_delivery_at'),
+            $request->validated('reason')
+        );
+
+        return redirect()
+            ->route('shipments.show', $shipment->tracking_number)
+            ->with('status', 'Estimasi waktu kedatangan (ETA) dan evaluasi keterlambatan berhasil diperbarui.');
     }
 }

@@ -84,6 +84,67 @@
         </div>
     </div>
 
+    <!-- Worldwide Combined KPIs Row (SEA→Europe, Asia→NA, SEA→Australia) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-2xl bg-sage-50 border border-sage-200/80 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">Ketepatan Tiba (On-Time Rate)</p>
+                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['on_time_delivery_rate'] ?? 100 }}%</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-sage-700">Rute Eropa</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-apricot-50 border border-apricot-200/80 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rata-Rata Keterlambatan</p>
+                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} jam</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-apricot-600">Rute Amerika</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-cream-100 border border-cream-200 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">Waktu Penyelesaian Kendala</p>
+                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} jam</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-espresso-700">Rute Australia</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-rose-50/80 border border-rose-200 flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Kendala Terbuka (Exceptions)</p>
+                <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} aktif</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-rose-600">Perlu Tindak</span>
+        </div>
+    </div>
+
+    @if(!empty($openExceptions) && $openExceptions->isNotEmpty())
+        <div class="p-5 rounded-3xl bg-white border border-rose-200 shadow-xs space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-rose-700 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    Peringatan Kendala Operasional Aktif
+                </h3>
+                <span class="text-[11px] font-mono text-espresso-500">{{ $openExceptions->count() }} terbuka</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                @foreach($openExceptions as $ex)
+                    <a href="{{ route('shipments.show', $ex->shipment->tracking_number) }}" class="p-3 rounded-2xl bg-rose-50/50 hover:bg-rose-50 border border-rose-200/80 flex items-center justify-between gap-3 transition-colors">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-bold text-espresso-900">{{ $ex->shipment->tracking_number }}</span>
+                                <span class="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-bold uppercase">{{ $ex->type }}</span>
+                            </div>
+                            <p class="text-espresso-700 truncate mt-0.5">{{ $ex->description }}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-rose-600 shrink-0">{{ $ex->severity }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <!-- Quick Tracking Modal / Result Drawer -->
     <div id="trackResultModal" class="hidden rounded-3xl border border-cream-200 bg-white p-6 shadow-[0_20px_45px_-15px_rgba(44,39,36,0.12)] space-y-4">
         <div class="flex items-center justify-between border-b border-cream-200 pb-3">

@@ -12,6 +12,10 @@ use Illuminate\Validation\ValidationException;
 
 class TrackingService
 {
+    public function __construct(
+        protected EtaService $etaService
+    ) {}
+
     /**
      * Add an immutable tracking event to a shipment and update shipment lifecycle state.
      *
@@ -101,6 +105,9 @@ class TrackingService
             }
 
             $shipment->update($shipmentUpdates);
+
+            // Evaluate deterministic ETA & delay metrics against the new checkpoint
+            $this->etaService->evaluateShipment($shipment->fresh(), $event->event_time);
 
             return $event->load(['location', 'creator']);
         });

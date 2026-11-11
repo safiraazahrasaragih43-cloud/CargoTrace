@@ -21,9 +21,9 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Build the timeline UI (chronological sorting, distinct event types).
 
 ## Milestone P11: Business Logic & APIs
-- [ ] Implement ETA calculation logic (Expected vs Actual).
-- [ ] Develop Exception Management (Customs Hold, Weather, etc.) and severity levels.
-- [ ] Finalize standard REST API endpoints with proper JSON formatting and HTTP codes.
+- [x] Implement ETA calculation logic (Expected vs Actual).
+- [x] Develop Exception Management (Customs Hold, Weather, etc.) and severity levels.
+- [x] Finalize standard REST API endpoints with proper JSON formatting and HTTP codes.
 
 ## Milestone P12: Maps & External Integrations
 - [ ] Integrate Leaflet.js & OpenStreetMap on the Frontend.

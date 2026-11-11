@@ -23,9 +23,12 @@ class ShipmentFactory extends Factory
             'current_location_id' => null,
             'status' => Shipment::STATUS_CREATED,
             'departure_at' => now(),
+            'expected_delivery_at' => now()->addDays(5),
             'estimated_delivery_at' => now()->addDays(5),
             'actual_delivery_at' => null,
             'delay_hours' => 0,
+            'is_delayed' => false,
+            'delay_reason' => null,
             'notes' => fake()->sentence(),
         ];
     }

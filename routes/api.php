@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CarrierController;
+use App\Http\Controllers\Api\V1\ExceptionController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\ShipmentController;
 use App\Http\Controllers\Api\V1\TrackingController;
@@ -34,9 +35,21 @@ Route::prefix('v1')->group(function () {
         // Shipments CRUD
         Route::apiResource('shipments', ShipmentController::class)->names('api.shipments');
 
+        // ETA Evaluation & Recalculation
+        Route::get('shipments/{shipment}/eta', [ShipmentController::class, 'evaluateEta'])->name('api.shipments.eta.show');
+        Route::patch('shipments/{shipment}/eta', [ShipmentController::class, 'updateEta'])->name('api.shipments.eta.update');
+
         // Tracking Timeline & Checkpoints
         Route::get('shipments/{shipment}/tracking', [TrackingController::class, 'index'])->name('api.shipments.tracking.index');
         Route::post('shipments/{shipment}/tracking', [TrackingController::class, 'store'])->name('api.shipments.tracking.store');
+
+        // Exception Management
+        Route::get('shipments/{shipment}/exceptions', [ExceptionController::class, 'index'])->name('api.shipments.exceptions.index');
+        Route::post('shipments/{shipment}/exceptions', [ExceptionController::class, 'store'])->name('api.shipments.exceptions.store');
+        Route::match(['put', 'patch'], 'exceptions/{exception}', [ExceptionController::class, 'update'])->name('api.exceptions.update');
+
+        // Global KPIs
+        Route::get('analytics/kpis', [ShipmentController::class, 'kpis'])->name('api.analytics.kpis');
     });
 
     // Health check endpoint

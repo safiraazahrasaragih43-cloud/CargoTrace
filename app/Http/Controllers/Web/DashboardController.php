@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Carrier;
 use App\Models\Location;
 use App\Models\Shipment;
+use App\Models\ShipmentException;
+use App\Services\EtaService;
 use App\Services\ShipmentService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,7 +15,8 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     public function __construct(
-        protected ShipmentService $shipmentService
+        protected ShipmentService $shipmentService,
+        protected EtaService $etaService
     ) {}
 
     public function index(Request $request): View
@@ -34,6 +37,15 @@ class DashboardController extends Controller
         $totalDelivered = (clone $baseQuery)->where('status', Shipment::STATUS_DELIVERED)->count();
         $totalDelayed = (clone $baseQuery)->where('delay_hours', '>', 0)->count();
 
+        $kpis = $this->etaService->calculateGlobalKpis();
+
+        $openExceptions = ShipmentException::with('shipment')
+            ->where('status', '!=', ShipmentException::STATUS_RESOLVED)
+            ->when($user->isCustomer(), fn ($q) => $q->whereHas('shipment', fn ($sq) => $sq->where('customer_id', $user->id)))
+            ->orderByDesc('detected_at')
+            ->take(5)
+            ->get();
+
         return view('dashboard', [
             'shipments' => $shipments,
             'stats' => [
@@ -42,9 +54,10 @@ class DashboardController extends Controller
                 'delivered' => $totalDelivered,
                 'delayed' => $totalDelayed,
             ],
+            'kpis' => $kpis,
+            'openExceptions' => $openExceptions,
             'carriersCount' => Carrier::count(),
             'locationsCount' => Location::count(),
         ]);
     }
 }
-

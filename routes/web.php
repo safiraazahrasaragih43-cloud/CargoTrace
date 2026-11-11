@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/shipments', [ShipmentWebController::class, 'index'])->name('shipments.index');
     Route::post('/shipments', [ShipmentWebController::class, 'store'])->name('shipments.store');
     Route::post('/shipments/{trackingNumber}/events', [ShipmentWebController::class, 'storeEvent'])->name('shipments.events.store');
+    Route::post('/shipments/{trackingNumber}/exceptions', [ShipmentWebController::class, 'storeException'])->name('shipments.exceptions.store');
+    Route::patch('/exceptions/{exception}', [ShipmentWebController::class, 'updateException'])->name('exceptions.update');
+    Route::patch('/shipments/{trackingNumber}/eta', [ShipmentWebController::class, 'updateEta'])->name('shipments.eta.update');
 
     // Carriers Management (Admin / Operator)
     Route::get('/carriers', [CarrierWebController::class, 'index'])->name('carriers.index');

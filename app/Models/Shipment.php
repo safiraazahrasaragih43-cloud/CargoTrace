@@ -62,9 +62,12 @@ class Shipment extends Model
         'current_location_id',
         'status',
         'departure_at',
+        'expected_delivery_at',
         'estimated_delivery_at',
         'actual_delivery_at',
         'delay_hours',
+        'is_delayed',
+        'delay_reason',
         'notes',
     ];
 
@@ -72,9 +75,11 @@ class Shipment extends Model
     {
         return [
             'departure_at' => 'datetime',
+            'expected_delivery_at' => 'datetime',
             'estimated_delivery_at' => 'datetime',
             'actual_delivery_at' => 'datetime',
             'delay_hours' => 'integer',
+            'is_delayed' => 'boolean',
         ];
     }
 
@@ -116,6 +121,18 @@ class Shipment extends Model
     public function latestTrackingEvent(): HasOne
     {
         return $this->hasOne(TrackingEvent::class)->latestOfMany('event_time');
+    }
+
+    public function exceptions(): HasMany
+    {
+        return $this->hasMany(ShipmentException::class)->orderBy('detected_at', 'desc');
+    }
+
+    public function openExceptions(): HasMany
+    {
+        return $this->hasMany(ShipmentException::class)
+            ->where('status', '!=', ShipmentException::STATUS_RESOLVED)
+            ->orderBy('detected_at', 'desc');
     }
 
     public function isTerminal(): bool

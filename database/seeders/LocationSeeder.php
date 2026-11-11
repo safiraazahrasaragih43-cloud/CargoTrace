@@ -90,6 +90,36 @@ class LocationSeeder extends Seeder
                 'latitude' => 1.3644000,
                 'longitude' => 103.9915000,
             ],
+            [
+                'name' => 'Port of Sydney (Port Botany)',
+                'code' => 'AUSYD',
+                'type' => Location::TYPE_PORT,
+                'address' => 'Bumborah Point Rd, Port Botany NSW',
+                'city' => 'Sydney',
+                'country' => 'Australia',
+                'latitude' => -33.9722000,
+                'longitude' => 151.2167000,
+            ],
+            [
+                'name' => 'Port of Melbourne',
+                'code' => 'AUMEL',
+                'type' => Location::TYPE_PORT,
+                'address' => 'Webb Dock Dr, Port Melbourne VIC',
+                'city' => 'Melbourne',
+                'country' => 'Australia',
+                'latitude' => -37.8409000,
+                'longitude' => 144.9125000,
+            ],
+            [
+                'name' => 'Port of Yokohama',
+                'code' => 'JPYOK',
+                'type' => Location::TYPE_PORT,
+                'address' => '1 Kaigan-dori, Naka-ku',
+                'city' => 'Yokohama',
+                'country' => 'Japan',
+                'latitude' => 35.4437000,
+                'longitude' => 139.6380000,
+            ],
         ];
 
         foreach ($locations as $location) {
