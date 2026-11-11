@@ -1,59 +1,155 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CargoTrace — Global Shipment Visibility & Tracking Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tracking, deterministic ETA delay evaluation, and operational exception management platform built with **Laravel 12**, **PHP 8.2+**, **MySQL / MariaDB**, **Tailwind CSS v4**, **Leaflet.js (OpenStreetMap)**, and **Chart.js**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Key Features & Configured Worldwide Corridors
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+CargoTrace implements an **Individual All-Routes Configuration** combining three international logistics corridors:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Corridor | Origin Region | Destination Focus | Delay Threshold | Primary Exception | Core KPI Focus |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| **SEA → Europe** | Indonesia / Singapore / SEA | Netherlands / Germany / UK | **12 Hours** | `CUSTOMS_HOLD` | On-Time Delivery Rate |
+| **Asia → North America** | China / Japan / Korea / SEA | United States / Canada | **18 Hours** | `WEATHER_DELAY` | Average Delay Duration |
+| **SEA → Australia** | Singapore / Indonesia / SEA | Australia / New Zealand | **24 Hours** | `DOCUMENTATION_ISSUE` | Exception Resolution Time |
 
-## Learning Laravel
+### Core Capabilities
+- **Strict Shipment Lifecycle State Machine:** Enforces sequential transitions (`CREATED → BOOKED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED`), exception recovery (`IN_TRANSIT → EXCEPTION → IN_TRANSIT`), and immutable terminal states (`DELIVERED`, `CANCELLED`).
+- **Append-Only Chronological Tracking Timeline:** Immutable location checkpoints (`TrackingEvent`) with GPS coordinates and live status updates.
+- **Deterministic ETA & Delay Engine (`EtaService`):** Automatically computes delay hours and maps severity tiers (`0h = ON_TIME`, `1–6h = LOW`, `7–24h = MEDIUM`, `>24h = HIGH`).
+- **Interactive Maps & External Integrations:** Interactive Leaflet.js OpenStreetMap route visualization + live destination weather telemetry (**Open-Meteo**) and UN/LOCODE port lookup (**Nominatim OpenStreetMap**) via Laravel HTTP Client with graceful failure handling.
+- **Role-Segmented UI:**
+  - **Public Landing Page:** Soft Earthy Glassmorphism UI with an interactive **Hero Corridor Selector** and a **12-Column Bento Grid**.
+  - **Admin & Staff Operators:** Glassmorphic **Left Sidebar Layout** (`Konsol Admin` / `Konsol Staff`) with full operational tooling and **Chart.js** database analytics.
+  - **Customers:** Clean **Glassmorphic Topbar Layout** (`Portal Klien`) scoped strictly to their own shipments and notifications.
+- **Server-Side Search, Multi-Filter & Sorting:** Search by tracking number/customer/carrier plus filters for status, carrier, origin, destination, delayed status, date ranges, and sorting (`latest`, `oldest`, `eta_asc`, `eta_desc`, `delay_desc`).
+- **In-App Notifications & Admin Audit Logs:** Automatic stakeholder alerts on shipment creation, status updates, ETA delays, and exceptions, alongside full before/after change audit trails restricted exclusively to Administrators.
+- **Security Hardening:** Role escalation prevention on registration, FormRequest validation, parameterized queries with SQL wildcard escaping and bounded pagination, HTML escaping on DOM/Leaflet sinks (`window.escapeHtml`), PII stripping on public tracking endpoints, CSRF tokens, Sanctum Bearer tokens with scoped abilities, and defensive HTTP security headers.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Architecture Overview
 
-## Laravel Sponsors
+CargoTrace follows an **MVC + Service Layer Pattern** cleanly separating HTTP handling from domain rules:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- `app/Http/Controllers/Web/*` & `Api/V1/*` — Thin HTTP controllers delegating authorization to Policies/FormRequests and domain execution to Services.
+- `app/Services/*` — Dedicated domain services (`AuthService`, `ShipmentService`, `TrackingService`, `EtaService`, `ExceptionService`, `CarrierService`, `LocationService`, `NotificationService`, `AuditLogService`, `WeatherService`, `GeocodingService`).
+- `app/Policies/*` — Granular authorization policies (`ShipmentPolicy`, `CarrierPolicy`, `LocationPolicy`, `TrackingEventPolicy`, `ShipmentExceptionPolicy`).
+- `app/Traits/*` — `ApiResponseTrait` (standardized JSON envelope) and `SanitizesQueriesTrait` (LIKE wildcard escaping + bounded pagination).
+- `app/Http/Middleware/*` — `RoleMiddleware` and `SecurityHeadersMiddleware`.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Role Matrix & Demo Credentials
 
-## Contributing
+After running the database seeders, the following accounts are available (password for all accounts: `password`):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Role | Email | Layout | Key Permissions |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@cargotrace.com` | Glass Sidebar (`Konsol Admin`) | Full CRUD, Carriers/Locations delete, Shipments delete, System Audit Logs |
+| **Logistics Operator** | `operator@cargotrace.com` | Glass Sidebar (`Konsol Staff`) | Create/update shipments, append tracking events, update ETA, manage exceptions, add locations |
+| **Customer** | `customer@cargotrace.com` | Glass Topbar (`Portal Klien`) | Read own shipments, view timelines & weather, view/read own notifications |
 
-## Code of Conduct
+### Sample Seeded Tracking Numbers
+- `CT-20261101-9821` (SEA → Europe Corridor)
+- `CT-20261105-4412` (Asia → North America Corridor)
+- `CT-20261020-1109` (SEA → Australia Corridor)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Local Setup & Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Requirements
+- **PHP >= 8.2** (with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo` extensions)
+- **Composer**
+- **MySQL 8+ / MariaDB 10.4+**
+- **Node.js 18+ & npm**
 
-## License
+### Step-by-Step Setup
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Clone the repository and install dependencies:**
+   ```bash
+   git clone <your-repo-url> cargotrace
+   cd cargotrace
+   composer install
+   npm install
+   ```
+
+2. **Configure environment variables:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   Edit `.env` to match your local MySQL credentials (`DB_DATABASE=cargotrace_db`, `DB_USERNAME=root`, `DB_PASSWORD=`). Ensure the database `cargotrace_db` exists in MySQL.
+
+3. **Run database migrations & seed realistic demo data:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+4. **Build frontend assets (Tailwind CSS v4, Leaflet, Chart.js):**
+   ```bash
+   npm run build
+   ```
+
+5. **Start the local development server:**
+   ```bash
+   php artisan serve
+   ```
+   *(Windows helper scripts `serve.bat` and `artisan.bat` are also included if multiple PHP versions are installed.)*
+
+Open `http://127.0.0.1:8000` in your browser.
+
+---
+
+## Running Automated Tests
+
+All unit and feature suites run cleanly via PHPUnit using an isolated in-memory SQLite testing configuration (`phpunit.xml`):
+
+```bash
+php vendor/phpunit/phpunit/phpunit
+```
+
+**Verified Test Coverage (77 tests, 394 assertions):**
+- Authentication & Sanctum API tokens (`AuthTest`, `ApiAuthTest`)
+- Role Middleware & RBAC Policies (`RoleMiddlewareTest`, `CarrierCrudTest`, `LocationCrudTest`)
+- Shipment CRUD & State Machine (`ShipmentCrudTest`, `TrackingTimelineTest`)
+- Deterministic ETA, Delay & Exceptions (`EtaAndDelayRulesTest`, `ExceptionManagementTest`)
+- External Integrations & Map Views (`ExternalIntegrationsTest`)
+- Web Navigation, Chart.js Dashboard, Search/Sort, Notifications & Audit Logs (`WebPagesNavigationTest`, `P13DashboardSearchNotificationAuditTest`)
+- P14 Security QA — Mass Assignment, XSS, SQLi/Wildcards, PII & Full Authorization/ETA Matrix (`P14SecurityAndQualityAssuranceTest`)
+
+---
+
+## API Documentation & Postman Collection
+
+All REST API endpoints are prefixed under `/api/v1` and return standard JSON responses:
+- **Postman Collection:** Import [`docs/CargoTrace_API_v1.postman_collection.json`](docs/CargoTrace_API_v1.postman_collection.json) directly into Postman.
+- **Full Endpoint Reference:** See [`docs/API_DOCS.md`](docs/API_DOCS.md).
+- **Live Demo & Ownership Guide:** See [`docs/DEMO_AND_INTERVIEW_GUIDE.md`](docs/DEMO_AND_INTERVIEW_GUIDE.md).
+
+---
+
+## Production Deployment Checklist
+
+1. Set production `.env` variables:
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://your-domain.com
+   ```
+2. Install optimized dependencies and build assets:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   npm ci && npm run build
+   ```
+3. Run migrations cleanly and optimize Laravel caches:
+   ```bash
+   php artisan migrate --force
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+4. Point Nginx/Apache document root to `public/` and configure HTTPS/TLS termination.
+5. Never commit `.env` or private secrets (already excluded via `.gitignore`).

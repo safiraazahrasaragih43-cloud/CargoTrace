@@ -56,6 +56,8 @@ class P13DashboardSearchNotificationAuditTest extends TestCase
 
         $adminRes = $this->actingAs($admin)->get('/dashboard');
         $adminRes->assertStatus(200)
+            ->assertSee('id="sidebar"', false)
+            ->assertDontSee('id="customerTopbar"', false)
             ->assertSee('Konsol Admin')
             ->assertSee('Log Audit Sistem')
             ->assertSee('statusChart')
@@ -66,11 +68,15 @@ class P13DashboardSearchNotificationAuditTest extends TestCase
 
         $operatorRes = $this->actingAs($operator)->get('/dashboard');
         $operatorRes->assertStatus(200)
+            ->assertSee('id="sidebar"', false)
+            ->assertDontSee('id="customerTopbar"', false)
             ->assertSee('Konsol Staff')
             ->assertDontSee('Log Audit Sistem');
 
         $customerRes = $this->actingAs($customer)->get('/dashboard');
         $customerRes->assertStatus(200)
+            ->assertSee('id="customerTopbar"', false)
+            ->assertDontSee('id="sidebar"', false)
             ->assertSee('Portal Klien')
             ->assertDontSee('Log Audit Sistem');
     }

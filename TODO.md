@@ -44,7 +44,7 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 
 ## Milestone P15: Finalization & Delivery
 - [ ] Deploy application to a live server/VPS/Cloud.
-- [ ] Ensure `.env` and API keys are not in the repository. Provide `.env.example`.
-- [ ] Write a comprehensive English `README.md` (Setup, Tests, Deployment, Features).
-- [ ] Create Postman Collection / API Docs.
-- [ ] Prepare for Live Demo and Code Ownership Interview.
+- [x] Ensure `.env` and API keys are not in the repository. Provide `.env.example`.
+- [x] Write a comprehensive English `README.md` (Setup, Tests, Deployment, Features).
+- [x] Create Postman Collection / API Docs.
+- [x] Prepare for Live Demo and Code Ownership Interview.

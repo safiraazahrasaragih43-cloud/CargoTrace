@@ -1,0 +1,342 @@
+{
+  "info": {
+    "name": "CargoTrace API v1",
+    "_postman_id": "263ec13f-0ff4-480a-9c08-cargotrace01",
+    "description": "REST API v1 collection for CargoTrace Global Shipment Visibility & Tracking Platform.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "tracking_number", "value": "CT-20261101-9821" },
+    { "key": "shipment_id", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Public & Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/health"
+          }
+        },
+        {
+          "name": "Public Track Shipment",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/tracking/{{tracking_number}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login (Sets Bearer Token Automatically)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@cargotrace.com\",\n  \"password\": \"password\",\n  \"device_name\": \"postman-desktop\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        },
+        {
+          "name": "Register Customer",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Freight Client\",\n  \"email\": \"client@example.com\",\n  \"password\": \"Password123!\",\n  \"password_confirmation\": \"Password123!\",\n  \"phone\": \"+62-812-0000-0000\",\n  \"company_name\": \"Nusantara Trade Co.\",\n  \"device_name\": \"postman\"\n}"
+            },
+            "url": "{{base_url}}/auth/register"
+          }
+        },
+        {
+          "name": "Me (Authenticated Profile)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/auth/me"
+          }
+        },
+        {
+          "name": "Logout (Revoke Current Token)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shipments CRUD, Search & ETA",
+      "item": [
+        {
+          "name": "List Shipments (Advanced Filter & Sort)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments?is_delayed=1&sort_by=eta_asc&per_page=15"
+          }
+        },
+        {
+          "name": "Create Shipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": 3,\n  \"carrier_id\": 1,\n  \"origin_id\": 1,\n  \"destination_id\": 3,\n  \"estimated_delivery_at\": \"2026-12-01 12:00:00\",\n  \"notes\": \"Export elektronik rute Jakarta - Rotterdam\",\n  \"items\": [\n    {\n      \"description\": \"Industrial Inverter Modules\",\n      \"quantity\": 10,\n      \"weight_kg\": 450.5,\n      \"value_amount\": 18500\n    }\n  ]\n}"
+            },
+            "url": "{{base_url}}/shipments"
+          }
+        },
+        {
+          "name": "Show Shipment Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}"
+          }
+        },
+        {
+          "name": "Update Shipment Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BOOKED\",\n  \"notes\": \"Container slot confirmed\"\n}"
+            },
+            "url": "{{base_url}}/shipments/{{shipment_id}}"
+          }
+        },
+        {
+          "name": "Evaluate ETA",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}/eta"
+          }
+        },
+        {
+          "name": "Update ETA & Recalculate Delay Rules",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estimated_delivery_at\": \"2026-12-03 06:00:00\",\n  \"reason\": \"Port congestion delay at transit hub\"\n}"
+            },
+            "url": "{{base_url}}/shipments/{{shipment_id}}/eta"
+          }
+        },
+        {
+          "name": "Delete Shipment (Admin Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tracking & Exceptions",
+      "item": [
+        {
+          "name": "Get Shipment Tracking Timeline",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}/tracking"
+          }
+        },
+        {
+          "name": "Append Tracking Checkpoint",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_TRANSIT\",\n  \"location_id\": 2,\n  \"description\": \"Vessel departed Port of Singapore transit terminal\"\n}"
+            },
+            "url": "{{base_url}}/shipments/{{shipment_id}}/tracking"
+          }
+        },
+        {
+          "name": "List Shipment Exceptions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}/exceptions"
+          }
+        },
+        {
+          "name": "Report Exception",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"CUSTOMS_HOLD\",\n  \"severity\": \"HIGH\",\n  \"description\": \"Additional customs manifest verification required at Rotterdam.\"\n}"
+            },
+            "url": "{{base_url}}/shipments/{{shipment_id}}/exceptions"
+          }
+        },
+        {
+          "name": "Resolve Exception",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\",\n  \"resolution_notes\": \"Verified HS code documents accepted by customs.\",\n  \"restore_status\": \"IN_TRANSIT\"\n}"
+            },
+            "url": "{{base_url}}/exceptions/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Master Data & External Integrations",
+      "item": [
+        {
+          "name": "List Carriers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/carriers"
+          }
+        },
+        {
+          "name": "List Locations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/locations"
+          }
+        },
+        {
+          "name": "Global Operational KPIs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/analytics/kpis"
+          }
+        },
+        {
+          "name": "Shipment Live Weather (Open-Meteo)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/shipments/{{shipment_id}}/weather"
+          }
+        },
+        {
+          "name": "Geocode Location Search (Nominatim)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/integrations/geocode?q=Rotterdam"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications & Audit Logs",
+      "item": [
+        {
+          "name": "List My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/notifications"
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/notifications/1/read"
+          }
+        },
+        {
+          "name": "Mark All Notifications as Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/notifications/read-all"
+          }
+        },
+        {
+          "name": "List System Audit Logs (Admin Only)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/audit-logs?action=SHIPMENT_CREATED"
+          }
+        }
+      ]
+    }
+  ]
+}
