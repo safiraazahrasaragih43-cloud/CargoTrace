@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\IntegrationController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CarrierWebController;
 use App\Http\Controllers\Web\DashboardController;
@@ -46,7 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/locations', [LocationWebController::class, 'index'])->name('locations.index');
     Route::post('/locations', [LocationWebController::class, 'store'])->name('locations.store');
     Route::delete('/locations/{location}', [LocationWebController::class, 'destroy'])->name('locations.destroy');
+
+    // Web Geocode Helper (Nominatim API)
+    Route::get('/integrations/geocode', [IntegrationController::class, 'geocode'])->name('web.integrations.geocode');
 });
 
-// Consignment Detail & Public/Auth Tracking Timeline View
+// Consignment Detail & Public/Auth Tracking Timeline View + Weather Integration
 Route::get('/shipments/{trackingNumber}', [ShipmentWebController::class, 'show'])->name('shipments.show');
+Route::get('/integrations/shipments/{trackingNumber}/weather', [ShipmentWebController::class, 'weather'])->name('web.shipments.weather');

@@ -217,6 +217,57 @@
         </div>
     </div>
 
+    <!-- INTERACTIVE MAP (LEAFLET.JS + OPENSTREETMAP) & LIVE WEATHER CONTEXT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Leaflet Interactive Route Map (2 cols) -->
+        <div class="lg:col-span-2 p-6 sm:p-7 rounded-3xl bg-white border border-cream-200/80 shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)] space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-700 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-extrabold text-espresso-900">Peta Rute &amp; Titik Pelacakan</h2>
+                        <p class="text-[11px] text-espresso-500">Visualisasi pelabuhan asal, checkpoint perjalanan, dan tujuan via OpenStreetMap.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 text-[10px] font-bold">
+                    <span class="inline-flex items-center gap-1.5 text-sage-700"><span class="w-2.5 h-2.5 rounded-full bg-sage-600"></span> Asal</span>
+                    <span class="inline-flex items-center gap-1.5 text-apricot-600"><span class="w-2.5 h-2.5 rounded-full bg-apricot-500"></span> Checkpoint</span>
+                    <span class="inline-flex items-center gap-1.5 text-espresso-900"><span class="w-2.5 h-2.5 rounded-full bg-espresso-900"></span> Tujuan</span>
+                </div>
+            </div>
+
+            <div id="shipmentMap" class="w-full h-72 sm:h-88 rounded-2xl border border-cream-200 bg-cream-100 z-10 overflow-hidden"></div>
+        </div>
+
+        <!-- Live External Weather API Card (1 col) -->
+        <div class="p-6 sm:p-7 rounded-3xl bg-white border border-cream-200/80 shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)] flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-apricot-100 text-apricot-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-espresso-900">Kondisi Cuaca Lokasi</h3>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded-full bg-cream-100 text-[10px] font-bold text-espresso-600">External API</span>
+                </div>
+
+                <div id="weatherWidgetBody" class="p-4 rounded-2xl bg-cream-50 border border-cream-200 text-xs space-y-2">
+                    <div class="flex items-center gap-2 text-espresso-500">
+                        <span class="w-2 h-2 rounded-full bg-sage-500 animate-ping"></span>
+                        <span>Mengambil telemetri cuaca maritim...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-sage-50 border border-sage-200/70 text-[10px] text-sage-700 leading-relaxed">
+                <strong>Catatan Modul:</strong> Kondisi cuaca saat ini hanya sebagai konteks visibilitas operasional dan <em>bukan</em> klaim bukti prediksi keterlambatan pengiriman.
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN GRID: TIMELINE + EXCEPTIONS & CARGO ITEMS -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- LEFT 2 COLS: TIMELINE + EXCEPTIONS -->
@@ -609,4 +660,150 @@ function onLocationChange(select) {
 }
 </script>
 @endif
+
+@php
+    $mapOrigin = $shipment->origin ? [
+        'name' => $shipment->origin->name,
+        'code' => $shipment->origin->code,
+        'lat' => $shipment->origin->latitude,
+        'lng' => $shipment->origin->longitude,
+        'country' => $shipment->origin->country,
+    ] : null;
+
+    $mapDestination = $shipment->destination ? [
+        'name' => $shipment->destination->name,
+        'code' => $shipment->destination->code,
+        'lat' => $shipment->destination->latitude,
+        'lng' => $shipment->destination->longitude,
+        'country' => $shipment->destination->country,
+    ] : null;
+
+    $mapEvents = $timeline->map(fn ($e) => [
+        'status' => $e->status,
+        'location_name' => $e->location_name,
+        'description' => $e->description,
+        'time' => $e->event_time?->format('d M Y · H:i') . ' UTC',
+        'lat' => $e->latitude,
+        'lng' => $e->longitude,
+    ])->values()->all();
+@endphp
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initShipmentMap();
+    loadShipmentWeather();
+});
+
+function createPinIcon(bgColor, borderColor, label) {
+    return window.L.divIcon({
+        className: 'custom-cargotrace-pin',
+        html: `<div style="background:${bgColor};border:2.5px solid ${borderColor};width:26px;height:26px;border-radius:9999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;box-shadow:0 4px 12px rgba(44,39,36,0.28);">${label}</div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -14],
+    });
+}
+
+function initShipmentMap() {
+    const mapContainer = document.getElementById('shipmentMap');
+    if (!mapContainer || typeof window.L === 'undefined') return;
+
+    const origin = {{ Illuminate\Support\Js::from($mapOrigin) }};
+    const destination = {{ Illuminate\Support\Js::from($mapDestination) }};
+    const events = {{ Illuminate\Support\Js::from($mapEvents) }};
+
+    const map = window.L.map('shipmentMap', { scrollWheelZoom: false }).setView([1.2644, 103.822], 3);
+
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const routeCoords = [];
+
+    if (origin && origin.lat && origin.lng) {
+        const pt = [parseFloat(origin.lat), parseFloat(origin.lng)];
+        routeCoords.push(pt);
+        window.L.marker(pt, { icon: createPinIcon('#6B7D64', '#FFFFFF', 'A') })
+            .addTo(map)
+            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Asal: ${origin.name} (${origin.code})</strong><br/>Status: ORIGIN HUB<br/>Negara: ${origin.country}</div>`);
+    }
+
+    events.forEach((ev, idx) => {
+        if (ev.lat && ev.lng) {
+            const pt = [parseFloat(ev.lat), parseFloat(ev.lng)];
+            routeCoords.push(pt);
+            const pinColor = ev.status === 'EXCEPTION' ? '#E11D48' : (ev.status === 'DELIVERED' ? '#4F5E4A' : '#F2994A');
+            window.L.marker(pt, { icon: createPinIcon(pinColor, '#FFFFFF', idx + 1) })
+                .addTo(map)
+                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${ev.location_name}</strong><br/>Status: <b>${ev.status}</b><br/>Waktu: ${ev.time}<br/><span style="color:#665E57;">${ev.description}</span></div>`);
+        }
+    });
+
+    if (destination && destination.lat && destination.lng) {
+        const pt = [parseFloat(destination.lat), parseFloat(destination.lng)];
+        routeCoords.push(pt);
+        window.L.marker(pt, { icon: createPinIcon('#2C2724', '#FFFFFF', 'T') })
+            .addTo(map)
+            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Tujuan: ${destination.name} (${destination.code})</strong><br/>Status: DESTINATION PORT<br/>Negara: ${destination.country}</div>`);
+    }
+
+    if (routeCoords.length >= 2) {
+        window.L.polyline(routeCoords, {
+            color: '#F2994A',
+            weight: 3,
+            opacity: 0.85,
+            dashArray: '8, 6'
+        }).addTo(map);
+        map.fitBounds(routeCoords, { padding: [36, 36] });
+    } else if (routeCoords.length === 1) {
+        map.setView(routeCoords[0], 7);
+    }
+}
+
+async function loadShipmentWeather() {
+    const body = document.getElementById('weatherWidgetBody');
+    if (!body) return;
+
+    try {
+        const res = await fetch('/integrations/shipments/{{ $shipment->tracking_number }}/weather');
+        const json = await res.json();
+        const w = json.data || {};
+
+        if (res.ok && w.available) {
+            body.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-espresso-500 uppercase">Lokasi Terpantau</p>
+                            <p class="text-sm font-extrabold text-espresso-900">${w.location}</p>
+                        </div>
+                        <span class="text-2xl font-extrabold text-apricot-600 font-mono">${w.temperature_c}&deg;C</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-cream-200 text-[11px]">
+                        <div>
+                            <span class="text-espresso-500 block">Kondisi</span>
+                            <strong class="text-espresso-900">${w.condition}</strong>
+                        </div>
+                        <div>
+                            <span class="text-espresso-500 block">Kecepatan Angin</span>
+                            <strong class="text-espresso-900 font-mono">${w.wind_speed_kmh} km/jam</strong>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-espresso-400 font-mono">Sumber: ${w.provider}</p>
+                </div>
+            `;
+        } else {
+            body.innerHTML = `
+                <div class="text-xs text-espresso-600 space-y-1">
+                    <p class="font-bold text-espresso-800">Telemetri Cuaca Tidak Tersedia</p>
+                    <p>${w.message || 'Layanan cuaca eksternal tidak dapat dijangkau saat ini.'}</p>
+                </div>
+            `;
+        }
+    } catch (e) {
+        body.innerHTML = `<p class="text-xs text-espresso-500">Gagal memuat widget cuaca (koneksi terputus/offline).</p>`;
+    }
+}
+</script>
 @endsection

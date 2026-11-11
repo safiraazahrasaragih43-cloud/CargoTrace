@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    'weather' => [
+        'provider' => env('WEATHER_PROVIDER', 'open-meteo'),
+        'base_url' => env('WEATHER_API_URL', 'https://api.open-meteo.com/v1/forecast'),
+        'openweather_url' => env('OPENWEATHER_API_URL', 'https://api.openweathermap.org/data/2.5/weather'),
+        'key' => env('WEATHER_API_KEY'),
+        'timeout' => (int) env('EXTERNAL_API_TIMEOUT', 5),
+    ],
+
+    'geocoding' => [
+        'base_url' => env('GEOCODING_API_URL', 'https://nominatim.openstreetmap.org/search'),
+        'user_agent' => env('GEOCODING_USER_AGENT', 'CargoTraceLogisticsPlatform/1.0'),
+        'api_key' => env('GEOCODING_API_KEY'),
+        'timeout' => (int) env('EXTERNAL_API_TIMEOUT', 5),
+    ],
+
 ];

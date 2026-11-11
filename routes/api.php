@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CarrierController;
 use App\Http\Controllers\Api\V1\ExceptionController;
+use App\Http\Controllers\Api\V1\IntegrationController;
 use App\Http\Controllers\Api\V1\LocationController;
 use App\Http\Controllers\Api\V1\ShipmentController;
 use App\Http\Controllers\Api\V1\TrackingController;
@@ -50,6 +51,10 @@ Route::prefix('v1')->group(function () {
 
         // Global KPIs
         Route::get('analytics/kpis', [ShipmentController::class, 'kpis'])->name('api.analytics.kpis');
+
+        // External Integrations (Weather & Geocoding)
+        Route::get('shipments/{shipment}/weather', [IntegrationController::class, 'shipmentWeather'])->name('api.shipments.weather');
+        Route::get('integrations/geocode', [IntegrationController::class, 'geocode'])->name('api.integrations.geocode');
     });
 
     // Health check endpoint

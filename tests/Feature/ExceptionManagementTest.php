@@ -178,3 +178,4 @@ class ExceptionManagementTest extends TestCase
             ->assertJsonMissingPath('file');
     }
 }
+

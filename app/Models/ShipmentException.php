@@ -104,3 +104,4 @@ class ShipmentException extends Model
         return round($this->detected_at->diffInMinutes($this->resolved_at) / 60, 2);
     }
 }
+

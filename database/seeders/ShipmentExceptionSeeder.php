@@ -63,3 +63,4 @@ class ShipmentExceptionSeeder extends Seeder
         }
     }
 }
+

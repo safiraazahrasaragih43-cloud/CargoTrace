@@ -26,10 +26,10 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Finalize standard REST API endpoints with proper JSON formatting and HTTP codes.
 
 ## Milestone P12: Maps & External Integrations
-- [ ] Integrate Leaflet.js & OpenStreetMap on the Frontend.
-- [ ] Map origin, destination, and tracking points with markers and popups.
-- [ ] Integrate an external Geocoding or Weather API via Laravel HTTP Client.
-- [ ] Implement error handling for external API failures.
+- [x] Integrate Leaflet.js & OpenStreetMap on the Frontend.
+- [x] Map origin, destination, and tracking points with markers and popups.
+- [x] Integrate an external Geocoding or Weather API via Laravel HTTP Client.
+- [x] Implement error handling for external API failures.
 
 ## Milestone P13: Dashboard & UX
 - [ ] Build Dashboard metrics (Total shipments, delay rates, open exceptions) using Chart.js.

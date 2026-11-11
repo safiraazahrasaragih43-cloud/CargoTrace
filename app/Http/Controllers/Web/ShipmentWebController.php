@@ -18,6 +18,8 @@ use App\Services\EtaService;
 use App\Services\ExceptionService;
 use App\Services\ShipmentService;
 use App\Services\TrackingService;
+use App\Services\WeatherService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -28,7 +30,8 @@ class ShipmentWebController extends Controller
         protected ShipmentService $shipmentService,
         protected TrackingService $trackingService,
         protected EtaService $etaService,
-        protected ExceptionService $exceptionService
+        protected ExceptionService $exceptionService,
+        protected WeatherService $weatherService
     ) {}
 
     /**
@@ -212,5 +215,29 @@ class ShipmentWebController extends Controller
         return redirect()
             ->route('shipments.show', $shipment->tracking_number)
             ->with('status', 'Estimasi waktu kedatangan (ETA) dan evaluasi keterlambatan berhasil diperbarui.');
+    }
+
+    /**
+     * Fetch live weather conditions for a shipment's current location or destination port (JSON).
+     */
+    public function weather(Request $request, string $trackingNumber): JsonResponse
+    {
+        $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
+
+        if ($request->user() && $request->user()->isCustomer() && $request->user()->id !== $shipment->customer_id) {
+            abort(403, 'Akses tidak diizinkan.');
+        }
+
+        $shipment->loadMissing(['currentLocation', 'destination', 'origin', 'latestTrackingEvent']);
+        $latestEvent = $shipment->latestTrackingEvent;
+
+        $lat = $latestEvent?->latitude ?? $shipment->currentLocation?->latitude ?? $shipment->destination?->latitude;
+        $lng = $latestEvent?->longitude ?? $shipment->currentLocation?->longitude ?? $shipment->destination?->longitude;
+        $label = $latestEvent?->location_name ?? $shipment->currentLocation?->name ?? $shipment->destination?->name ?? 'Lokasi Pengiriman';
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->weatherService->getWeatherForCoordinates($lat, $lng, $label),
+        ]);
     }
 }

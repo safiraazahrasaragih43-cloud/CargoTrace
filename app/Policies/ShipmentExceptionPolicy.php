@@ -36,3 +36,4 @@ class ShipmentExceptionPolicy
         return $user->isAdmin() || $user->isOperator();
     }
 }
+

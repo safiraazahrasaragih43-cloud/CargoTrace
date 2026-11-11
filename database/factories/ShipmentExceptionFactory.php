@@ -28,3 +28,4 @@ class ShipmentExceptionFactory extends Factory
         ];
     }
 }
+

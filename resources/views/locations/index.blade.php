@@ -39,6 +39,18 @@
         </div>
     @endif
 
+    <!-- Global Interactive Hubs Map -->
+    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-extrabold text-espresso-900">Peta Jaringan Pelabuhan &amp; Hub Dunia</h2>
+                <p class="text-[11px] text-espresso-500">Klik marker untuk melihat koordinat GPS dan kode pelabuhan UN/LOCODE.</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-sage-100 text-sage-700 text-[11px] font-bold">OpenStreetMap</span>
+        </div>
+        <div id="locationsWorldMap" class="w-full h-64 sm:h-80 rounded-2xl border border-cream-200 bg-cream-100 z-10 overflow-hidden"></div>
+    </div>
+
     <!-- Search & Filter Bar -->
     <div class="p-5 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-4">
         <form method="GET" action="{{ route('locations.index') }}" class="flex flex-col sm:flex-row gap-3">
@@ -153,9 +165,22 @@
         <form action="{{ route('locations.store') }}" method="POST" class="space-y-4 text-xs">
             @csrf
 
+            <!-- Geocoding External API Lookup Box -->
+            <div class="p-3.5 rounded-2xl bg-sage-50 border border-sage-200 space-y-2">
+                <label class="block font-bold text-sage-700 text-[11px] uppercase tracking-wider">Cari Koordinat Otomatis (External Geocoding API)</label>
+                <div class="flex gap-2">
+                    <input id="geocodeQuery" type="text" placeholder="Ketik pelabuhan/kota (cth: Port of Tokyo)"
+                           class="flex-1 px-3 py-2 bg-white border border-sage-200 rounded-xl text-espresso-900 focus:outline-none focus:ring-2 focus:ring-sage-500">
+                    <button type="button" onclick="runGeocodeSearch()" class="px-4 py-2 rounded-xl bg-sage-500 hover:bg-sage-600 text-white font-bold transition-colors cursor-pointer shrink-0">
+                        Cari Koordinat
+                    </button>
+                </div>
+                <div id="geocodeStatus" class="text-[11px] text-espresso-600"></div>
+            </div>
+
             <div>
                 <label class="block font-bold text-espresso-800 mb-1">Nama Hub / Fasilitas *</label>
-                <input type="text" name="name" required placeholder="cth: Pelabuhan Tanjung Perak Surabaya"
+                <input id="locNameInput" type="text" name="name" required placeholder="cth: Pelabuhan Tanjung Perak Surabaya"
                        class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
             </div>
 
@@ -178,12 +203,12 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-espresso-800 mb-1">Kota *</label>
-                    <input type="text" name="city" required placeholder="cth: Surabaya"
+                    <input id="locCityInput" type="text" name="city" required placeholder="cth: Surabaya"
                            class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
                 <div>
                     <label class="block font-bold text-espresso-800 mb-1">Negara *</label>
-                    <input type="text" name="country" required placeholder="cth: Indonesia"
+                    <input id="locCountryInput" type="text" name="country" required placeholder="cth: Indonesia"
                            class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
             </div>
@@ -191,12 +216,12 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-espresso-800 mb-1">Lintang (Latitude) *</label>
-                    <input type="number" step="0.000001" name="latitude" required placeholder="-7.2036"
+                    <input id="locLatInput" type="number" step="0.000001" name="latitude" required placeholder="-7.2036"
                            class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
                 <div>
                     <label class="block font-bold text-espresso-800 mb-1">Bujur (Longitude) *</label>
-                    <input type="number" step="0.000001" name="longitude" required placeholder="112.7317"
+                    <input id="locLngInput" type="number" step="0.000001" name="longitude" required placeholder="112.7317"
                            class="w-full px-3.5 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl font-mono text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
             </div>
@@ -219,4 +244,90 @@
     </div>
 </div>
 @endif
+
+@php
+    $mapHubs = $locations->getCollection()->map(fn ($l) => [
+        'name' => $l->name,
+        'code' => $l->code,
+        'type' => $l->type,
+        'city' => $l->city,
+        'country' => $l->country,
+        'lat' => $l->latitude,
+        'lng' => $l->longitude,
+    ])->values()->all();
+@endphp
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mapEl = document.getElementById('locationsWorldMap');
+    if (!mapEl || typeof window.L === 'undefined') return;
+
+    const hubs = {{ Illuminate\Support\Js::from($mapHubs) }};
+
+    const map = window.L.map('locationsWorldMap', { scrollWheelZoom: false }).setView([15.0, 105.0], 2);
+
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const bounds = [];
+    hubs.forEach(hub => {
+        if (hub.lat && hub.lng) {
+            const pt = [parseFloat(hub.lat), parseFloat(hub.lng)];
+            bounds.push(pt);
+            const icon = window.L.divIcon({
+                className: 'hub-pin',
+                html: `<div style="background:#879880;border:2px solid #FFFFFF;width:18px;height:18px;border-radius:9999px;box-shadow:0 3px 8px rgba(44,39,36,0.25);"></div>`,
+                iconSize: [18, 18],
+                iconAnchor: [9, 9],
+            });
+            window.L.marker(pt, { icon })
+                .addTo(map)
+                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${hub.name} (${hub.code})</strong><br/>Tipe: ${hub.type}<br/>${hub.city}, ${hub.country}<br/><code>${hub.lat}, ${hub.lng}</code></div>`);
+        }
+    });
+
+    if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [30, 30] });
+    }
+});
+
+async function runGeocodeSearch() {
+    const q = document.getElementById('geocodeQuery').value.trim();
+    const statusEl = document.getElementById('geocodeStatus');
+    if (!q || q.length < 2) {
+        statusEl.textContent = 'Ketik minimal 2 karakter nama kota atau pelabuhan.';
+        return;
+    }
+
+    statusEl.textContent = 'Mencari koordinat melalui Nominatim OpenStreetMap...';
+
+    try {
+        const res = await fetch('/integrations/geocode?q=' + encodeURIComponent(q));
+        const json = await res.json();
+        const payload = json.data || {};
+
+        if (res.ok && payload.available && payload.results && payload.results.length > 0) {
+            const first = payload.results[0];
+            document.getElementById('locLatInput').value = first.latitude;
+            document.getElementById('locLngInput').value = first.longitude;
+            if (first.city && !document.getElementById('locCityInput').value) {
+                document.getElementById('locCityInput').value = first.city;
+            }
+            if (first.country && !document.getElementById('locCountryInput').value) {
+                document.getElementById('locCountryInput').value = first.country;
+            }
+            if (!document.getElementById('locNameInput').value) {
+                document.getElementById('locNameInput').value = first.display_name.split(',')[0];
+            }
+            statusEl.innerHTML = `<span class="text-sage-700 font-bold">&#10003; Ditemukan: ${first.display_name} (${first.latitude}, ${first.longitude})</span>`;
+        } else {
+            statusEl.innerHTML = `<span class="text-rose-600 font-semibold">${payload.message || 'Lokasi tidak ditemukan atau layanan eksternal sedang sibuk.'}</span>`;
+        }
+    } catch (e) {
+        statusEl.innerHTML = '<span class="text-rose-600 font-semibold">Gagal menghubungi layanan geocoding eksternal.</span>';
+    }
+}
+</script>
 @endsection
