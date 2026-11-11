@@ -272,6 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).addTo(map);
 
     const bounds = [];
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     hubs.forEach(hub => {
         if (hub.lat && hub.lng) {
             const pt = [parseFloat(hub.lat), parseFloat(hub.lng)];
@@ -284,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             window.L.marker(pt, { icon })
                 .addTo(map)
-                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${hub.name} (${hub.code})</strong><br/>Tipe: ${hub.type}<br/>${hub.city}, ${hub.country}<br/><code>${hub.lat}, ${hub.lng}</code></div>`);
+                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${esc(hub.name)} (${esc(hub.code)})</strong><br/>Tipe: ${esc(hub.type)}<br/>${esc(hub.city)}, ${esc(hub.country)}<br/><code>${esc(hub.lat)}, ${esc(hub.lng)}</code></div>`);
         }
     });
 
@@ -294,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function runGeocodeSearch() {
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     const q = document.getElementById('geocodeQuery').value.trim();
     const statusEl = document.getElementById('geocodeStatus');
     if (!q || q.length < 2) {
@@ -321,9 +323,9 @@ async function runGeocodeSearch() {
             if (!document.getElementById('locNameInput').value) {
                 document.getElementById('locNameInput').value = first.display_name.split(',')[0];
             }
-            statusEl.innerHTML = `<span class="text-sage-700 font-bold">&#10003; Ditemukan: ${first.display_name} (${first.latitude}, ${first.longitude})</span>`;
+            statusEl.innerHTML = `<span class="text-sage-700 font-bold">&#10003; Ditemukan: ${esc(first.display_name)} (${esc(first.latitude)}, ${esc(first.longitude)})</span>`;
         } else {
-            statusEl.innerHTML = `<span class="text-rose-600 font-semibold">${payload.message || 'Lokasi tidak ditemukan atau layanan eksternal sedang sibuk.'}</span>`;
+            statusEl.innerHTML = `<span class="text-rose-600 font-semibold">${esc(payload.message) || 'Lokasi tidak ditemukan atau layanan eksternal sedang sibuk.'}</span>`;
         }
     } catch (e) {
         statusEl.innerHTML = '<span class="text-rose-600 font-semibold">Gagal menghubungi layanan geocoding eksternal.</span>';

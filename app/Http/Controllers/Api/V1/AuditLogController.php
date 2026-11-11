@@ -38,3 +38,4 @@ class AuditLogController extends Controller
         ], 'Audit logs retrieved successfully');
     }
 }
+

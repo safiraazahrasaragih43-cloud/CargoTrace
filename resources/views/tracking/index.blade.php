@@ -62,6 +62,7 @@ function selectTrack(no) {
 }
 
 async function liveTrackLookup() {
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     const val = document.getElementById('liveTrackInput').value.trim();
     if (!val) return;
 
@@ -83,10 +84,10 @@ async function liveTrackLookup() {
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-cream-200">
                         <div>
                             <span class="text-xs font-bold text-espresso-500 uppercase">Referensi Nomor Resi</span>
-                            <h3 class="text-2xl font-extrabold font-mono text-sage-700">${s.tracking_number}</h3>
+                            <h3 class="text-2xl font-extrabold font-mono text-sage-700">${esc(s.tracking_number)}</h3>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-sage-100 text-sage-700">${s.status}</span>
+                            <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-sage-100 text-sage-700">${esc(s.status)}</span>
                             <a href="/shipments/${encodeURIComponent(s.tracking_number)}" class="px-4 py-2 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-md transition-all">
                                 Timeline Lengkap &rarr;
                             </a>
@@ -96,19 +97,19 @@ async function liveTrackLookup() {
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                             <span class="text-espresso-500 block font-semibold">Ekspedisi</span>
-                            <strong class="text-espresso-900">${s.carrier ? s.carrier.name : 'Tidak Ada'}</strong>
+                            <strong class="text-espresso-900">${s.carrier ? esc(s.carrier.name) : 'Tidak Ada'}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                             <span class="text-espresso-500 block font-semibold">Asal</span>
-                            <strong class="text-espresso-900">${s.origin ? s.origin.name : 'Tidak Ada'}</strong>
+                            <strong class="text-espresso-900">${s.origin ? esc(s.origin.name) : 'Tidak Ada'}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                             <span class="text-espresso-500 block font-semibold">Tujuan</span>
-                            <strong class="text-espresso-900">${s.destination ? s.destination.name : 'Tidak Ada'}</strong>
+                            <strong class="text-espresso-900">${s.destination ? esc(s.destination.name) : 'Tidak Ada'}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                             <span class="text-espresso-500 block font-semibold">Posisi Saat Ini</span>
-                            <strong class="text-sage-700">${s.current_location ? s.current_location.name : 'Di Lokasi Asal'}</strong>
+                            <strong class="text-sage-700">${s.current_location ? esc(s.current_location.name) : 'Di Lokasi Asal'}</strong>
                         </div>
                     </div>
 
@@ -119,11 +120,11 @@ async function liveTrackLookup() {
                                 ${events.slice().reverse().map(ev => `
                                     <div class="p-3.5 rounded-2xl bg-cream-50/70 border border-cream-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                                         <div>
-                                            <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-apricot-100 text-apricot-600 mr-2">${ev.status}</span>
-                                            <strong class="text-espresso-900">${ev.location_name}</strong>
-                                            <p class="text-espresso-600 mt-1">${ev.description}</p>
+                                            <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-apricot-100 text-apricot-600 mr-2">${esc(ev.status)}</span>
+                                            <strong class="text-espresso-900">${esc(ev.location_name)}</strong>
+                                            <p class="text-espresso-600 mt-1">${esc(ev.description)}</p>
                                         </div>
-                                        <span class="font-mono text-[11px] text-espresso-500 shrink-0">${new Date(ev.event_time).toLocaleString('id-ID')}</span>
+                                        <span class="font-mono text-[11px] text-espresso-500 shrink-0">${esc(new Date(ev.event_time).toLocaleString('id-ID'))}</span>
                                     </div>
                                 `).join('')}
                             </div>
@@ -132,7 +133,7 @@ async function liveTrackLookup() {
                 </div>
             `;
         } else {
-            body.innerHTML = `<p class="text-sm font-bold text-rose-600">${json.message || 'Nomor resi pengiriman tidak ditemukan.'}</p>`;
+            body.innerHTML = `<p class="text-sm font-bold text-rose-600">${esc(json.message) || 'Nomor resi pengiriman tidak ditemukan.'}</p>`;
         }
     } catch (e) {
         body.innerHTML = '<p class="text-sm font-bold text-rose-600">Terjadi kesalahan saat menghubungi API pelacakan.</p>';

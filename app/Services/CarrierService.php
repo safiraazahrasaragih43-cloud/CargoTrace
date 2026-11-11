@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Models\Carrier;
+use App\Traits\SanitizesQueriesTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class CarrierService
 {
+    use SanitizesQueriesTrait;
+
     /**
      * Get paginated carriers or all active carriers.
      */
@@ -16,7 +19,7 @@ class CarrierService
         $query = Carrier::query();
 
         if (! empty($filters['search'])) {
-            $search = $filters['search'];
+            $search = $this->escapeLike($filters['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('code', 'like', "%{$search}%");
@@ -27,7 +30,7 @@ class CarrierService
             $query->where('is_active', (bool) $filters['is_active']);
         }
 
-        return $query->latest()->paginate($perPage);
+        return $query->latest()->paginate($this->clampPerPage($perPage));
     }
 
     public function getAllActive(): Collection

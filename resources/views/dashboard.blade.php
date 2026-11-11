@@ -519,13 +519,14 @@ function quickInspect(trackingNo) {
 }
 
 async function quickTrack() {
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     const input = document.getElementById('trackInput').value.trim();
     if (!input) return;
 
     const modal = document.getElementById('trackResultModal');
     const body = document.getElementById('trackResultBody');
     modal.classList.remove('hidden');
-    body.innerHTML = '<span class="text-espresso-500">Memeriksa endpoint REST API (/api/v1/tracking/' + input + ')...</span>';
+    body.innerHTML = '<span class="text-espresso-500">Memeriksa endpoint REST API (/api/v1/tracking/' + esc(input) + ')...</span>';
 
     try {
         const res = await fetch('/api/v1/tracking/' + encodeURIComponent(input));
@@ -537,27 +538,27 @@ async function quickTrack() {
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs font-sans">
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Nomor Resi</span>
-                        <strong class="text-sage-700 font-mono text-sm">${s.tracking_number}</strong>
+                        <strong class="text-sage-700 font-mono text-sm">${esc(s.tracking_number)}</strong>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Status</span>
-                        <span class="text-apricot-600 font-extrabold">${s.status}</span>
+                        <span class="text-apricot-600 font-extrabold">${esc(s.status)}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Ekspedisi</span>
-                        <span class="text-espresso-900 font-bold">${s.carrier ? s.carrier.name : 'Tidak Ada'}</span>
+                        <span class="text-espresso-900 font-bold">${s.carrier ? esc(s.carrier.name) : 'Tidak Ada'}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Pelabuhan Asal</span>
-                        <span class="text-espresso-900 font-bold">${s.origin ? s.origin.name : 'Tidak Ada'}</span>
+                        <span class="text-espresso-900 font-bold">${s.origin ? esc(s.origin.name) : 'Tidak Ada'}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Pelabuhan Tujuan</span>
-                        <span class="text-espresso-900 font-bold">${s.destination ? s.destination.name : 'Tidak Ada'}</span>
+                        <span class="text-espresso-900 font-bold">${s.destination ? esc(s.destination.name) : 'Tidak Ada'}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
                         <span class="text-espresso-500 block font-semibold">Estimasi Tiba</span>
-                        <span class="text-espresso-800 font-semibold">${s.estimated_delivery_at ? new Date(s.estimated_delivery_at).toLocaleString('id-ID') : 'Menunggu'}</span>
+                        <span class="text-espresso-800 font-semibold">${s.estimated_delivery_at ? esc(new Date(s.estimated_delivery_at).toLocaleString('id-ID')) : 'Menunggu'}</span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-cream-200 flex justify-end">
@@ -568,7 +569,7 @@ async function quickTrack() {
                 </div>
             `;
         } else {
-            body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">${data.message || 'Pengiriman tidak ditemukan untuk nomor resi tersebut.'}</span>`;
+            body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">${esc(data.message) || 'Pengiriman tidak ditemukan untuk nomor resi tersebut.'}</span>`;
         }
     } catch (e) {
         body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">Gagal mengambil data pengiriman.</span>`;

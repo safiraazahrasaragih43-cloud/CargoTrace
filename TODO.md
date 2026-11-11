@@ -37,10 +37,10 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Implement in-app notifications (and optionally email) and Audit Logs for critical actions.
 
 ## Milestone P14: Security & Quality Assurance
-- [ ] Review mass-assignment protections, SQL injection, XSS, and CSRF.
-- [ ] Write Automated Tests for Authentication and Authorization.
-- [ ] Write Automated Tests for Shipment CRUD and valid/invalid status transitions.
-- [ ] Write Automated Tests for ETA/Delay rules.
+- [x] Review mass-assignment protections, SQL injection, XSS, and CSRF.
+- [x] Write Automated Tests for Authentication and Authorization.
+- [x] Write Automated Tests for Shipment CRUD and valid/invalid status transitions.
+- [x] Write Automated Tests for ETA/Delay rules.
 
 ## Milestone P15: Finalization & Delivery
 - [ ] Deploy application to a live server/VPS/Cloud.

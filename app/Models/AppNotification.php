@@ -48,3 +48,4 @@ class AppNotification extends Model
         return $this->read_at !== null;
     }
 }
+

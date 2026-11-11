@@ -132,12 +132,13 @@ class ShipmentController extends Controller
     }
 
     /**
-     * Public tracking endpoint (accessible without authentication).
+     * Public tracking endpoint (accessible without authentication, strips private customer PII).
      */
     public function track(string $trackingNumber): JsonResponse
     {
         $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
-        $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location', 'exceptions']);
+        $shipment->load(['carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location', 'exceptions']);
+        $shipment->unsetRelation('customer');
 
         return $this->successResponse(
             new ShipmentResource($shipment),

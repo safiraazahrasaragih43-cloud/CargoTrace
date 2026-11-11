@@ -119,3 +119,4 @@ class NotificationAndAuditSeeder extends Seeder
         }
     }
 }
+

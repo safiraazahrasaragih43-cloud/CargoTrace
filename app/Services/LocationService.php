@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Models\Location;
+use App\Traits\SanitizesQueriesTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 class LocationService
 {
+    use SanitizesQueriesTrait;
+
     /**
      * Get paginated locations with filtering.
      */
@@ -16,7 +19,7 @@ class LocationService
         $query = Location::query();
 
         if (! empty($filters['search'])) {
-            $search = $filters['search'];
+            $search = $this->escapeLike($filters['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('code', 'like', "%{$search}%")
@@ -29,7 +32,7 @@ class LocationService
             $query->where('type', $filters['type']);
         }
 
-        return $query->orderBy('name')->paginate($perPage);
+        return $query->orderBy('name')->paginate($this->clampPerPage($perPage));
     }
 
     public function getAll(): Collection

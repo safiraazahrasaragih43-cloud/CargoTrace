@@ -478,6 +478,7 @@
     }
 
     async function heroTrack() {
+        const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
         const input = document.getElementById('heroTrackInput').value.trim();
         if (!input) return;
 
@@ -497,14 +498,14 @@
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-white/75 p-4 rounded-2xl border border-cream-200">
                             <div>
                                 <span class="text-xs text-espresso-500 font-semibold">Referensi Nomor Resi:</span>
-                                <p class="text-lg font-extrabold font-mono text-sage-700">${s.tracking_number}</p>
+                                <p class="text-lg font-extrabold font-mono text-sage-700">${esc(s.tracking_number)}</p>
                             </div>
                             <div>
                                 <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider
                                     ${s.status === 'DELIVERED' ? 'bg-sage-100 text-sage-700' :
                                       (s.status === 'IN_TRANSIT' ? 'bg-sage-500 text-white' :
                                       'bg-apricot-100 text-apricot-600')}">
-                                    ${s.status}
+                                    ${esc(s.status)}
                                 </span>
                             </div>
                         </div>
@@ -512,19 +513,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                             <div class="p-3.5 rounded-2xl bg-white/75 border border-cream-200">
                                 <span class="text-espresso-500 block font-semibold mb-0.5">Ekspedisi</span>
-                                <strong class="text-espresso-900">${s.carrier ? s.carrier.name : 'Tidak Ada'}</strong>
+                                <strong class="text-espresso-900">${s.carrier ? esc(s.carrier.name) : 'Tidak Ada'}</strong>
                             </div>
                             <div class="p-3.5 rounded-2xl bg-white/75 border border-cream-200">
                                 <span class="text-espresso-500 block font-semibold mb-0.5">Pelabuhan Asal</span>
-                                <strong class="text-espresso-900">${s.origin ? s.origin.name : 'Tidak Ada'}</strong>
+                                <strong class="text-espresso-900">${s.origin ? esc(s.origin.name) : 'Tidak Ada'}</strong>
                             </div>
                             <div class="p-3.5 rounded-2xl bg-white/75 border border-cream-200">
                                 <span class="text-espresso-500 block font-semibold mb-0.5">Pelabuhan Tujuan</span>
-                                <strong class="text-espresso-900">${s.destination ? s.destination.name : 'Tidak Ada'}</strong>
+                                <strong class="text-espresso-900">${s.destination ? esc(s.destination.name) : 'Tidak Ada'}</strong>
                             </div>
                             <div class="p-3.5 rounded-2xl bg-white/75 border border-cream-200">
                                 <span class="text-espresso-500 block font-semibold mb-0.5">Estimasi Tiba</span>
-                                <strong class="text-espresso-900">${s.estimated_delivery_at ? new Date(s.estimated_delivery_at).toLocaleDateString('id-ID') : 'Menunggu'}</strong>
+                                <strong class="text-espresso-900">${s.estimated_delivery_at ? esc(new Date(s.estimated_delivery_at).toLocaleDateString('id-ID')) : 'Menunggu'}</strong>
                             </div>
                         </div>
 
@@ -537,7 +538,7 @@
                     </div>
                 `;
             } else {
-                content.innerHTML = `<p class="text-rose-600 font-medium text-sm">${data.message || 'Nomor resi pengiriman tidak ditemukan.'}</p>`;
+                content.innerHTML = `<p class="text-rose-600 font-medium text-sm">${esc(data.message) || 'Nomor resi pengiriman tidak ditemukan.'}</p>`;
             }
         } catch (e) {
             content.innerHTML = `<p class="text-rose-600 font-medium text-sm">Gagal memeriksa data pengiriman. Periksa koneksi Anda.</p>`;

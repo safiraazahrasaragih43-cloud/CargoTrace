@@ -210,8 +210,13 @@
 
                 <div class="pt-3 border-t border-cream-200">
                     <div class="text-espresso-500">Pelanggan Penerima:</div>
-                    <div class="text-sm font-extrabold text-espresso-900 mt-0.5">{{ $shipment->customer?->name ?? 'N/A' }}</div>
-                    <div class="text-[11px] text-espresso-500">{{ $shipment->customer?->email ?? '' }}</div>
+                    @auth
+                        <div class="text-sm font-extrabold text-espresso-900 mt-0.5">{{ $shipment->customer?->name ?? 'N/A' }}</div>
+                        <div class="text-[11px] text-espresso-500">{{ $shipment->customer?->email ?? '' }}</div>
+                    @else
+                        <div class="text-sm font-extrabold text-espresso-900 mt-0.5">{{ $shipment->customer?->company_name ?: 'Pelanggan Terdaftar CargoTrace' }}</div>
+                        <div class="text-[11px] text-espresso-500">Masuk akun untuk melihat detail kontak</div>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -720,13 +725,14 @@ function initShipmentMap() {
     }).addTo(map);
 
     const routeCoords = [];
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
 
     if (origin && origin.lat && origin.lng) {
         const pt = [parseFloat(origin.lat), parseFloat(origin.lng)];
         routeCoords.push(pt);
         window.L.marker(pt, { icon: createPinIcon('#6B7D64', '#FFFFFF', 'A') })
             .addTo(map)
-            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Asal: ${origin.name} (${origin.code})</strong><br/>Status: ORIGIN HUB<br/>Negara: ${origin.country}</div>`);
+            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Asal: ${esc(origin.name)} (${esc(origin.code)})</strong><br/>Status: ORIGIN HUB<br/>Negara: ${esc(origin.country)}</div>`);
     }
 
     events.forEach((ev, idx) => {
@@ -736,7 +742,7 @@ function initShipmentMap() {
             const pinColor = ev.status === 'EXCEPTION' ? '#E11D48' : (ev.status === 'DELIVERED' ? '#4F5E4A' : '#F2994A');
             window.L.marker(pt, { icon: createPinIcon(pinColor, '#FFFFFF', idx + 1) })
                 .addTo(map)
-                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${ev.location_name}</strong><br/>Status: <b>${ev.status}</b><br/>Waktu: ${ev.time}<br/><span style="color:#665E57;">${ev.description}</span></div>`);
+                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${esc(ev.location_name)}</strong><br/>Status: <b>${esc(ev.status)}</b><br/>Waktu: ${esc(ev.time)}<br/><span style="color:#665E57;">${esc(ev.description)}</span></div>`);
         }
     });
 
@@ -745,7 +751,7 @@ function initShipmentMap() {
         routeCoords.push(pt);
         window.L.marker(pt, { icon: createPinIcon('#2C2724', '#FFFFFF', 'T') })
             .addTo(map)
-            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Tujuan: ${destination.name} (${destination.code})</strong><br/>Status: DESTINATION PORT<br/>Negara: ${destination.country}</div>`);
+            .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>Tujuan: ${esc(destination.name)} (${esc(destination.code)})</strong><br/>Status: DESTINATION PORT<br/>Negara: ${esc(destination.country)}</div>`);
     }
 
     if (routeCoords.length >= 2) {
@@ -762,6 +768,7 @@ function initShipmentMap() {
 }
 
 async function loadShipmentWeather() {
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     const body = document.getElementById('weatherWidgetBody');
     if (!body) return;
 
@@ -776,28 +783,28 @@ async function loadShipmentWeather() {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-[11px] font-bold text-espresso-500 uppercase">Lokasi Terpantau</p>
-                            <p class="text-sm font-extrabold text-espresso-900">${w.location}</p>
+                            <p class="text-sm font-extrabold text-espresso-900">${esc(w.location)}</p>
                         </div>
-                        <span class="text-2xl font-extrabold text-apricot-600 font-mono">${w.temperature_c}&deg;C</span>
+                        <span class="text-2xl font-extrabold text-apricot-600 font-mono">${esc(w.temperature_c)}&deg;C</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-cream-200 text-[11px]">
                         <div>
                             <span class="text-espresso-500 block">Kondisi</span>
-                            <strong class="text-espresso-900">${w.condition}</strong>
+                            <strong class="text-espresso-900">${esc(w.condition)}</strong>
                         </div>
                         <div>
                             <span class="text-espresso-500 block">Kecepatan Angin</span>
-                            <strong class="text-espresso-900 font-mono">${w.wind_speed_kmh} km/jam</strong>
+                            <strong class="text-espresso-900 font-mono">${esc(w.wind_speed_kmh)} km/jam</strong>
                         </div>
                     </div>
-                    <p class="text-[10px] text-espresso-400 font-mono">Sumber: ${w.provider}</p>
+                    <p class="text-[10px] text-espresso-400 font-mono">Sumber: ${esc(w.provider)}</p>
                 </div>
             `;
         } else {
             body.innerHTML = `
                 <div class="text-xs text-espresso-600 space-y-1">
                     <p class="font-bold text-espresso-800">Telemetri Cuaca Tidak Tersedia</p>
-                    <p>${w.message || 'Layanan cuaca eksternal tidak dapat dijangkau saat ini.'}</p>
+                    <p>${esc(w.message) || 'Layanan cuaca eksternal tidak dapat dijangkau saat ini.'}</p>
                 </div>
             `;
         }

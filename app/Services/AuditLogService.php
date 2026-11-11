@@ -34,6 +34,8 @@ class AuditLogService
         ]);
     }
 
+    use \App\Traits\SanitizesQueriesTrait;
+
     /**
      * Query audit logs with search, action, and entity filters (Admin view).
      */
@@ -42,7 +44,7 @@ class AuditLogService
         $query = AuditLog::with('actor');
 
         if (! empty($filters['search'])) {
-            $search = $filters['search'];
+            $search = $this->escapeLike($filters['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
                   ->orWhere('action', 'like', "%{$search}%")
@@ -59,6 +61,7 @@ class AuditLogService
             $query->where('entity_type', $filters['entity_type']);
         }
 
-        return $query->latest()->paginate($perPage);
+        return $query->latest()->paginate($this->clampPerPage($perPage));
     }
 }
+

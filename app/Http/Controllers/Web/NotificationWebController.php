@@ -48,3 +48,4 @@ class NotificationWebController extends Controller
             ->with('status', 'Semua notifikasi ditandai telah dibaca.');
     }
 }
+

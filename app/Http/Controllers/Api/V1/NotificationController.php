@@ -54,3 +54,4 @@ class NotificationController extends Controller
         return $this->successResponse(['marked_count' => $count], 'All notifications marked as read');
     }
 }
+

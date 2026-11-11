@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 class AuthService
 {
     /**
-     * Register a new user with secure defaults.
+     * Register a new user with strict default customer role (prevents privilege escalation).
      */
     public function register(array $data): User
     {
@@ -17,7 +17,7 @@ class AuthService
             'name' => $data['name'],
             'email' => strtolower(trim($data['email'])),
             'password' => Hash::make($data['password']),
-            'role' => $data['role'] ?? User::ROLE_CUSTOMER,
+            'role' => User::ROLE_CUSTOMER,
             'phone' => $data['phone'] ?? null,
             'company_name' => $data['company_name'] ?? null,
         ]);

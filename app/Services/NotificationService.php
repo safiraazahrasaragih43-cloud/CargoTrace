@@ -5,11 +5,14 @@ namespace App\Services;
 use App\Models\AppNotification;
 use App\Models\Shipment;
 use App\Models\User;
+use App\Traits\SanitizesQueriesTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 
 class NotificationService
 {
+    use SanitizesQueriesTrait;
+
     /**
      * Send an in-app notification to a specific user.
      */
@@ -64,7 +67,7 @@ class NotificationService
         return AppNotification::with('shipment')
             ->where('user_id', $user->id)
             ->latest()
-            ->paginate($perPage);
+            ->paginate($this->clampPerPage($perPage));
     }
 
     /**
@@ -105,3 +108,4 @@ class NotificationService
             ->update(['read_at' => now()]);
     }
 }
+

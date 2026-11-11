@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AppNotification;
 use App\Models\Shipment;
 use App\Models\User;
+use App\Traits\SanitizesQueriesTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -12,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class ShipmentService
 {
+    use SanitizesQueriesTrait;
+
     public function __construct(
         protected NotificationService $notificationService,
         protected AuditLogService $auditLogService
@@ -60,7 +63,7 @@ class ShipmentService
         }
 
         if (! empty($filters['search'])) {
-            $search = $filters['search'];
+            $search = $this->escapeLike($filters['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('tracking_number', 'like', "%{$search}%")
                   ->orWhereHas('customer', fn ($cq) => $cq->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"))
@@ -77,7 +80,7 @@ class ShipmentService
             default => $query->latest(),
         };
 
-        return $query->paginate($perPage);
+        return $query->paginate($this->clampPerPage($perPage));
     }
 
     /**
