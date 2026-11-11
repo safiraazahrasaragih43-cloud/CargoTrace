@@ -29,7 +29,7 @@ class ShipmentController extends Controller
 
         $shipments = $this->shipmentService->getShipments(
             $request->user(),
-            $request->only(['search', 'status', 'carrier_id', 'customer_id', 'is_delayed']),
+            $request->only(['search', 'status', 'carrier_id', 'customer_id', 'origin_id', 'destination_id', 'is_delayed', 'date_from', 'date_to', 'sort_by']),
             $request->integer('per_page', 15)
         );
 

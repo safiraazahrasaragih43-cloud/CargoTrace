@@ -32,9 +32,9 @@ This list follows the academic milestones (P8 - P15) mandated by the project bri
 - [x] Implement error handling for external API failures.
 
 ## Milestone P13: Dashboard & UX
-- [ ] Build Dashboard metrics (Total shipments, delay rates, open exceptions) using Chart.js.
-- [ ] Implement Server-side Search, Filtering, and Pagination for shipments.
-- [ ] Implement in-app notifications (and optionally email) and Audit Logs for critical actions.
+- [x] Build Dashboard metrics (Total shipments, delay rates, open exceptions) using Chart.js.
+- [x] Implement Server-side Search, Filtering, and Pagination for shipments.
+- [x] Implement in-app notifications (and optionally email) and Audit Logs for critical actions.
 
 ## Milestone P14: Security & Quality Assurance
 - [ ] Review mass-assignment protections, SQL injection, XSS, and CSRF.

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AppNotification;
 use App\Models\Location;
 use App\Models\Shipment;
 use App\Models\TrackingEvent;
@@ -13,7 +14,9 @@ use Illuminate\Validation\ValidationException;
 class TrackingService
 {
     public function __construct(
-        protected EtaService $etaService
+        protected EtaService $etaService,
+        protected NotificationService $notificationService,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -70,8 +73,9 @@ class TrackingService
         }
 
         $eventTime = ! empty($data['event_time']) ? $data['event_time'] : now();
+        $previousStatus = $shipment->status;
 
-        return DB::transaction(function () use ($shipment, $targetStatus, $data, $locationId, $locationName, $latitude, $longitude, $eventTime, $actor) {
+        return DB::transaction(function () use ($shipment, $previousStatus, $targetStatus, $data, $locationId, $locationName, $latitude, $longitude, $eventTime, $actor) {
             // Create immutable tracking event
             $event = TrackingEvent::create([
                 'shipment_id' => $shipment->id,
@@ -107,7 +111,37 @@ class TrackingService
             $shipment->update($shipmentUpdates);
 
             // Evaluate deterministic ETA & delay metrics against the new checkpoint
-            $this->etaService->evaluateShipment($shipment->fresh(), $event->event_time);
+            $etaResult = $this->etaService->evaluateShipment($shipment->fresh(), $event->event_time);
+
+            // Record immutable audit trail
+            $this->auditLogService->record(
+                'TRACKING_EVENT_ADDED',
+                'Shipment',
+                $shipment->id,
+                "Checkpoint [{$targetStatus}] dicatat untuk {$shipment->tracking_number} di {$locationName}.",
+                $actor,
+                ['status' => $previousStatus],
+                ['status' => $targetStatus, 'location' => $locationName]
+            );
+
+            // Notify customer about movement
+            $this->notificationService->notifyShipmentStakeholders(
+                $shipment,
+                AppNotification::TYPE_TRACKING_UPDATE,
+                "Pembaruan Status ({$shipment->tracking_number}): {$targetStatus}",
+                "Posisi terkini di {$locationName}: {$data['description']}"
+            );
+
+            // Trigger additional alert if delay threshold exceeded
+            if (($etaResult['exceeds_threshold'] ?? false) === true) {
+                $this->notificationService->notifyShipmentStakeholders(
+                    $shipment,
+                    AppNotification::TYPE_ETA_DELAY,
+                    "Peringatan Keterlambatan ({$shipment->tracking_number})",
+                    $etaResult['reason'] ?? "Keterlambatan terdeteksi (+{$etaResult['delay_hours']} jam).",
+                    includeStaff: true
+                );
+            }
 
             return $event->load(['location', 'creator']);
         });

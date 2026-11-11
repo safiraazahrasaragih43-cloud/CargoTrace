@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -83,5 +84,15 @@ class User extends Authenticatable
         }
 
         return $this->role === $roles;
+    }
+
+    public function appNotifications(): HasMany
+    {
+        return $this->hasMany(AppNotification::class, 'user_id')->latest();
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'user_id')->latest();
     }
 }

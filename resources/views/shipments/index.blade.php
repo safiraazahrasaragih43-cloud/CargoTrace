@@ -39,47 +39,107 @@
         </div>
     @endif
 
-    <!-- Search & Status Filter Bar -->
-    <div class="p-5 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-4">
-        <form method="GET" action="{{ route('shipments.index') }}" class="flex flex-col sm:flex-row gap-3">
-            <div class="relative flex-1">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-espresso-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <!-- Advanced Search, Filter & Sort Console (Glassmorphism) -->
+    <div class="p-5 sm:p-6 rounded-3xl glass-card-strong space-y-4">
+        <form method="GET" action="{{ route('shipments.index') }}" class="space-y-3">
+            <!-- Primary Row -->
+            <div class="flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-espresso-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nomor resi, nama pelanggan, atau ekspedisi..."
+                           class="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs text-espresso-900 placeholder-espresso-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
-                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nomor resi, nama pelanggan, atau ekspedisi..."
-                       class="w-full pl-10 pr-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-xs text-espresso-900 placeholder-espresso-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                <select name="status" class="px-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs font-semibold text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="">Semua Status</option>
+                    @foreach(\App\Models\Shipment::STATUSES as $st)
+                        <option value="{{ $st }}" {{ ($filters['status'] ?? '') === $st ? 'selected' : '' }}>{{ $st }}</option>
+                    @endforeach
+                </select>
+                <select name="sort_by" class="px-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs font-semibold text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="latest" {{ ($filters['sort_by'] ?? 'latest') === 'latest' ? 'selected' : '' }}>Urutkan: Terbaru</option>
+                    <option value="oldest" {{ ($filters['sort_by'] ?? '') === 'oldest' ? 'selected' : '' }}>Urutkan: Terlama</option>
+                    <option value="eta_asc" {{ ($filters['sort_by'] ?? '') === 'eta_asc' ? 'selected' : '' }}>ETA Terdekat</option>
+                    <option value="eta_desc" {{ ($filters['sort_by'] ?? '') === 'eta_desc' ? 'selected' : '' }}>ETA Terjauh</option>
+                    <option value="delay_desc" {{ ($filters['sort_by'] ?? '') === 'delay_desc' ? 'selected' : '' }}>Keterlambatan Tertinggi</option>
+                </select>
             </div>
-            <select name="status" class="px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-xs font-semibold text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
-                <option value="">Semua Status</option>
-                @foreach(\App\Models\Shipment::STATUSES as $st)
-                    <option value="{{ $st }}" {{ ($filters['status'] ?? '') === $st ? 'selected' : '' }}>{{ $st }}</option>
-                @endforeach
-            </select>
-            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-sage-500 hover:bg-sage-600 text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
-                Terapkan Filter
-            </button>
-            @if(!empty($filters['search']) || !empty($filters['status']))
-                <a href="{{ route('shipments.index') }}" class="px-4 py-2.5 rounded-2xl bg-cream-100 hover:bg-cream-200 text-espresso-700 text-xs font-bold flex items-center justify-center">
-                    Reset
-                </a>
-            @endif
-        </form>
 
-        <!-- Quick Status Filter Pills -->
-        <div class="flex items-center gap-2 flex-wrap text-[11px] font-bold">
-            <a href="{{ route('shipments.index') }}" class="px-3.5 py-1.5 rounded-full {{ empty($filters['status']) ? 'bg-sage-500 text-white' : 'bg-cream-100 text-espresso-600 hover:bg-cream-200' }} transition-colors">
-                Semua
-            </a>
-            @foreach(['CREATED', 'BOOKED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'EXCEPTION'] as $st)
-                <a href="{{ route('shipments.index', ['status' => $st]) }}" class="px-3.5 py-1.5 rounded-full {{ ($filters['status'] ?? '') === $st ? 'bg-sage-500 text-white' : 'bg-cream-100 text-espresso-600 hover:bg-cream-200' }} transition-colors">
-                    {{ $st }}
-                </a>
-            @endforeach
-        </div>
+            <!-- Advanced Logistics Filters Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+                <select name="carrier_id" class="px-3.5 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="">Semua Ekspedisi</option>
+                    @foreach($carriers as $car)
+                        <option value="{{ $car->id }}" {{ (string)($filters['carrier_id'] ?? '') === (string)$car->id ? 'selected' : '' }}>{{ $car->name }}</option>
+                    @endforeach
+                </select>
+
+                <select name="origin_id" class="px-3.5 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="">Semua Pelabuhan Asal</option>
+                    @foreach($locations as $loc)
+                        <option value="{{ $loc->id }}" {{ (string)($filters['origin_id'] ?? '') === (string)$loc->id ? 'selected' : '' }}>Asal: {{ $loc->name }}</option>
+                    @endforeach
+                </select>
+
+                <select name="destination_id" class="px-3.5 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="">Semua Tujuan</option>
+                    @foreach($locations as $loc)
+                        <option value="{{ $loc->id }}" {{ (string)($filters['destination_id'] ?? '') === (string)$loc->id ? 'selected' : '' }}>Tujuan: {{ $loc->name }}</option>
+                    @endforeach
+                </select>
+
+                <select name="is_delayed" class="px-3.5 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                    <option value="">Semua Ketepatan</option>
+                    <option value="1" {{ ($filters['is_delayed'] ?? '') === '1' ? 'selected' : '' }}>Terlambat Saja</option>
+                    <option value="0" {{ ($filters['is_delayed'] ?? '') === '0' ? 'selected' : '' }}>Tepat Waktu Saja</option>
+                </select>
+
+                <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" title="Dari Tanggal"
+                       class="px-3 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+
+                <div class="flex gap-2">
+                    <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" title="Sampai Tanggal"
+                           class="w-full px-3 py-2 bg-white/75 border border-cream-200 rounded-xl text-xs text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <!-- Quick Status Filter Pills -->
+                <div class="flex items-center gap-2 flex-wrap text-[11px] font-bold">
+                    <a href="{{ route('shipments.index') }}" class="px-3.5 py-1.5 rounded-full {{ empty($filters['status']) ? 'bg-sage-500 text-white' : 'bg-cream-100/80 text-espresso-600 hover:bg-cream-200' }} transition-colors">
+                        Semua
+                    </a>
+                    @foreach(['CREATED', 'BOOKED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'EXCEPTION'] as $st)
+                        <a href="{{ route('shipments.index', ['status' => $st]) }}" class="px-3.5 py-1.5 rounded-full {{ ($filters['status'] ?? '') === $st ? 'bg-sage-500 text-white' : 'bg-cream-100/80 text-espresso-600 hover:bg-cream-200' }} transition-colors">
+                            {{ $st }}
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="flex items-center gap-2">
+                    @php
+                        $hasActiveFilters = !empty($filters['search']) || !empty($filters['status']) || !empty($filters['carrier_id'])
+                            || !empty($filters['origin_id']) || !empty($filters['destination_id'])
+                            || (isset($filters['is_delayed']) && $filters['is_delayed'] !== '')
+                            || !empty($filters['date_from']) || !empty($filters['date_to'])
+                            || (!empty($filters['sort_by']) && $filters['sort_by'] !== 'latest');
+                    @endphp
+                    @if($hasActiveFilters)
+                        <a href="{{ route('shipments.index') }}" class="px-4 py-2 rounded-2xl bg-cream-100 hover:bg-cream-200 text-espresso-700 text-xs font-bold flex items-center justify-center transition-colors">
+                            Reset Filter
+                        </a>
+                    @endif
+                    <button type="submit" class="px-5 py-2 rounded-2xl bg-sage-500 hover:bg-sage-600 text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
+                        Terapkan Filter
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- Shipments Table -->
-    <div class="rounded-3xl bg-white border border-cream-200/80 overflow-hidden shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)]">
+    <div class="rounded-3xl glass-card-strong overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-cream-200 text-left text-xs">
                 <thead class="bg-sage-50 text-espresso-600 font-bold uppercase tracking-wider">

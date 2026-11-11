@@ -53,13 +53,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Base Entities (Carriers, Locations, Shipments, Tracking, Exceptions)
+        // 2. Base Entities (Carriers, Locations, Shipments, Tracking, Exceptions, Notifications & Audit)
         $this->call([
             CarrierSeeder::class,
             LocationSeeder::class,
             ShipmentSeeder::class,
             TrackingEventSeeder::class,
             ShipmentExceptionSeeder::class,
+            NotificationAndAuditSeeder::class,
         ]);
     }
 }

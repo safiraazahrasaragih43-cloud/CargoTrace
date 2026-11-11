@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AppNotification;
 use App\Models\Shipment;
 use App\Models\ShipmentException;
 use App\Models\TrackingEvent;
@@ -13,7 +14,9 @@ use Illuminate\Validation\ValidationException;
 class ExceptionService
 {
     public function __construct(
-        protected EtaService $etaService
+        protected EtaService $etaService,
+        protected NotificationService $notificationService,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -86,6 +89,24 @@ class ExceptionService
                 $this->etaService->evaluateShipment($shipment->fresh(), null, "Exception {$data['type']}");
             }
 
+            $this->auditLogService->record(
+                'EXCEPTION_REPORTED',
+                'ShipmentException',
+                $exception->id,
+                "Kendala [{$data['type']} | {$data['severity']}] dilaporkan pada {$shipment->tracking_number}.",
+                $actor,
+                null,
+                ['type' => $data['type'], 'severity' => $data['severity']]
+            );
+
+            $this->notificationService->notifyShipmentStakeholders(
+                $shipment,
+                AppNotification::TYPE_EXCEPTION_ALERT,
+                "Kendala Pengiriman ({$shipment->tracking_number}): {$data['type']}",
+                $data['description'],
+                includeStaff: true
+            );
+
             return $exception->load(['reporter', 'resolver', 'trackingEvent']);
         });
     }
@@ -101,7 +122,9 @@ class ExceptionService
             ]);
         }
 
-        return DB::transaction(function () use ($exception, $data, $actor) {
+        $previousStatus = $exception->status;
+
+        return DB::transaction(function () use ($exception, $previousStatus, $data, $actor) {
             $targetStatus = $data['status'] ?? $exception->status;
 
             $updates = [
@@ -149,6 +172,25 @@ class ExceptionService
                         $shipment->update(['status' => $resumeStatus]);
                     }
                 }
+            }
+
+            $this->auditLogService->record(
+                $targetStatus === ShipmentException::STATUS_RESOLVED ? 'EXCEPTION_RESOLVED' : 'EXCEPTION_UPDATED',
+                'ShipmentException',
+                $exception->id,
+                "Status kendala [{$exception->type}] pada {$shipment?->tracking_number} diperbarui menjadi {$targetStatus}.",
+                $actor,
+                ['status' => $previousStatus],
+                ['status' => $targetStatus, 'resolution_notes' => $data['resolution_notes'] ?? null]
+            );
+
+            if ($targetStatus === ShipmentException::STATUS_RESOLVED && $shipment) {
+                $this->notificationService->notifyShipmentStakeholders(
+                    $shipment,
+                    AppNotification::TYPE_EXCEPTION_RESOLVED,
+                    "Kendala Diselesaikan ({$shipment->tracking_number})",
+                    "Kendala [{$exception->type}] telah diselesaikan. " . ($data['resolution_notes'] ?? '')
+                );
             }
 
             return $exception->fresh(['reporter', 'resolver', 'trackingEvent']);

@@ -40,3 +40,21 @@
     --color-espresso-500: #877E75;
     --color-espresso-400: #AAA096;
 }
+
+@layer components {
+    .glass-card {
+        @apply bg-white/65 backdrop-blur-xl border border-white/85 shadow-[0_12px_36px_-12px_rgba(44,39,36,0.08)];
+    }
+
+    .glass-card-strong {
+        @apply bg-white/80 backdrop-blur-2xl border border-white/95 shadow-[0_18px_44px_-14px_rgba(44,39,36,0.10)];
+    }
+
+    .glass-sage {
+        @apply bg-sage-500/90 backdrop-blur-xl border border-white/30 shadow-[0_20px_50px_-15px_rgba(135,152,128,0.45)];
+    }
+
+    .glass-sidebar {
+        @apply bg-white/75 backdrop-blur-2xl border-r border-white/85 shadow-[8px_0_32px_-12px_rgba(44,39,36,0.06)];
+    }
+}

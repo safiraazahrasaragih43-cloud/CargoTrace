@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AppNotification;
 use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -11,8 +12,13 @@ use Illuminate\Validation\ValidationException;
 
 class ShipmentService
 {
+    public function __construct(
+        protected NotificationService $notificationService,
+        protected AuditLogService $auditLogService
+    ) {}
+
     /**
-     * Get paginated shipments scoped to user authorization and filters.
+     * Get paginated shipments scoped to user authorization with advanced server-side filters & sorting.
      */
     public function getShipments(User $user, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
@@ -33,8 +39,24 @@ class ShipmentService
             $query->where('carrier_id', $filters['carrier_id']);
         }
 
+        if (! empty($filters['origin_id'])) {
+            $query->where('origin_id', $filters['origin_id']);
+        }
+
+        if (! empty($filters['destination_id'])) {
+            $query->where('destination_id', $filters['destination_id']);
+        }
+
         if (isset($filters['is_delayed']) && $filters['is_delayed'] !== '') {
             $query->where('is_delayed', filter_var($filters['is_delayed'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('estimated_delivery_at', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('estimated_delivery_at', '<=', $filters['date_to']);
         }
 
         if (! empty($filters['search'])) {
@@ -42,11 +64,20 @@ class ShipmentService
             $query->where(function ($q) use ($search) {
                 $q->where('tracking_number', 'like', "%{$search}%")
                   ->orWhereHas('customer', fn ($cq) => $cq->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"))
-                  ->orWhereHas('carrier', fn ($cq) => $cq->where('name', 'like', "%{$search}%"));
+                  ->orWhereHas('carrier', fn ($cq) => $cq->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%"));
             });
         }
 
-        return $query->latest()->paginate($perPage);
+        $sortBy = $filters['sort_by'] ?? 'latest';
+        match ($sortBy) {
+            'oldest' => $query->orderBy('created_at', 'asc'),
+            'eta_asc' => $query->orderBy('estimated_delivery_at', 'asc'),
+            'eta_desc' => $query->orderBy('estimated_delivery_at', 'desc'),
+            'delay_desc' => $query->orderBy('delay_hours', 'desc')->latest(),
+            default => $query->latest(),
+        };
+
+        return $query->paginate($perPage);
     }
 
     /**
@@ -54,7 +85,7 @@ class ShipmentService
      */
     public function findShipment(User $user, int $id): Shipment
     {
-        $query = Shipment::with(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items']);
+        $query = Shipment::with(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items', 'exceptions']);
 
         if ($user->isCustomer()) {
             $query->where('customer_id', $user->id);
@@ -74,7 +105,7 @@ class ShipmentService
     }
 
     /**
-     * Create a new shipment with atomic transaction and items support.
+     * Create a new shipment with atomic transaction, items, notification, and audit log.
      */
     public function createShipment(array $data, ?array $items = null): Shipment
     {
@@ -101,16 +132,32 @@ class ShipmentService
                 }
             }
 
+            $this->auditLogService->record(
+                'SHIPMENT_CREATED',
+                'Shipment',
+                $shipment->id,
+                "Pengiriman {$shipment->tracking_number} dibuat dengan status {$shipment->status}.",
+                null,
+                null,
+                ['tracking_number' => $shipment->tracking_number, 'status' => $shipment->status]
+            );
+
+            $this->notificationService->notifyShipmentStakeholders(
+                $shipment,
+                AppNotification::TYPE_TRACKING_UPDATE,
+                "Pengiriman Baru Dibuat ({$shipment->tracking_number})",
+                "Pengiriman dengan nomor resi {$shipment->tracking_number} telah terdaftar di sistem dengan status {$shipment->status}."
+            );
+
             return $shipment->load(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items']);
         });
     }
 
     /**
-     * Update an existing shipment.
+     * Update an existing shipment and record audit trail.
      */
     public function updateShipment(Shipment $shipment, array $data): Shipment
     {
-        // Prevent terminal state mutation unless special status change logic is used
         if ($shipment->isTerminal() && isset($data['status']) && $data['status'] !== $shipment->status) {
             throw ValidationException::withMessages([
                 'status' => ["Cannot change status of a terminal shipment ({$shipment->status})."],
@@ -125,17 +172,41 @@ class ShipmentService
             }
         }
 
+        $oldValues = $shipment->only(array_keys($data));
         $shipment->update($data);
+
+        $this->auditLogService->record(
+            'SHIPMENT_UPDATED',
+            'Shipment',
+            $shipment->id,
+            "Data pengiriman {$shipment->tracking_number} diperbarui.",
+            null,
+            $oldValues,
+            $shipment->only(array_keys($data))
+        );
 
         return $shipment->fresh(['customer', 'carrier', 'origin', 'destination', 'currentLocation', 'items']);
     }
 
     /**
-     * Soft delete a shipment.
+     * Soft delete a shipment and record audit trail.
      */
     public function deleteShipment(Shipment $shipment): bool
     {
-        return (bool) $shipment->delete();
+        $trackingNo = $shipment->tracking_number;
+        $id = $shipment->id;
+        $deleted = (bool) $shipment->delete();
+
+        if ($deleted) {
+            $this->auditLogService->record(
+                'SHIPMENT_DELETED',
+                'Shipment',
+                $id,
+                "Pengiriman {$trackingNo} dihapus (soft delete)."
+            );
+        }
+
+        return $deleted;
     }
 
     /**
@@ -150,4 +221,3 @@ class ShipmentService
         return $number;
     }
 }
-

@@ -40,7 +40,7 @@
     @endif
 
     <!-- Global Interactive Hubs Map -->
-    <div class="p-5 sm:p-6 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-3">
+    <div class="p-5 sm:p-6 rounded-3xl glass-card-strong space-y-3">
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-sm font-extrabold text-espresso-900">Peta Jaringan Pelabuhan &amp; Hub Dunia</h2>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Search & Filter Bar -->
-    <div class="p-5 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-4">
+    <div class="p-5 rounded-3xl glass-card-strong space-y-4">
         <form method="GET" action="{{ route('locations.index') }}" class="flex flex-col sm:flex-row gap-3">
             <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nama hub, UN/LOCODE, kota, atau negara..."
                    class="flex-1 px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl text-xs text-espresso-900 placeholder-espresso-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Locations Table -->
-    <div class="rounded-3xl bg-white border border-cream-200/80 overflow-hidden shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)]">
+    <div class="rounded-3xl glass-card-strong overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-cream-200 text-left text-xs">
                 <thead class="bg-sage-50 text-espresso-600 font-bold uppercase tracking-wider">

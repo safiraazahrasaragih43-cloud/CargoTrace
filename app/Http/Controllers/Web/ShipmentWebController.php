@@ -41,15 +41,17 @@ class ShipmentWebController extends Controller
     {
         $this->authorize('viewAny', Shipment::class);
 
+        $filterKeys = ['search', 'status', 'carrier_id', 'origin_id', 'destination_id', 'is_delayed', 'date_from', 'date_to', 'sort_by'];
+
         $shipments = $this->shipmentService->getShipments(
             $request->user(),
-            $request->only(['search', 'status', 'carrier_id', 'is_delayed']),
+            $request->only($filterKeys),
             12
         );
 
         return view('shipments.index', [
             'shipments' => $shipments,
-            'filters' => $request->only(['search', 'status', 'carrier_id', 'is_delayed']),
+            'filters' => $request->only($filterKeys),
             'customers' => User::where('role', User::ROLE_CUSTOMER)->orderBy('name')->get(),
             'carriers' => Carrier::where('is_active', true)->orderBy('name')->get(),
             'locations' => Location::orderBy('name')->get(),

@@ -52,3 +52,4 @@ class IntegrationController extends Controller
         return $this->successResponse($result, $result['message'] ?? 'Geocoding query completed');
     }
 }
+

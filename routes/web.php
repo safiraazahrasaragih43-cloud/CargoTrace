@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\V1\IntegrationController;
+use App\Http\Controllers\Web\AuditLogWebController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\CarrierWebController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocationWebController;
+use App\Http\Controllers\Web\NotificationWebController;
 use App\Http\Controllers\Web\ShipmentWebController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +52,12 @@ Route::middleware('auth')->group(function () {
 
     // Web Geocode Helper (Nominatim API)
     Route::get('/integrations/geocode', [IntegrationController::class, 'geocode'])->name('web.integrations.geocode');
+
+    // Notifications & Audit Logs
+    Route::get('/notifications', [NotificationWebController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationWebController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationWebController::class, 'markAllRead'])->name('notifications.read_all');
+    Route::get('/audit-logs', [AuditLogWebController::class, 'index'])->name('audit_logs.index');
 });
 
 // Consignment Detail & Public/Auth Tracking Timeline View + Weather Integration

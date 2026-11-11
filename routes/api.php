@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuditLogController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CarrierController;
 use App\Http\Controllers\Api\V1\ExceptionController;
 use App\Http\Controllers\Api\V1\IntegrationController;
 use App\Http\Controllers\Api\V1\LocationController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ShipmentController;
 use App\Http\Controllers\Api\V1\TrackingController;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +57,12 @@ Route::prefix('v1')->group(function () {
         // External Integrations (Weather & Geocoding)
         Route::get('shipments/{shipment}/weather', [IntegrationController::class, 'shipmentWeather'])->name('api.shipments.weather');
         Route::get('integrations/geocode', [IntegrationController::class, 'geocode'])->name('api.integrations.geocode');
+
+        // In-App Notifications & Admin Audit Logs
+        Route::get('notifications', [NotificationController::class, 'index'])->name('api.notifications.index');
+        Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('api.notifications.read');
+        Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('api.notifications.read_all');
+        Route::get('audit-logs', [AuditLogController::class, 'index'])->name('api.audit_logs.index');
     });
 
     // Health check endpoint

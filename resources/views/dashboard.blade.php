@@ -37,12 +37,12 @@
         </div>
     </div>
 
-    <!-- Live Operational Stat Cards -->
+    <!-- Live Operational Stat Cards (Glassmorphism) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-[0_10px_28px_-14px_rgba(44,39,36,0.08)]">
+        <div class="p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Pengiriman Aktif</p>
-                <div class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
             </div>
@@ -50,10 +50,10 @@
             <p class="text-xs font-semibold text-sage-600 mt-1">Siklus pengiriman berjalan</p>
         </div>
 
-        <div class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-[0_10px_28px_-14px_rgba(44,39,36,0.08)]">
+        <div class="p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Dalam Perjalanan</p>
-                <div class="w-9 h-9 rounded-2xl bg-apricot-100 text-apricot-600 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-2xl bg-apricot-100/90 text-apricot-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </div>
             </div>
@@ -61,10 +61,10 @@
             <p class="text-xs font-semibold text-espresso-500 mt-1">Antar titik pelabuhan/hub</p>
         </div>
 
-        <div class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-[0_10px_28px_-14px_rgba(44,39,36,0.08)]">
+        <div class="p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Keterlambatan</p>
-                <div class="w-9 h-9 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-2xl bg-rose-100/90 text-rose-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
             </div>
@@ -72,10 +72,10 @@
             <p class="text-xs font-semibold text-espresso-500 mt-1">Terdeteksi aturan ETA</p>
         </div>
 
-        <div class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-[0_10px_28px_-14px_rgba(44,39,36,0.08)]">
+        <div class="p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Terkirim (30 Hari)</p>
-                <div class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
@@ -86,41 +86,89 @@
 
     <!-- Worldwide Combined KPIs Row (SEA→Europe, Asia→NA, SEA→Australia) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-4 rounded-2xl bg-sage-50 border border-sage-200/80 flex items-center justify-between">
+        <div class="p-4 rounded-2xl glass-sage flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">Ketepatan Tiba (On-Time Rate)</p>
                 <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['on_time_delivery_rate'] ?? 100 }}%</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-sage-700">Rute Eropa</span>
+            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-sage-700">Rute Eropa</span>
         </div>
 
-        <div class="p-4 rounded-2xl bg-apricot-50 border border-apricot-200/80 flex items-center justify-between">
+        <div class="p-4 rounded-2xl glass-card border-apricot-200/80 flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rata-Rata Keterlambatan</p>
                 <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} jam</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-apricot-600">Rute Amerika</span>
+            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-apricot-600">Rute Amerika</span>
         </div>
 
-        <div class="p-4 rounded-2xl bg-cream-100 border border-cream-200 flex items-center justify-between">
+        <div class="p-4 rounded-2xl glass-card flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">Waktu Penyelesaian Kendala</p>
                 <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} jam</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-espresso-700">Rute Australia</span>
+            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-espresso-700">Rute Australia</span>
         </div>
 
-        <div class="p-4 rounded-2xl bg-rose-50/80 border border-rose-200 flex items-center justify-between">
+        <div class="p-4 rounded-2xl glass-card border-rose-200/80 flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Kendala Terbuka (Exceptions)</p>
                 <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} aktif</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-white text-[10px] font-bold text-rose-600">Perlu Tindak</span>
+            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-rose-600">Perlu Tindak</span>
+        </div>
+    </div>
+
+    <!-- Live Analytics Grid (Chart.js powered by Database) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Chart 1: Shipments by Status -->
+        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-extrabold text-espresso-900">Distribusi Status Pengiriman</h3>
+                    <p class="text-[11px] text-espresso-500">Proporsi status aktif &amp; selesai</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-sage-100/90 text-[10px] font-bold text-sage-700">Total: {{ $stats['total'] ?? 0 }}</span>
+            </div>
+            <div class="relative h-56 flex items-center justify-center">
+                <canvas id="statusChart"></canvas>
+                <p id="statusChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data status pengiriman.</p>
+            </div>
+        </div>
+
+        <!-- Chart 2: Shipments by Carrier -->
+        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-extrabold text-espresso-900">Volume per Ekspedisi</h3>
+                    <p class="text-[11px] text-espresso-500">Muatan aktif tiap mitra angkutan</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-apricot-100/90 text-[10px] font-bold text-apricot-600">Mitra Aktif</span>
+            </div>
+            <div class="relative h-56 flex items-center justify-center">
+                <canvas id="carrierChart"></canvas>
+                <p id="carrierChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data volume ekspedisi.</p>
+            </div>
+        </div>
+
+        <!-- Chart 3: Exception Breakdown -->
+        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-extrabold text-espresso-900">Analisis Kendala Rute</h3>
+                    <p class="text-[11px] text-espresso-500">CUSTOMS, WEATHER, DOCS &amp; lainnya</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-rose-100/90 text-[10px] font-bold text-rose-700">Monitoring SLA</span>
+            </div>
+            <div class="relative h-56 flex items-center justify-center">
+                <canvas id="exceptionChart"></canvas>
+                <p id="exceptionChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Tidak ada catatan kendala saat ini.</p>
+            </div>
         </div>
     </div>
 
     @if(!empty($openExceptions) && $openExceptions->isNotEmpty())
-        <div class="p-5 rounded-3xl bg-white border border-rose-200 shadow-xs space-y-3">
+        <div class="p-5 rounded-3xl glass-card border-rose-200 space-y-3">
             <div class="flex items-center justify-between">
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-rose-700 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
@@ -146,7 +194,7 @@
     @endif
 
     <!-- Quick Tracking Modal / Result Drawer -->
-    <div id="trackResultModal" class="hidden rounded-3xl border border-cream-200 bg-white p-6 shadow-[0_20px_45px_-15px_rgba(44,39,36,0.12)] space-y-4">
+    <div id="trackResultModal" class="hidden rounded-3xl glass-card-strong p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-cream-200 pb-3">
             <h3 class="text-sm font-extrabold text-espresso-900 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-sage-500 animate-ping"></span>
@@ -158,7 +206,7 @@
     </div>
 
     <!-- SHIPMENTS MANIFEST TABLE SECTION -->
-    <div id="shipments-section" class="rounded-3xl bg-white border border-cream-200/80 overflow-hidden shadow-[0_14px_35px_-15px_rgba(44,39,36,0.08)]">
+    <div id="shipments-section" class="rounded-3xl glass-card-strong overflow-hidden">
         <div class="p-6 border-b border-cream-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h2 class="text-base font-extrabold text-espresso-900">Daftar Pengiriman Terkini</h2>
@@ -264,7 +312,7 @@
     <!-- CARRIERS & MASTER NODES PREVIEW -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Carriers Card -->
-        <div id="carriers-section" class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-4">
+        <div id="carriers-section" class="p-6 rounded-3xl glass-card-strong space-y-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-2xl bg-apricot-100 text-apricot-600 flex items-center justify-center">
@@ -301,7 +349,7 @@
         </div>
 
         <!-- Locations Card -->
-        <div id="locations-section" class="p-6 rounded-3xl bg-white border border-cream-200/80 shadow-xs space-y-4">
+        <div id="locations-section" class="p-6 rounded-3xl glass-card-strong space-y-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center">
@@ -337,7 +385,133 @@
     </div>
 </div>
 
+@php
+    $chartsData = [
+        'status' => $charts['status'] ?? [],
+        'carriers' => $charts['carriers'] ?? [],
+        'exceptions' => $charts['exceptions'] ?? [],
+    ];
+@endphp
+
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const chartPayload = {{ Illuminate\Support\Js::from($chartsData) }};
+
+    const renderDashboardCharts = () => {
+        if (typeof window.Chart === 'undefined') return;
+
+        Chart.defaults.font.family = "'Plus Jakarta Sans', 'Inter', sans-serif";
+        Chart.defaults.color = '#635952';
+
+        // 1. Shipments by Status (Doughnut)
+        const statusEntries = Object.entries(chartPayload.status || {});
+        const statusCanvas = document.getElementById('statusChart');
+        const statusEmpty = document.getElementById('statusChartEmpty');
+        if (statusCanvas) {
+            if (statusEntries.length === 0) {
+                statusCanvas.classList.add('hidden');
+                if (statusEmpty) statusEmpty.classList.remove('hidden');
+            } else {
+                new Chart(statusCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusEntries.map(([k]) => k.replace(/_/g, ' ')),
+                        datasets: [{
+                            data: statusEntries.map(([, v]) => v),
+                            backgroundColor: ['#879880', '#F2994A', '#6D7F66', '#E4C39A', '#E11D48', '#A3B19D', '#2C2724'],
+                            borderWidth: 2,
+                            borderColor: 'rgba(255,255,255,0.85)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 2. Shipments by Carrier (Bar)
+        const carrierEntries = Object.entries(chartPayload.carriers || {});
+        const carrierCanvas = document.getElementById('carrierChart');
+        const carrierEmpty = document.getElementById('carrierChartEmpty');
+        if (carrierCanvas) {
+            if (carrierEntries.length === 0) {
+                carrierCanvas.classList.add('hidden');
+                if (carrierEmpty) carrierEmpty.classList.remove('hidden');
+            } else {
+                new Chart(carrierCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: carrierEntries.map(([k]) => k),
+                        datasets: [{
+                            label: 'Jumlah Pengiriman',
+                            data: carrierEntries.map(([, v]) => v),
+                            backgroundColor: 'rgba(135, 152, 128, 0.85)',
+                            borderRadius: 10,
+                            maxBarThickness: 32,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0, font: { size: 10 } }, grid: { color: 'rgba(227,219,205,0.45)' } },
+                            x: { ticks: { font: { size: 10, weight: '600' } }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 3. Exception Breakdown (Horizontal Bar)
+        const excEntries = Object.entries(chartPayload.exceptions || {});
+        const excCanvas = document.getElementById('exceptionChart');
+        const excEmpty = document.getElementById('exceptionChartEmpty');
+        if (excCanvas) {
+            if (excEntries.length === 0) {
+                excCanvas.classList.add('hidden');
+                if (excEmpty) excEmpty.classList.remove('hidden');
+            } else {
+                new Chart(excCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: excEntries.map(([k]) => k.replace(/_/g, ' ')),
+                        datasets: [{
+                            label: 'Total Kasus',
+                            data: excEntries.map(([, v]) => v),
+                            backgroundColor: 'rgba(242, 153, 74, 0.85)',
+                            borderRadius: 10,
+                            maxBarThickness: 26,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, ticks: { precision: 0, font: { size: 10 } }, grid: { color: 'rgba(227,219,205,0.45)' } },
+                            y: { ticks: { font: { size: 10, weight: '600' } }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    if (typeof window.Chart !== 'undefined') {
+        renderDashboardCharts();
+    } else {
+        window.addEventListener('load', renderDashboardCharts);
+    }
+});
+
 function quickInspect(trackingNo) {
     document.getElementById('trackInput').value = trackingNo;
     quickTrack();
