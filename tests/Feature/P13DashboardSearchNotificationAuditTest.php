@@ -78,6 +78,9 @@ class P13DashboardSearchNotificationAuditTest extends TestCase
             ->assertSee('id="customerTopbar"', false)
             ->assertDontSee('id="sidebar"', false)
             ->assertSee('Portal Klien')
+            ->assertDontSee('statusChart')
+            ->assertDontSee('carrierChart')
+            ->assertDontSee('exceptionChart')
             ->assertDontSee('Log Audit Sistem');
     }
 

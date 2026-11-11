@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $totalDelivered = (clone $baseQuery)->where('status', Shipment::STATUS_DELIVERED)->count();
         $totalDelayed = (clone $baseQuery)->where('delay_hours', '>', 0)->count();
 
-        $kpis = $this->etaService->calculateGlobalKpis();
+        $kpis = $user->isCustomer() ? [] : $this->etaService->calculateGlobalKpis();
 
         $openExceptions = ShipmentException::with('shipment')
             ->where('status', '!=', ShipmentException::STATUS_RESOLVED)
@@ -46,26 +46,31 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Live database Chart.js aggregations
-        $statusCounts = (clone $baseQuery)
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
+        // Live database Chart.js aggregations (Admin & Staff console only)
+        $statusCounts = [];
+        $carrierCounts = [];
+        $exceptionTypeCounts = [];
 
-        $carrierCounts = (clone $baseQuery)
-            ->join('carriers', 'shipments.carrier_id', '=', 'carriers.id')
-            ->select('carriers.name as carrier_name', DB::raw('count(*) as total'))
-            ->groupBy('carriers.name')
-            ->pluck('total', 'carrier_name')
-            ->toArray();
+        if (! $user->isCustomer()) {
+            $statusCounts = (clone $baseQuery)
+                ->select('status', DB::raw('count(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->toArray();
 
-        $exceptionTypeCounts = ShipmentException::query()
-            ->when($user->isCustomer(), fn ($q) => $q->whereHas('shipment', fn ($sq) => $sq->where('customer_id', $user->id)))
-            ->select('type', DB::raw('count(*) as total'))
-            ->groupBy('type')
-            ->pluck('total', 'type')
-            ->toArray();
+            $carrierCounts = (clone $baseQuery)
+                ->join('carriers', 'shipments.carrier_id', '=', 'carriers.id')
+                ->select('carriers.name as carrier_name', DB::raw('count(*) as total'))
+                ->groupBy('carriers.name')
+                ->pluck('total', 'carrier_name')
+                ->toArray();
+
+            $exceptionTypeCounts = ShipmentException::query()
+                ->select('type', DB::raw('count(*) as total'))
+                ->groupBy('type')
+                ->pluck('total', 'type')
+                ->toArray();
+        }
 
         return view('dashboard', [
             'shipments' => $shipments,

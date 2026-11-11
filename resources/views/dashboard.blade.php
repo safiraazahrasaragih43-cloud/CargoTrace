@@ -4,7 +4,11 @@
 @section('page_title', 'Pusat Operasional Kargo')
 
 @section('content')
-<div class="space-y-8">
+@php
+    $isCustomer = Auth::user()->isCustomer();
+@endphp
+
+<div class="space-y-7">
     <!-- Welcome Header Banner -->
     <div class="relative overflow-hidden rounded-3xl bg-sage-500 text-white p-6 sm:p-8 shadow-[0_18px_45px_-15px_rgba(135,152,128,0.45)]">
         <div class="absolute -right-12 -top-12 w-56 h-56 rounded-full bg-white/10 pointer-events-none"></div>
@@ -14,21 +18,29 @@
             <div>
                 <div class="flex items-center gap-2 mb-2.5">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-xs text-white">
-                        Peran: {{ ucfirst(Auth::user()->role) }}
+                        {{ $isCustomer ? 'Layanan Pelanggan' : 'Peran: ' . ucfirst(Auth::user()->role) }}
                     </span>
-                    <span class="text-xs text-sage-100 font-medium">Terautentikasi melalui Sanctum/Session</span>
+                    @unless($isCustomer)
+                        <span class="text-xs text-sage-100 font-medium">Terautentikasi melalui Sanctum/Session</span>
+                    @endunless
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Selamat datang kembali, {{ Auth::user()->name }}!</h1>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white">
+                    {{ $isCustomer ? 'Halo, ' . Auth::user()->name . '!' : 'Selamat datang kembali, ' . Auth::user()->name . '!' }}
+                </h1>
                 <p class="mt-1 text-sm text-sage-50">
-                    Portal Visibilitas CargoTrace &mdash; {{ Auth::user()->company_name ?: 'Jaringan Rantai Pasok Global' }}
+                    @if($isCustomer)
+                        Pantau posisi dan estimasi kedatangan pengiriman kargo Anda dengan mudah.
+                    @else
+                        Portal Visibilitas CargoTrace &mdash; {{ Auth::user()->company_name ?: 'Jaringan Rantai Pasok Global' }}
+                    @endif
                 </p>
             </div>
 
             <!-- Quick Track Input Widget -->
             <div id="quick-track" class="w-full md:w-auto">
                 <form id="trackForm" onsubmit="event.preventDefault(); quickTrack();" class="flex items-center gap-2 bg-white/15 backdrop-blur-sm p-1.5 rounded-2xl border border-white/20">
-                    <input id="trackInput" type="text" placeholder="CT-YYYYMMDD-XXXX"
-                           class="w-full sm:w-60 px-3.5 py-2.5 bg-white rounded-xl text-xs font-mono placeholder-espresso-400 text-espresso-900 focus:outline-none focus:ring-2 focus:ring-apricot-400 transition-all">
+                    <input id="trackInput" type="text" placeholder="Masukkan Nomor Resi (CT-...)"
+                           class="w-full sm:w-64 px-3.5 py-2.5 bg-white rounded-xl text-xs font-mono placeholder-espresso-400 text-espresso-900 focus:outline-none focus:ring-2 focus:ring-apricot-400 transition-all">
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/30 transition-all whitespace-nowrap cursor-pointer">
                         Lacak Kargo
                     </button>
@@ -37,135 +49,137 @@
         </div>
     </div>
 
-    <!-- Live Operational Stat Cards (Glassmorphism) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-6 rounded-3xl glass-card-strong">
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Pengiriman Aktif</p>
-                <div class="w-9 h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Pengiriman Aktif</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
             </div>
-            <p class="mt-3 text-3xl font-extrabold text-espresso-900">{{ $stats['active'] ?? 0 }}</p>
-            <p class="text-xs font-semibold text-sage-600 mt-1">Siklus pengiriman berjalan</p>
+            <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-espresso-900">{{ $stats['active'] ?? 0 }}</p>
+            <p class="text-[11px] font-semibold text-sage-600 mt-1">{{ $isCustomer ? 'Sedang diproses' : 'Siklus pengiriman berjalan' }}</p>
         </div>
 
-        <div class="p-6 rounded-3xl glass-card-strong">
+        <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Dalam Perjalanan</p>
-                <div class="w-9 h-9 rounded-2xl bg-apricot-100/90 text-apricot-600 flex items-center justify-center">
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Dalam Perjalanan</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-apricot-100/90 text-apricot-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </div>
             </div>
-            <p class="mt-3 text-3xl font-extrabold text-apricot-600">{{ $stats['in_transit'] ?? 0 }}</p>
-            <p class="text-xs font-semibold text-espresso-500 mt-1">Antar titik pelabuhan/hub</p>
+            <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-apricot-600">{{ $stats['in_transit'] ?? 0 }}</p>
+            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? 'Menuju pelabuhan tujuan' : 'Antar titik pelabuhan/hub' }}</p>
         </div>
 
-        <div class="p-6 rounded-3xl glass-card-strong">
+        <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Keterlambatan</p>
-                <div class="w-9 h-9 rounded-2xl bg-rose-100/90 text-rose-600 flex items-center justify-center">
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ $isCustomer ? 'Perlu Perhatian' : 'Keterlambatan' }}</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-rose-100/90 text-rose-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
             </div>
-            <p class="mt-3 text-3xl font-extrabold text-rose-600">{{ $stats['delayed'] ?? 0 }}</p>
-            <p class="text-xs font-semibold text-espresso-500 mt-1">Terdeteksi aturan ETA</p>
+            <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-rose-600">{{ $stats['delayed'] ?? 0 }}</p>
+            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? 'Mengalami penyesuaian ETA' : 'Terdeteksi aturan ETA' }}</p>
         </div>
 
-        <div class="p-6 rounded-3xl glass-card-strong">
+        <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Terkirim (30 Hari)</p>
-                <div class="w-9 h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Terkirim</p>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
-            <p class="mt-3 text-3xl font-extrabold text-sage-700">{{ $stats['delivered'] ?? 0 }}</p>
-            <p class="text-xs font-semibold text-sage-600 mt-1">Status selesai diterima</p>
+            <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-sage-700">{{ $stats['delivered'] ?? 0 }}</p>
+            <p class="text-[11px] font-semibold text-sage-600 mt-1">Status selesai diterima</p>
         </div>
     </div>
 
-    <!-- Worldwide Combined KPIs Row (SEA→Europe, Asia→NA, SEA→Australia) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-4 rounded-2xl glass-sage flex items-center justify-between">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">Ketepatan Tiba (On-Time Rate)</p>
-                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['on_time_delivery_rate'] ?? 100 }}%</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-sage-700">Rute Eropa</span>
-        </div>
-
-        <div class="p-4 rounded-2xl glass-card border-apricot-200/80 flex items-center justify-between">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rata-Rata Keterlambatan</p>
-                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} jam</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-apricot-600">Rute Amerika</span>
-        </div>
-
-        <div class="p-4 rounded-2xl glass-card flex items-center justify-between">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">Waktu Penyelesaian Kendala</p>
-                <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} jam</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-espresso-700">Rute Australia</span>
-        </div>
-
-        <div class="p-4 rounded-2xl glass-card border-rose-200/80 flex items-center justify-between">
-            <div>
-                <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Kendala Terbuka (Exceptions)</p>
-                <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} aktif</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-rose-600">Perlu Tindak</span>
-        </div>
-    </div>
-
-    <!-- Live Analytics Grid (Chart.js powered by Database) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <!-- Chart 1: Shipments by Status -->
-        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
-            <div class="flex items-center justify-between">
+    @unless($isCustomer)
+        <!-- Worldwide Combined KPIs Row (Admin & Staff Console Only) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-4 rounded-2xl glass-sage flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-extrabold text-espresso-900">Distribusi Status Pengiriman</h3>
-                    <p class="text-[11px] text-espresso-500">Proporsi status aktif &amp; selesai</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">Ketepatan Tiba (On-Time Rate)</p>
+                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['on_time_delivery_rate'] ?? 100 }}%</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-sage-100/90 text-[10px] font-bold text-sage-700">Total: {{ $stats['total'] ?? 0 }}</span>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-sage-700">Rute Eropa</span>
             </div>
-            <div class="relative h-56 flex items-center justify-center">
-                <canvas id="statusChart"></canvas>
-                <p id="statusChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data status pengiriman.</p>
+
+            <div class="p-4 rounded-2xl glass-card border-apricot-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rata-Rata Keterlambatan</p>
+                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} jam</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-apricot-600">Rute Amerika</span>
+            </div>
+
+            <div class="p-4 rounded-2xl glass-card flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">Waktu Penyelesaian Kendala</p>
+                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} jam</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-espresso-700">Rute Australia</span>
+            </div>
+
+            <div class="p-4 rounded-2xl glass-card border-rose-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Kendala Terbuka (Exceptions)</p>
+                    <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} aktif</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-rose-600">Perlu Tindak</span>
             </div>
         </div>
 
-        <!-- Chart 2: Shipments by Carrier -->
-        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-extrabold text-espresso-900">Volume per Ekspedisi</h3>
-                    <p class="text-[11px] text-espresso-500">Muatan aktif tiap mitra angkutan</p>
+        <!-- Live Analytics Grid (Chart.js — Admin & Staff Console Only) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- Chart 1: Shipments by Status -->
+            <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-espresso-900">Distribusi Status Pengiriman</h3>
+                        <p class="text-[11px] text-espresso-500">Proporsi status aktif &amp; selesai</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-sage-100/90 text-[10px] font-bold text-sage-700">Total: {{ $stats['total'] ?? 0 }}</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-apricot-100/90 text-[10px] font-bold text-apricot-600">Mitra Aktif</span>
+                <div class="relative h-56 flex items-center justify-center">
+                    <canvas id="statusChart"></canvas>
+                    <p id="statusChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data status pengiriman.</p>
+                </div>
             </div>
-            <div class="relative h-56 flex items-center justify-center">
-                <canvas id="carrierChart"></canvas>
-                <p id="carrierChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data volume ekspedisi.</p>
-            </div>
-        </div>
 
-        <!-- Chart 3: Exception Breakdown -->
-        <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-extrabold text-espresso-900">Analisis Kendala Rute</h3>
-                    <p class="text-[11px] text-espresso-500">CUSTOMS, WEATHER, DOCS &amp; lainnya</p>
+            <!-- Chart 2: Shipments by Carrier -->
+            <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-espresso-900">Volume per Ekspedisi</h3>
+                        <p class="text-[11px] text-espresso-500">Muatan aktif tiap mitra angkutan</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-apricot-100/90 text-[10px] font-bold text-apricot-600">Mitra Aktif</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-rose-100/90 text-[10px] font-bold text-rose-700">Monitoring SLA</span>
+                <div class="relative h-56 flex items-center justify-center">
+                    <canvas id="carrierChart"></canvas>
+                    <p id="carrierChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data volume ekspedisi.</p>
+                </div>
             </div>
-            <div class="relative h-56 flex items-center justify-center">
-                <canvas id="exceptionChart"></canvas>
-                <p id="exceptionChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Tidak ada catatan kendala saat ini.</p>
+
+            <!-- Chart 3: Exception Breakdown -->
+            <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-espresso-900">Analisis Kendala Rute</h3>
+                        <p class="text-[11px] text-espresso-500">CUSTOMS, WEATHER, DOCS &amp; lainnya</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-rose-100/90 text-[10px] font-bold text-rose-700">Monitoring SLA</span>
+                </div>
+                <div class="relative h-56 flex items-center justify-center">
+                    <canvas id="exceptionChart"></canvas>
+                    <p id="exceptionChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Tidak ada catatan kendala saat ini.</p>
+                </div>
             </div>
         </div>
-    </div>
+    @endunless
 
     @if(!empty($openExceptions) && $openExceptions->isNotEmpty())
         <div class="p-5 rounded-3xl glass-card border-rose-200 space-y-3">
@@ -231,7 +245,9 @@
                 <thead class="bg-sage-50 text-espresso-600 font-bold uppercase tracking-wider">
                     <tr>
                         <th scope="col" class="px-5 py-3.5">Nomor Resi</th>
-                        <th scope="col" class="px-5 py-3.5">Pelanggan</th>
+                        @unless($isCustomer)
+                            <th scope="col" class="px-5 py-3.5">Pelanggan</th>
+                        @endunless
                         <th scope="col" class="px-5 py-3.5">Ekspedisi</th>
                         <th scope="col" class="px-5 py-3.5">Asal &rarr; Tujuan</th>
                         <th scope="col" class="px-5 py-3.5">Status</th>
@@ -246,10 +262,12 @@
                             <td class="px-5 py-4 font-mono font-bold text-sage-700 whitespace-nowrap">
                                 {{ $shipment->tracking_number }}
                             </td>
-                            <td class="px-5 py-4">
-                                <div class="font-bold text-espresso-900">{{ $shipment->customer?->name ?: 'N/A' }}</div>
-                                <div class="text-[11px] text-espresso-500">{{ $shipment->customer?->company_name }}</div>
-                            </td>
+                            @unless($isCustomer)
+                                <td class="px-5 py-4">
+                                    <div class="font-bold text-espresso-900">{{ $shipment->customer?->name ?: 'N/A' }}</div>
+                                    <div class="text-[11px] text-espresso-500">{{ $shipment->customer?->company_name }}</div>
+                                </td>
+                            @endunless
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-full bg-cream-100 text-espresso-800 font-semibold">
                                     {{ $shipment->carrier?->name ?: 'Belum Ditentukan' }}
@@ -293,7 +311,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-10 text-center text-espresso-500">
+                            <td colspan="{{ $isCustomer ? 7 : 8 }}" class="px-5 py-10 text-center text-espresso-500">
                                 Belum ada data pengiriman di sistem.
                             </td>
                         </tr>
@@ -309,8 +327,9 @@
         @endif
     </div>
 
-    <!-- CARRIERS & MASTER NODES PREVIEW -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    @unless($isCustomer)
+        <!-- CARRIERS & MASTER NODES PREVIEW (Admin & Staff Only) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Carriers Card -->
         <div id="carriers-section" class="p-6 rounded-3xl glass-card-strong space-y-4">
             <div class="flex items-center justify-between">
@@ -383,8 +402,37 @@
             </div>
         </div>
     </div>
+    @else
+        <!-- Simplified Quick Service Links for Customer -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a href="{{ route('shipments.index') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
+                <div>
+                    <p class="text-xs font-extrabold text-espresso-900">Semua Pengiriman Saya</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">Filter rute &amp; riwayat pengiriman</p>
+                </div>
+                <span class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+            </a>
+
+            <a href="{{ route('tracking.page') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
+                <div>
+                    <p class="text-xs font-extrabold text-espresso-900">Lacak Resi Lainnya</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">Pencarian resi instan real-time</p>
+                </div>
+                <span class="w-9 h-9 rounded-2xl bg-apricot-100 text-apricot-600 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+            </a>
+
+            <a href="{{ route('notifications.index') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
+                <div>
+                    <p class="text-xs font-extrabold text-espresso-900">Notifikasi Status</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">Pantau update perjalanan &amp; kendala</p>
+                </div>
+                <span class="w-9 h-9 rounded-2xl bg-cream-200 text-espresso-700 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+            </a>
+        </div>
+    @endunless
 </div>
 
+@unless($isCustomer)
 @php
     $chartsData = [
         'status' => $charts['status'] ?? [],
@@ -511,7 +559,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('load', renderDashboardCharts);
     }
 });
+</script>
+@endunless
 
+<script>
 function quickInspect(trackingNo) {
     document.getElementById('trackInput').value = trackingNo;
     quickTrack();
