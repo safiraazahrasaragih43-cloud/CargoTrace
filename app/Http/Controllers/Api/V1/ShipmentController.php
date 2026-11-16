@@ -134,11 +134,16 @@ class ShipmentController extends Controller
     /**
      * Public tracking endpoint (accessible without authentication, strips private customer PII).
      */
-    public function track(string $trackingNumber): JsonResponse
+    public function track(Request $request, string $trackingNumber): mixed
     {
         $shipment = $this->shipmentService->findByTrackingNumber($trackingNumber);
         $shipment->load(['carrier', 'origin', 'destination', 'currentLocation', 'items', 'trackingEvents.location', 'exceptions']);
         $shipment->unsetRelation('customer');
+
+        // If accessed directly from a browser without requesting raw JSON, redirect smoothly to visual tracking page
+        if ($request->acceptsHtml() && !$request->wantsJson() && $request->query('format') !== 'json') {
+            return redirect()->route('tracking.page', ['tracking_number' => $trackingNumber]);
+        }
 
         return $this->successResponse(
             new ShipmentResource($shipment),

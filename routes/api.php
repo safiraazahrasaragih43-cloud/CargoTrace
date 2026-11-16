@@ -66,11 +66,34 @@ Route::prefix('v1')->group(function () {
     });
 
     // Health check endpoint
-    Route::get('/health', function () {
-        return response()->json([
+    Route::get('/health', function (\Illuminate\Http\Request $request) {
+        $now = now()->toISOString();
+
+        $dbConnected = true;
+        try {
+            \Illuminate\Support\Facades\DB::connection()->getPdo();
+        } catch (\Throwable $e) {
+            $dbConnected = false;
+        }
+
+        $jsonPayload = [
             'success' => true,
             'message' => 'CargoTrace API v1 operational',
-            'timestamp' => now()->toISOString(),
-        ]);
+            'timestamp' => $now,
+        ];
+
+        // If accessed directly from browser without JSON preference, render full visual health dashboard
+        if ($request->acceptsHtml() && !$request->wantsJson() && $request->query('format') !== 'json') {
+            return response()->view('api.health', [
+                'jsonPayload' => $jsonPayload,
+                'jsonString' => json_encode($jsonPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                'dbConnected' => $dbConnected,
+                'timestamp' => $now,
+                'phpVersion' => PHP_VERSION,
+                'laravelVersion' => app()->version(),
+            ], $dbConnected ? 200 : 503);
+        }
+
+        return response()->json($jsonPayload, $dbConnected ? 200 : 503);
     });
 });

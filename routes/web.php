@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 // Public Live Quick Track Page
 Route::get('/track', [ShipmentWebController::class, 'trackPage'])->name('tracking.page');
+Route::redirect('/tracking', '/track');
 
 // Guest Authentication Routes
 Route::middleware('guest')->group(function () {
