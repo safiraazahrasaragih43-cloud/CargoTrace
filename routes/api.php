@@ -97,3 +97,33 @@ Route::prefix('v1')->group(function () {
         return response()->json($jsonPayload, $dbConnected ? 200 : 503);
     });
 });
+
+// =========================================================================
+// Slide 12 Root Aliases (Allows direct calls like /api/login and /api/shipments)
+// =========================================================================
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/tracking/{trackingNumber}', [ShipmentController::class, 'track']);
+Route::get('/health', function (\Illuminate\Http\Request $request) {
+    if ($request->acceptsHtml() && !$request->wantsJson()) {
+        return redirect('/api/v1/health');
+    }
+    return response()->json([
+        'success' => true,
+        'message' => 'CargoTrace API operational',
+        'timestamp' => now()->toISOString(),
+    ]);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'me'])->name('api.root.user');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('api.root.logout');
+    Route::apiResource('shipments', ShipmentController::class)->names('api.root.shipments');
+    Route::get('shipments/{shipment}/tracking', [TrackingController::class, 'index'])->name('api.root.tracking.index');
+    Route::post('shipments/{shipment}/tracking', [TrackingController::class, 'store'])->name('api.root.tracking.store');
+    Route::get('shipments/{shipment}/exceptions', [ExceptionController::class, 'index'])->name('api.root.exceptions.index');
+    Route::post('shipments/{shipment}/exceptions', [ExceptionController::class, 'store'])->name('api.root.exceptions.store');
+    Route::match(['put', 'patch'], 'exceptions/{exception}', [ExceptionController::class, 'update'])->name('api.root.exceptions.update');
+    Route::apiResource('carriers', CarrierController::class)->names('api.root.carriers');
+    Route::apiResource('locations', LocationController::class)->names('api.root.locations');
+});
