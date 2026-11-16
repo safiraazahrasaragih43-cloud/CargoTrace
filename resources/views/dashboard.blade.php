@@ -42,7 +42,7 @@
                     <input id="trackInput" type="text" placeholder="Masukkan Nomor Resi (CT-...)"
                            class="w-full sm:w-64 px-3.5 py-2.5 bg-white rounded-xl text-xs font-mono placeholder-espresso-400 text-espresso-900 focus:outline-none focus:ring-2 focus:ring-apricot-400 transition-all">
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/30 transition-all whitespace-nowrap cursor-pointer">
-                        Lacak Kargo
+                        {{ __('Lacak Kargo') }}
                     </button>
                 </form>
             </div>
@@ -53,7 +53,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Pengiriman Aktif</p>
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ __('Pengiriman Aktif') }}</p>
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
@@ -64,7 +64,7 @@
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Dalam Perjalanan</p>
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ __('Dalam Perjalanan') }}</p>
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-apricot-100/90 text-apricot-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </div>
@@ -75,7 +75,7 @@
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ $isCustomer ? 'Perlu Perhatian' : 'Keterlambatan' }}</p>
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ $isCustomer ? __('Perlu Perhatian') : __('Keterlambatan') }}</p>
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-rose-100/90 text-rose-600 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
@@ -86,7 +86,7 @@
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
             <div class="flex items-center justify-between">
-                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">Terkirim</p>
+                <p class="text-[11px] sm:text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ __('Terkirim') }}</p>
                 <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-sage-100/90 text-sage-700 flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>

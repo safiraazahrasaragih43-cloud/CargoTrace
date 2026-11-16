@@ -22,7 +22,7 @@
                 @csrf
 
                 <div>
-                    <label for="name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                    <label for="name" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Nama Lengkap') }}</label>
                     <input id="name" name="name" type="text" autocomplete="name" required
                            value="{{ old('name') }}"
                            placeholder="cth: Budi Santoso"
@@ -30,7 +30,7 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Alamat Email</label>
+                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Alamat Email') }}</label>
                     <input id="email" name="email" type="email" autocomplete="email" required
                            value="{{ old('email') }}"
                            placeholder="nama@perusahaan.com"
@@ -55,14 +55,14 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Kata Sandi</label>
+                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Kata Sandi') }}</label>
                     <input id="password" name="password" type="password" required
                            placeholder="Minimal 8 karakter"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Konfirmasi Kata Sandi</label>
+                    <label for="password_confirmation" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Konfirmasi Kata Sandi') }}</label>
                     <input id="password_confirmation" name="password_confirmation" type="password" required
                            placeholder="Ulangi kata sandi"
                            class="block w-full px-4 py-2.5 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 text-sm transition-all">
@@ -71,15 +71,15 @@
                 <div class="pt-2">
                     <button type="submit"
                             class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg shadow-apricot-500/25 text-sm font-bold text-white bg-apricot-500 hover:bg-apricot-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apricot-500 transition-all cursor-pointer">
-                        Selesaikan Pendaftaran
+                        {{ __('Daftar Akun') }}
                     </button>
                 </div>
             </form>
 
             <div class="mt-5 text-center text-xs text-espresso-500">
-                Sudah memiliki akun?
+                {{ __('Sudah punya akun?') }}
                 <a href="{{ route('login') }}" class="font-bold text-apricot-600 hover:text-apricot-500">
-                    Masuk di sini
+                    {{ __('Masuk di sini') }}
                 </a>
             </div>
         </div>

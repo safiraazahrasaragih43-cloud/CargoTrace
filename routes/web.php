@@ -15,6 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Language Switcher (Indonesian / English)
+Route::get('/lang/{locale}', function (string $locale) {
+    if (in_array($locale, ['id', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back(fallback: route('home'));
+})->name('lang.switch');
+
 // Public Live Quick Track Page
 Route::get('/track', [ShipmentWebController::class, 'trackPage'])->name('tracking.page');
 Route::redirect('/tracking', '/track');

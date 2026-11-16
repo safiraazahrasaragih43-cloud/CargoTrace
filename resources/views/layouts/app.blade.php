@@ -32,6 +32,8 @@
 
             <!-- User Menu / Actions -->
             <div class="flex items-center gap-3">
+                @include('components.language-switcher')
+
                 @auth
                     <div class="flex items-center gap-3">
                         <div class="text-right hidden sm:block">
@@ -48,17 +50,17 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="px-4 py-1.5 rounded-full text-xs font-semibold text-espresso-800 bg-white hover:bg-cream-100 border border-cream-200 shadow-xs transition-colors cursor-pointer">
-                                Keluar
+                                {{ __('Keluar') }}
                             </button>
                         </form>
                     </div>
                 @else
                     <div class="flex items-center gap-2">
                         <a href="{{ route('login') }}" class="px-4 py-1.5 rounded-full text-xs font-semibold text-espresso-800 hover:bg-cream-100 transition-colors">
-                            Masuk
+                            {{ __('Masuk') }}
                         </a>
                         <a href="{{ route('register') }}" class="px-4 py-1.5 rounded-full text-xs font-bold bg-apricot-500 hover:bg-apricot-600 text-white shadow-md shadow-apricot-500/25 transition-all">
-                            Daftar
+                            {{ __('Daftar') }}
                         </a>
                     </div>
                 @endauth

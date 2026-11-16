@@ -15,17 +15,17 @@
                 Telemetri REST Real-Time
             </span>
             <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight">
-                Lacak pengiriman apa pun di seluruh pelabuhan &amp; checkpoint global
+                {{ __('Lacak pengiriman apa pun di seluruh pelabuhan & checkpoint global') }}
             </h1>
             <p class="text-sm text-sage-100">
-                Masukkan nomor resi CargoTrace Anda (cth: CT-20261101-9821) untuk memantau posisi langsung dan catatan perjalanan.
+                {{ __('Masukkan nomor resi CargoTrace Anda (cth: CT-20261101-9821) untuk memantau posisi langsung dan catatan perjalanan.') }}
             </p>
 
             <form onsubmit="event.preventDefault(); liveTrackLookup();" class="flex flex-col sm:flex-row gap-2.5 pt-1">
                 <input id="liveTrackInput" type="text" value="{{ $initialQuery ?? '' }}" placeholder="CT-YYYYMMDD-XXXX"
                        class="flex-1 px-4 py-3.5 bg-white border border-white rounded-2xl text-sm font-mono text-espresso-900 placeholder-espresso-400 shadow-lg focus:outline-none focus:ring-2 focus:ring-apricot-400">
                 <button type="submit" class="px-6 py-3.5 rounded-2xl bg-apricot-500 hover:bg-apricot-600 text-white font-bold text-sm shadow-lg shadow-apricot-500/30 transition-all cursor-pointer shrink-0">
-                    Lacak Pengiriman
+                    {{ __('Lacak Pengiriman') }}
                 </button>
             </form>
         </div>

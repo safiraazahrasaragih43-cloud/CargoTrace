@@ -44,8 +44,10 @@
                 <a href="#roles" class="hover:text-espresso-900 transition-colors">Matriks Peran</a>
             </nav>
 
-            <!-- Auth Buttons -->
+            <!-- Auth Buttons & Language Switcher -->
             <div class="flex items-center gap-2.5">
+                @include('components.language-switcher')
+
                 @auth
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-apricot-500 hover:bg-apricot-600 text-white shadow-lg shadow-apricot-500/25 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -53,10 +55,10 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="px-4 py-2 rounded-full text-xs font-bold text-espresso-800 bg-white/80 hover:bg-white border border-white shadow-xs transition-colors">
-                        Masuk
+                        {{ __('Masuk') }}
                     </a>
                     <a href="{{ route('register') }}" class="px-5 py-2 rounded-full text-xs font-bold bg-apricot-500 hover:bg-apricot-600 text-white shadow-lg shadow-apricot-500/25 transition-all">
-                        Daftar Akun
+                        {{ __('Daftar Akun') }}
                     </a>
                 @endauth
             </div>

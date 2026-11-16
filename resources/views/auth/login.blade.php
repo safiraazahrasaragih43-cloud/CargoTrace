@@ -22,7 +22,7 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Alamat Email</label>
+                    <label for="email" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Alamat Email') }}</label>
                     <input id="email" name="email" type="email" autocomplete="email" required
                            value="{{ old('email') }}"
                            placeholder="nama@perusahaan.com"
@@ -30,7 +30,7 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">Kata Sandi</label>
+                    <label for="password" class="block text-xs font-bold text-espresso-800 uppercase tracking-wider mb-1.5">{{ __('Kata Sandi') }}</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required
                            placeholder="••••••••"
                            class="block w-full px-4 py-3 bg-cream-100/70 border border-cream-200 rounded-2xl placeholder-espresso-400 text-espresso-900 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500 focus:border-transparent text-sm transition-all">
@@ -41,13 +41,13 @@
                         <input id="remember" name="remember" type="checkbox"
                                class="h-4 w-4 text-sage-600 focus:ring-sage-500 border-cream-300 rounded bg-cream-50">
                         <label for="remember" class="ml-2 block text-xs font-medium text-espresso-600">
-                            Ingat saya
+                            {{ __('Ingat Saya') }}
                         </label>
                     </div>
 
                     <div class="text-xs">
                         <a href="{{ route('register') }}" class="font-bold text-apricot-600 hover:text-apricot-500">
-                            Belum punya akun?
+                            {{ __('Belum punya akun?') }}
                         </a>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="pt-1">
                     <button type="submit"
                             class="w-full flex justify-center py-3 px-4 rounded-full shadow-lg shadow-apricot-500/25 text-sm font-bold text-white bg-apricot-500 hover:bg-apricot-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apricot-500 transition-all cursor-pointer">
-                        Masuk Sekarang
+                        {{ __('Masuk') }}
                     </button>
                 </div>
             </form>
