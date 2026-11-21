@@ -39,16 +39,75 @@
         </div>
     @endif
 
-    <!-- Global Interactive Hubs Map -->
-    <div class="p-5 sm:p-6 rounded-3xl glass-card-strong space-y-3">
-        <div class="flex items-center justify-between">
+    <!-- Global Interactive Hubs Map with Route Lanes & Distances -->
+    <div class="p-5 sm:p-6 rounded-3xl glass-card-strong space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div>
-                <h2 class="text-sm font-extrabold text-espresso-900">{{ __('Peta Jaringan Pelabuhan & Hub Dunia') }}</h2>
-                <p class="text-[11px] text-espresso-500">{{ __('Klik marker untuk melihat koordinat GPS dan kode pelabuhan UN/LOCODE.') }}</p>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="px-2.5 py-0.5 rounded-full bg-sage-100 text-sage-800 text-[10px] font-bold uppercase tracking-wider">{{ __('Jalur Rute Maritim & Jarak Global') }}</span>
+                    <span class="text-xs text-espresso-500">Haversine GPS Telemetry</span>
+                </div>
+                <h2 class="text-lg font-extrabold text-espresso-900">{{ __('Peta Jaringan Pelabuhan & Hub Dunia') }}</h2>
+                <p class="text-[11px] text-espresso-500">{{ __('Klik garis rute atau marker untuk melihat jarak maritim (km & NM) dan waktu tempuh estimasi.') }}</p>
             </div>
-            <span class="px-3 py-1 rounded-full bg-sage-100 text-sage-700 text-[11px] font-bold">OpenStreetMap</span>
+
+            <!-- Controls & Toggles -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" id="toggleDistancesBtn" onclick="toggleRouteDistances()" class="px-3.5 py-1.5 rounded-full bg-white border border-cream-200 text-espresso-700 hover:bg-cream-100 text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-apricot-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                    <span id="toggleDistancesText">{{ __('Label Jarak: AKTIF') }}</span>
+                </button>
+                <button type="button" id="toggleSeaBtn" onclick="toggleSeaLanes()" class="px-3.5 py-1.5 rounded-full bg-sage-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5">
+                    <span>🚢 {{ __('Jalur Laut') }}</span>
+                </button>
+                <button type="button" id="toggleAirBtn" onclick="toggleAirLanes()" class="px-3.5 py-1.5 rounded-full bg-purple-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5">
+                    <span>✈️ {{ __('Jalur Udara') }}</span>
+                </button>
+            </div>
         </div>
-        <div id="locationsWorldMap" class="w-full h-64 sm:h-80 rounded-2xl border border-cream-200 bg-cream-100 z-10 overflow-hidden"></div>
+
+        <!-- Corridor Route Legend Badges with Distances -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+            <div onclick="focusCorridor('sea_europe')" class="p-2.5 rounded-2xl bg-orange-50/70 border border-orange-200/80 hover:bg-orange-100/70 hover:border-orange-300 transition-all cursor-pointer flex items-center justify-between shadow-2xs group" title="Klik untuk zoom ke koridor ini">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#EA580C] shadow-xs group-hover:scale-110 transition-transform"></span>
+                    <span class="font-bold text-orange-950">{{ __('Koridor SEA → Eropa') }}</span>
+                </div>
+                <span class="font-mono text-[11px] font-extrabold text-[#EA580C]">~16,577 km</span>
+            </div>
+
+            <div onclick="focusCorridor('asia_america')" class="p-2.5 rounded-2xl bg-sky-50/70 border border-sky-200/80 hover:bg-sky-100/70 hover:border-sky-300 transition-all cursor-pointer flex items-center justify-between shadow-2xs group" title="Klik untuk zoom ke koridor ini">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#0284C7] shadow-xs group-hover:scale-110 transition-transform"></span>
+                    <span class="font-bold text-sky-950">{{ __('Koridor Asia → Amerika') }}</span>
+                </div>
+                <span class="font-mono text-[11px] font-extrabold text-[#0284C7]">~10,574 km</span>
+            </div>
+
+            <div onclick="focusCorridor('sea_australia')" class="p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 hover:bg-emerald-100/70 hover:border-emerald-300 transition-all cursor-pointer flex items-center justify-between shadow-2xs group" title="Klik untuk zoom ke koridor ini">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#10B981] shadow-xs group-hover:scale-110 transition-transform"></span>
+                    <span class="font-bold text-emerald-950">{{ __('Koridor SEA → Australia') }}</span>
+                </div>
+                <span class="font-mono text-[11px] font-extrabold text-[#10B981]">~7,219 km</span>
+            </div>
+
+            <div onclick="focusCorridor('air_feeder')" class="p-2.5 rounded-2xl bg-purple-50/70 border border-purple-200/80 hover:bg-purple-100/70 hover:border-purple-300 transition-all cursor-pointer flex items-center justify-between shadow-2xs group" title="Klik untuk zoom ke koridor ini">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#8B5CF6] shadow-xs group-hover:scale-110 transition-transform"></span>
+                    <span class="font-bold text-purple-950">{{ __('Jalur Udara / Feeder') }}</span>
+                </div>
+                <span class="font-mono text-[11px] font-extrabold text-[#8B5CF6]">~884 km</span>
+            </div>
+        </div>
+
+        <!-- The Map Container -->
+        <div id="locationsWorldMap" class="w-full h-80 sm:h-96 lg:h-[430px] rounded-2xl border border-cream-200 bg-cream-100 z-10 overflow-hidden shadow-inner"></div>
+
+        <div class="flex items-center justify-between text-[11px] text-espresso-500 px-1">
+            <span>&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-espresso-800">OpenStreetMap</a> contributors &bull; CargoTrace Global AIS Maritime Corridors</span>
+            <span class="font-mono font-bold text-sage-700">1 NM = 1.852 km</span>
+        </div>
     </div>
 
     <!-- Search & Filter Bar -->
@@ -246,54 +305,493 @@
 @endif
 
 @php
-    $mapHubs = $locations->getCollection()->map(fn ($l) => [
-        'name' => $l->name,
-        'code' => $l->code,
-        'type' => $l->type,
-        'city' => $l->city,
-        'country' => $l->country,
-        'lat' => $l->latitude,
-        'lng' => $l->longitude,
-    ])->values()->all();
+    $allHubs = \App\Models\Location::select('id', 'name', 'code', 'type', 'city', 'country', 'latitude', 'longitude')
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->get()
+        ->map(fn ($l) => [
+            'id' => $l->id,
+            'name' => $l->name,
+            'code' => $l->code,
+            'type' => $l->type,
+            'city' => $l->city,
+            'country' => $l->country,
+            'lat' => (float) $l->latitude,
+            'lng' => (float) $l->longitude,
+        ])->values()->all();
 @endphp
 
+<style>
+.custom-hub-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.route-distance-badge {
+    background: transparent !important;
+    border: none !important;
+}
+.route-distance-pill {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    border: 1.5px solid;
+    padding: 2.5px 8px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(44,39,36,0.18);
+    display: inline-flex;
+    align-items: center;
+    gap: 4.5px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.route-distance-pill:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(44,39,36,0.25);
+}
+</style>
+
 <script>
+let worldMap = null;
+let distanceMarkersLayer = null;
+let seaLanesLayer = null;
+let airLanesLayer = null;
+let isDistancesVisible = true;
+let isSeaVisible = true;
+let isAirVisible = true;
+let corridorBounds = {};
+
 document.addEventListener('DOMContentLoaded', function () {
+    initWorldLocationsMap();
+});
+
+function initWorldLocationsMap() {
     const mapEl = document.getElementById('locationsWorldMap');
     if (!mapEl || typeof window.L === 'undefined') return;
 
-    const hubs = {{ Illuminate\Support\Js::from($mapHubs) }};
+    const hubs = {{ Illuminate\Support\Js::from($allHubs) }};
+    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
 
-    const map = window.L.map('locationsWorldMap', { scrollWheelZoom: false }).setView([15.0, 105.0], 2);
+    // Initialize Map centered on global sea trade crossroads (Singapore/Equator)
+    worldMap = window.L.map('locationsWorldMap', {
+        scrollWheelZoom: false,
+        worldCopyJump: false,
+        minZoom: 2,
+        maxZoom: 18
+    }).setView([18.0, 85.0], 2);
 
     window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(worldMap);
 
-    const bounds = [];
-    const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
+    distanceMarkersLayer = window.L.layerGroup().addTo(worldMap);
+    seaLanesLayer = window.L.layerGroup().addTo(worldMap);
+    airLanesLayer = window.L.layerGroup().addTo(worldMap);
+
+    // Connected routes dictionary for hubs
+    const hubConnectedRoutes = {
+        'IDTPP': ['SEA &rarr; Eropa (~16,577 km)', 'SEA &rarr; Australia (~7,219 km)'],
+        'SGSIN': ['SEA &rarr; Eropa (~16,577 km)', 'SEA &rarr; Australia (~7,219 km)'],
+        'NLRTM': ['SEA &rarr; Eropa (via Terusan Suez)'],
+        'DEHAM': ['SEA &rarr; Eropa (Feeder Rotterdam)'],
+        'CNSHA': ['Asia &rarr; Amerika Utara (~10,574 km)'],
+        'JPYOK': ['Asia &rarr; Amerika Utara (Trans-Pasifik)'],
+        'USLAX': ['Asia &rarr; Amerika Utara (~10,574 km)'],
+        'AUSYD': ['SEA &rarr; Australia (Port Botany)'],
+        'AUMEL': ['SEA &rarr; Australia (Melbourne Hub)'],
+        'IDCGK': ['Jalur Udara / Feeder CGK &harr; SINAC (884 km)'],
+        'SINAC': ['Jalur Udara / Feeder CGK &harr; SINAC (884 km)']
+    };
+
+    // 1. Plot Port & Location Markers
+    const allPinsBounds = [];
     hubs.forEach(hub => {
         if (hub.lat && hub.lng) {
             const pt = [parseFloat(hub.lat), parseFloat(hub.lng)];
-            bounds.push(pt);
+            allPinsBounds.push(pt);
+
+            const isAirport = hub.type === 'AIRPORT';
+            const pinColor = isAirport ? '#8B5CF6' : (hub.type === 'CUSTOMS' ? '#E11D48' : '#879880');
+            const pinBorder = '#FFFFFF';
+            const iconSymbol = isAirport ? '✈' : '⚓';
+
             const icon = window.L.divIcon({
-                className: 'hub-pin',
-                html: `<div style="background:#879880;border:2px solid #FFFFFF;width:18px;height:18px;border-radius:9999px;box-shadow:0 3px 8px rgba(44,39,36,0.25);"></div>`,
-                iconSize: [18, 18],
-                iconAnchor: [9, 9],
+                className: 'custom-hub-pin',
+                html: `<div style="background:${pinColor};border:2.5px solid ${pinBorder};width:24px;height:24px;border-radius:9999px;box-shadow:0 3px 10px rgba(44,39,36,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;">${iconSymbol}</div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12],
+                popupAnchor: [0, -14],
             });
+
+            const connected = hubConnectedRoutes[hub.code] || [];
+            let connectedHtml = '';
+            if (connected.length > 0) {
+                connectedHtml = `<div style="margin-top:6px;padding-top:6px;border-top:1px solid #EAE6DF;font-size:11px;">
+                    <strong style="color:#6B7D64;">{{ __('Rute Maritim Terhubung') }}:</strong>
+                    <ul style="margin:2px 0 0 14px;padding:0;color:#2C2724;">
+                        ${connected.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                </div>`;
+            }
+
             window.L.marker(pt, { icon })
-                .addTo(map)
-                .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${esc(hub.name)} (${esc(hub.code)})</strong><br/>${@json(__('Tipe'))}: ${esc(hub.type)}<br/>${esc(hub.city)}, ${esc(hub.country)}<br/><code>${esc(hub.lat)}, ${esc(hub.lng)}</code></div>`);
+                .addTo(worldMap)
+                .bindPopup(`
+                    <div style="font-family:sans-serif;font-size:12px;line-height:1.45;min-width:200px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+                            <strong style="font-size:13px;color:#2C2724;">${esc(hub.name)}</strong>
+                            <span style="background:#E2E8DF;color:#4F5E4A;padding:1px 6px;border-radius:9999px;font-family:monospace;font-weight:bold;font-size:10px;">${esc(hub.code)}</span>
+                        </div>
+                        <div style="color:#665E57;font-size:11px;">
+                            <span>${esc(hub.city)}, ${esc(hub.country)}</span> &bull; 
+                            <span style="font-weight:600;color:#E07A2B;">${esc(hub.type)}</span>
+                        </div>
+                        <div style="font-family:monospace;font-size:10px;color:#879880;margin-top:2px;">
+                            GPS: ${esc(hub.lat.toFixed(4))}, ${esc(hub.lng.toFixed(4))}
+                        </div>
+                        ${connectedHtml}
+                    </div>
+                `);
         }
     });
 
-    if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [30, 30] });
-    }
-});
+    // 2. Define Comprehensive Global Maritime Corridors & Distance Lines
+    const globalCorridors = [
+        // ================= KORIDOR 1: SEA -> EROPA =================
+        {
+            id: 'sea_europe',
+            type: 'sea',
+            name: '{{ __('Koridor SEA → Eropa') }}',
+            color: '#EA580C',
+            sla: '{{ __('Batas Keterlambatan SLA:') }} 12 {{ __('jam') }}',
+            exception: '{{ __('Fokus Kendala Utama:') }} CUSTOMS_HOLD',
+            segments: [
+                {
+                    from: 'Tanjung Priok (IDTPP)',
+                    to: 'Port of Singapore (SGSIN)',
+                    km: 887,
+                    nm: 479,
+                    transit: '1.5 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [-2.4, 105.5],
+                    coords: [
+                        [-6.1018, 106.8833],
+                        [-2.0000, 105.4000],
+                        [1.2644, 103.8220]
+                    ]
+                },
+                {
+                    from: 'Port of Singapore (SGSIN)',
+                    to: 'Port of Rotterdam (NLRTM)',
+                    km: 15200,
+                    nm: 8200,
+                    transit: '20-24 {{ __('Hari Transit Pelayaran') }} (Via Terusan Suez)',
+                    mid: [21.5, 38.0],
+                    coords: [
+                        [1.2644, 103.8220],
+                        [5.5000, 96.5000],
+                        [6.0000, 80.5000],
+                        [11.5000, 52.0000],
+                        [12.6000, 43.5000],
+                        [27.8000, 34.2000],
+                        [31.3000, 32.3000],
+                        [36.5000, 14.5000],
+                        [36.0000, -5.5000],
+                        [43.5000, -9.5000],
+                        [49.5000, -4.0000],
+                        [51.9244, 4.4777]
+                    ]
+                },
+                {
+                    from: 'Port of Rotterdam (NLRTM)',
+                    to: 'Port of Hamburg (DEHAM)',
+                    km: 490,
+                    nm: 265,
+                    transit: '1 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [53.6, 6.8],
+                    coords: [
+                        [51.9244, 4.4777],
+                        [53.2000, 5.2000],
+                        [54.0000, 7.8000],
+                        [53.5353, 9.9868]
+                    ]
+                }
+            ]
+        },
 
+        // ================= KORIDOR 2: ASIA -> AMERIKA UTARA =================
+        {
+            id: 'asia_america',
+            type: 'sea',
+            name: '{{ __('Koridor Asia → Amerika') }}',
+            color: '#0284C7',
+            sla: '{{ __('Batas Keterlambatan SLA:') }} 18 {{ __('jam') }}',
+            exception: '{{ __('Fokus Kendala Utama:') }} WEATHER_DELAY',
+            segments: [
+                {
+                    from: 'Shanghai Yangshan (CNSHA)',
+                    to: 'Port of Yokohama (JPYOK)',
+                    km: 1721,
+                    nm: 929,
+                    transit: '3 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [33.2, 131.5],
+                    coords: [
+                        [30.6167, 122.0667],
+                        [32.0000, 128.5000],
+                        [33.5000, 135.5000],
+                        [35.4437, 139.6380]
+                    ]
+                },
+                {
+                    from: 'Port of Yokohama (JPYOK)',
+                    to: 'Port of Los Angeles (USLAX) [Pasifik Barat]',
+                    km: 8853,
+                    nm: 4780,
+                    transit: '12-14 {{ __('Hari Transit Pelayaran') }} (Trans-Pasifik)',
+                    mid: [41.0, 165.0],
+                    coords: [
+                        [35.4437, 139.6380],
+                        [39.5000, 155.0000],
+                        [42.5000, 170.0000],
+                        [43.5000, 179.9900]
+                    ]
+                },
+                {
+                    from: 'Port of Yokohama (JPYOK)',
+                    to: 'Port of Los Angeles (USLAX) [Pasifik Timur]',
+                    km: 8853,
+                    nm: 4780,
+                    transit: '12-14 {{ __('Hari Transit Pelayaran') }} (Trans-Pasifik)',
+                    mid: [39.0, -145.0],
+                    coords: [
+                        [43.5000, -179.9900],
+                        [42.0000, -165.0000],
+                        [38.5000, -145.0000],
+                        [36.0000, -130.0000],
+                        [33.7432, -118.2673]
+                    ]
+                }
+            ]
+        },
+
+        // ================= KORIDOR 3: SEA -> AUSTRALIA =================
+        {
+            id: 'sea_australia',
+            type: 'sea',
+            name: '{{ __('Koridor SEA → Australia') }}',
+            color: '#10B981',
+            sla: '{{ __('Batas Keterlambatan SLA:') }} 24 {{ __('jam') }}',
+            exception: '{{ __('Fokus Kendala Utama:') }} DOCUMENTATION_ISSUE',
+            segments: [
+                {
+                    from: 'Tanjung Priok (IDTPP)',
+                    to: 'Port of Melbourne (AUMEL)',
+                    km: 5620,
+                    nm: 3034,
+                    transit: '8-10 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [-24.0, 117.0],
+                    coords: [
+                        [-6.1018, 106.8833],
+                        [-8.8000, 115.5000],
+                        [-18.0000, 118.0000],
+                        [-32.0000, 115.0000],
+                        [-36.5000, 137.0000],
+                        [-37.8409, 144.9125]
+                    ]
+                },
+                {
+                    from: 'Port of Melbourne (AUMEL)',
+                    to: 'Port of Sydney (AUSYD)',
+                    km: 712,
+                    nm: 384,
+                    transit: '1.5 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [-38.2, 148.5],
+                    coords: [
+                        [-37.8409, 144.9125],
+                        [-39.0000, 147.0000],
+                        [-37.5000, 150.2000],
+                        [-33.9722, 151.2167]
+                    ]
+                },
+                {
+                    from: 'Port of Singapore (SGSIN)',
+                    to: 'Port of Sydney (AUSYD) [Rute Timur]',
+                    km: 6305,
+                    nm: 3404,
+                    transit: '10 {{ __('Hari Berlayar (Kecepatan 18-20 knot)') }}',
+                    mid: [-16.0, 133.0],
+                    coords: [
+                        [1.2644, 103.8220],
+                        [-5.0000, 119.0000],
+                        [-10.5000, 128.0000],
+                        [-22.0000, 153.0000],
+                        [-33.9722, 151.2167]
+                    ]
+                }
+            ]
+        },
+
+        // ================= KORIDOR 4: JALUR UDARA / FEEDER =================
+        {
+            id: 'air_feeder',
+            type: 'air',
+            name: '{{ __('Jalur Udara / Feeder') }}',
+            color: '#8B5CF6',
+            sla: '{{ __('Batas Keterlambatan SLA:') }} 6 {{ __('jam') }}',
+            exception: '{{ __('Fokus Kendala Utama:') }} AIR_CUSTOMS_SCAN',
+            segments: [
+                {
+                    from: 'Soekarno-Hatta Cargo (IDCGK)',
+                    to: 'Changi Airfreight (SINAC)',
+                    km: 884,
+                    nm: 477,
+                    transit: '1j 45m {{ __('Jam Terbang (Airfreight Express)') }}',
+                    mid: [-2.5, 105.2],
+                    coords: [
+                        [-6.1275, 106.6537],
+                        [-2.5000, 105.2000],
+                        [1.3644, 103.9915]
+                    ]
+                }
+            ]
+        }
+    ];
+
+    // 3. Render Route Polylines and Distance Badges
+    globalCorridors.forEach(corridor => {
+        const corridorPoints = [];
+        const targetLayer = corridor.type === 'air' ? airLanesLayer : seaLanesLayer;
+
+        corridor.segments.forEach(seg => {
+            seg.coords.forEach(pt => corridorPoints.push(pt));
+
+            // Create Polyline for the segment
+            const polyline = window.L.polyline(seg.coords, {
+                color: corridor.color,
+                weight: corridor.type === 'air' ? 3.0 : 3.5,
+                opacity: 0.85,
+                dashArray: corridor.type === 'air' ? '5, 6' : '10, 6',
+                lineCap: 'round',
+                lineJoin: 'round'
+            });
+
+            // Hover effects on lines
+            polyline.on('mouseover', function () {
+                this.setStyle({ weight: 5.5, opacity: 1.0 });
+            });
+            polyline.on('mouseout', function () {
+                this.setStyle({ weight: corridor.type === 'air' ? 3.0 : 3.5, opacity: 0.85 });
+            });
+
+            // Popup on line click
+            const popupHtml = `
+                <div style="font-family:sans-serif;font-size:12px;min-width:220px;line-height:1.45;">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:9999px;background:${corridor.color};"></span>
+                        <strong style="color:#2C2724;font-size:13px;">${esc(corridor.name)}</strong>
+                    </div>
+                    <div style="color:#665E57;font-size:11px;font-weight:600;margin-bottom:6px;">
+                        ${esc(seg.from)} &rarr; ${esc(seg.to)}
+                    </div>
+                    <div style="background:#F6F4EF;padding:6px 8px;border-radius:8px;font-size:11px;space-y:2px;">
+                        <div><strong style="color:#2C2724;">{{ __('Total Jarak:') }}</strong> <span style="font-family:monospace;font-weight:bold;color:${corridor.color};">${seg.km.toLocaleString()} km</span> <span style="color:#879880;">(${seg.nm.toLocaleString()} NM)</span></div>
+                        <div><strong style="color:#2C2724;">{{ __('Estimasi Waktu Tempuh:') }}</strong> ${esc(seg.transit)}</div>
+                        <div><strong style="color:#2C2724;">${esc(corridor.sla)}</strong></div>
+                        <div style="font-size:10px;color:#879880;margin-top:2px;">${esc(corridor.exception)}</div>
+                    </div>
+                </div>
+            `;
+            polyline.bindPopup(popupHtml);
+            targetLayer.addLayer(polyline);
+
+            // Floating Distance Badge along the midpoint of the route
+            if (seg.mid && seg.mid.length === 2) {
+                const badgeIcon = window.L.divIcon({
+                    className: 'route-distance-badge',
+                    html: `
+                        <div class="route-distance-pill" style="border-color:${corridor.color};color:#2C2724;" title="${esc(seg.from)} &rarr; ${esc(seg.to)}">
+                            <span style="display:inline-block;width:6px;height:6px;border-radius:9999px;background:${corridor.color};"></span>
+                            <span>${seg.km.toLocaleString()} km</span>
+                            <span style="color:#879880;font-size:9px;">(${seg.nm.toLocaleString()} NM)</span>
+                        </div>
+                    `,
+                    iconSize: [110, 24],
+                    iconAnchor: [55, 12],
+                });
+
+                const badgeMarker = window.L.marker(seg.mid, { icon: badgeIcon });
+                badgeMarker.bindPopup(popupHtml);
+                distanceMarkersLayer.addLayer(badgeMarker);
+            }
+        });
+
+        // Store bounds for corridor focus
+        if (corridorPoints.length > 0) {
+            corridorBounds[corridor.id] = window.L.latLngBounds(corridorPoints);
+        }
+    });
+
+    // Fit map bounds to encompass all hubs comfortably
+    if (allPinsBounds.length > 1) {
+        worldMap.fitBounds(allPinsBounds, { padding: [40, 40] });
+    }
+}
+
+// Interactive Toggle Functions
+function toggleRouteDistances() {
+    if (!worldMap || !distanceMarkersLayer) return;
+    isDistancesVisible = !isDistancesVisible;
+    const btnText = document.getElementById('toggleDistancesText');
+
+    if (isDistancesVisible) {
+        worldMap.addLayer(distanceMarkersLayer);
+        if (btnText) btnText.textContent = '{{ __('Label Jarak: AKTIF') }}';
+    } else {
+        worldMap.removeLayer(distanceMarkersLayer);
+        if (btnText) btnText.textContent = '{{ __('Label Jarak: MATI') }}';
+    }
+}
+
+function toggleSeaLanes() {
+    if (!worldMap || !seaLanesLayer) return;
+    isSeaVisible = !isSeaVisible;
+    const btn = document.getElementById('toggleSeaBtn');
+
+    if (isSeaVisible) {
+        worldMap.addLayer(seaLanesLayer);
+        if (btn) btn.className = 'px-3.5 py-1.5 rounded-full bg-sage-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5';
+    } else {
+        worldMap.removeLayer(seaLanesLayer);
+        if (btn) btn.className = 'px-3.5 py-1.5 rounded-full bg-cream-200 text-espresso-600 text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5';
+    }
+}
+
+function toggleAirLanes() {
+    if (!worldMap || !airLanesLayer) return;
+    isAirVisible = !isAirVisible;
+    const btn = document.getElementById('toggleAirBtn');
+
+    if (isAirVisible) {
+        worldMap.addLayer(airLanesLayer);
+        if (btn) btn.className = 'px-3.5 py-1.5 rounded-full bg-purple-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5';
+    } else {
+        worldMap.removeLayer(airLanesLayer);
+        if (btn) btn.className = 'px-3.5 py-1.5 rounded-full bg-cream-200 text-espresso-600 text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5';
+    }
+}
+
+function focusCorridor(corridorId) {
+    if (!worldMap || !corridorBounds[corridorId]) return;
+    worldMap.flyToBounds(corridorBounds[corridorId], {
+        padding: [50, 50],
+        duration: 1.2
+    });
+}
+
+// Nominatim Geocoding
 async function runGeocodeSearch() {
     const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
     const q = document.getElementById('geocodeQuery').value.trim();
