@@ -61,4 +61,37 @@ class LanguageSwitcherTest extends TestCase
         $response->assertRedirect('/');
         $response->assertSessionMissing('locale');
     }
+
+    public function test_landing_page_renders_fully_in_english_when_switched(): void
+    {
+        $response = $this->withSession(['locale' => 'en'])->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('lang="en"', false);
+        $response->assertSee('Live Tracking');
+        $response->assertSee('Bento Architecture');
+        $response->assertSee('Role Matrix');
+        $response->assertSee('Sign In');
+        $response->assertSee('Create Account');
+        $response->assertSee('Smart visibility for');
+        $response->assertSee('your global cargo');
+        $response->assertSee('Enter tracking number');
+        $response->assertSee('Track Cargo');
+        $response->assertSee('Select Global Corridor Scenario (Hero Selection)');
+        $response->assertSee('12h Limit');
+        $response->assertSee('SEA &rarr; Europe', false);
+        $response->assertSee('Asia &rarr; America', false);
+        $response->assertSee('Europe Corridor');
+        $response->assertSee('Selected Corridor');
+        $response->assertSee('Origin');
+        $response->assertSee('Destination');
+        $response->assertSee('Active Tracking Number');
+        $response->assertSee('Inspect Now');
+        $response->assertSee('Bento Grid System Overview');
+        $response->assertSee('Modern Architecture &amp; Unified Core Features', false);
+        $response->assertSee('User Role Matrix');
+        $response->assertSee('Administrator');
+        $response->assertSee('Full Access');
+    }
 }
+

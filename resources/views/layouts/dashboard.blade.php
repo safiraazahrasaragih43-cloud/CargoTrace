@@ -11,12 +11,12 @@
         : 0;
 @endphp
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-cream-50 text-espresso-900">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-cream-50 text-espresso-900">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>CargoTrace - @yield('title', $isStaffConsole ? 'Konsol Operasional' : 'Portal Pelacakan Kargo')</title>
+    <title>CargoTrace - @yield('title', $isStaffConsole ? __('Konsol Operasional') : __('Portal Pelacakan Kargo'))</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +51,7 @@
                     <div>
                         <span class="text-base font-extrabold tracking-tight text-espresso-900">CargoTrace</span>
                         <span class="block text-[10px] font-bold uppercase tracking-widest text-sage-600">
-                            {{ $user->isAdmin() ? 'Konsol Admin' : 'Konsol Staff' }}
+                            {{ $user->isAdmin() ? __('Konsol Admin') : __('Konsol Staff') }}
                         </span>
                     </div>
                 </a>
@@ -185,8 +185,8 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <div class="flex items-center gap-2">
-                        <span class="text-sm font-extrabold text-espresso-900">@yield('page_title', 'Ringkasan Operasional')</span>
-                        <span class="hidden sm:inline-block text-[11px] font-medium text-espresso-400">| Sistem Visibilitas &amp; Pelacakan</span>
+                        <span class="text-sm font-extrabold text-espresso-900">@yield('page_title', __('Ringkasan Operasional'))</span>
+                        <span class="hidden sm:inline-block text-[11px] font-medium text-espresso-400">| {{ __('Sistem Visibilitas & Pelacakan') }}</span>
                     </div>
                 </div>
 
@@ -324,15 +324,15 @@
             <!-- Mobile Responsive Topbar Drawer -->
             <div id="customerMobileMenu" class="hidden md:hidden border-t border-white/70 bg-white/85 backdrop-blur-xl px-4 py-3 space-y-2">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('dashboard') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">Dashboard</a>
+                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('dashboard') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">{{ __('Dashboard') }}</a>
                     <a href="{{ route('shipments.index') }}" class="flex items-center justify-between px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('shipments.*') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">
-                        <span>Pengiriman Saya</span>
+                        <span>{{ __('Pengiriman Saya') }}</span>
                         <span class="font-mono text-[10px]">{{ $totalShipmentsCount }}</span>
                     </a>
-                    <a href="{{ route('tracking.page') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('tracking.page') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">Lacak Kargo</a>
-                    <a href="{{ route('locations.index') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('locations.*') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">Pelabuhan &amp; Hub</a>
+                    <a href="{{ route('tracking.page') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('tracking.page') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">{{ __('Lacak Kargo') }}</a>
+                    <a href="{{ route('locations.index') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('locations.*') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">{{ __('Pelabuhan & Hub') }}</a>
                     <a href="{{ route('notifications.index') }}" class="flex items-center justify-between px-4 py-2 rounded-2xl text-xs font-bold {{ request()->routeIs('notifications.*') ? 'bg-apricot-500 text-white' : 'text-espresso-800 hover:bg-cream-100' }}">
-                        <span>Notifikasi</span>
+                        <span>{{ __('Notifikasi') }}</span>
                         @if($unreadNotifCount > 0)
                             <span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">{{ $unreadNotifCount }}</span>
                         @endif
@@ -341,12 +341,12 @@
                         <span class="text-xs font-bold text-espresso-700">{{ $user->name }}</span>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="px-3 py-1 rounded-full bg-rose-50 text-xs font-bold text-rose-600 cursor-pointer">Keluar</button>
+                            <button type="submit" class="px-3 py-1 rounded-full bg-rose-50 text-xs font-bold text-rose-600 cursor-pointer">{{ __('Keluar') }}</button>
                         </form>
                     </div>
                 @else
-                    <a href="{{ url('/') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold text-espresso-800 hover:bg-cream-100">Beranda</a>
-                    <a href="{{ route('tracking.page') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold text-espresso-800 hover:bg-cream-100">Lacak Kargo Cepat</a>
+                    <a href="{{ url('/') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold text-espresso-800 hover:bg-cream-100">{{ __('Beranda') }}</a>
+                    <a href="{{ route('tracking.page') }}" class="block px-4 py-2 rounded-2xl text-xs font-bold text-espresso-800 hover:bg-cream-100">{{ __('Lacak Kargo Cepat') }}</a>
                 @endauth
             </div>
         </header>
