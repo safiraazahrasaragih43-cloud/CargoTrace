@@ -668,12 +668,11 @@ function initWorldLocationsMap() {
         corridor.segments.forEach(seg => {
             seg.coords.forEach(pt => corridorPoints.push(pt));
 
-            // Create Polyline for the segment
+            // Create Polyline for the segment (Solid line as requested)
             const polyline = window.L.polyline(seg.coords, {
                 color: corridor.color,
-                weight: corridor.type === 'air' ? 3.0 : 3.5,
-                opacity: 0.85,
-                dashArray: corridor.type === 'air' ? '5, 6' : '10, 6',
+                weight: 3.5,
+                opacity: 0.9,
                 lineCap: 'round',
                 lineJoin: 'round'
             });
@@ -683,7 +682,7 @@ function initWorldLocationsMap() {
                 this.setStyle({ weight: 5.5, opacity: 1.0 });
             });
             polyline.on('mouseout', function () {
-                this.setStyle({ weight: corridor.type === 'air' ? 3.0 : 3.5, opacity: 0.85 });
+                this.setStyle({ weight: 3.5, opacity: 0.9 });
             });
 
             // Popup on line click

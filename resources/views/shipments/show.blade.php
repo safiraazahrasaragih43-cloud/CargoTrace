@@ -757,9 +757,10 @@ function initShipmentMap() {
     if (routeCoords.length >= 2) {
         window.L.polyline(routeCoords, {
             color: '#F2994A',
-            weight: 3,
-            opacity: 0.85,
-            dashArray: '8, 6'
+            weight: 3.5,
+            opacity: 0.9,
+            lineCap: 'round',
+            lineJoin: 'round'
         }).addTo(map);
         map.fitBounds(routeCoords, { padding: [36, 36] });
     } else if (routeCoords.length === 1) {
