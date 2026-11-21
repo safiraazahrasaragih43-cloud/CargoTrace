@@ -53,6 +53,16 @@
 
             <!-- Controls & Toggles -->
             <div class="flex items-center gap-2 flex-wrap">
+                <!-- Map Layer Switcher: Google Satellite vs Vector -->
+                <div class="inline-flex p-1 rounded-full bg-cream-100 border border-cream-200 text-xs font-bold shadow-2xs">
+                    <button type="button" id="btnSatelliteMode" onclick="setMapBasemap('satellite')" class="px-3.5 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>🛰️ {{ __('Citra Satelit Google') }}</span>
+                    </button>
+                    <button type="button" id="btnStreetMode" onclick="setMapBasemap('street')" class="px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>🗺️ {{ __('Peta Vektor') }}</span>
+                    </button>
+                </div>
+
                 <button type="button" id="toggleDistancesBtn" onclick="toggleRouteDistances()" class="px-3.5 py-1.5 rounded-full bg-white border border-cream-200 text-espresso-700 hover:bg-cream-100 text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5 text-apricot-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                     <span id="toggleDistancesText">{{ __('Label Jarak: AKTIF') }}</span>
@@ -356,6 +366,8 @@
 
 <script>
 let worldMap = null;
+let googleHybridLayer = null;
+let osmVectorLayer = null;
 let distanceMarkersLayer = null;
 let seaLanesLayer = null;
 let airLanesLayer = null;
@@ -380,13 +392,24 @@ function initWorldLocationsMap() {
         scrollWheelZoom: false,
         worldCopyJump: false,
         minZoom: 2,
-        maxZoom: 18
+        maxZoom: 20
     }).setView([18.0, 85.0], 2);
 
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
+    // 1. Google Maps / Earth Hybrid Satellite Layer (Lush green forests, realistic blue ocean, terrain, roads & labels)
+    googleHybridLayer = window.L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20,
+        attribution: '&copy; Google Earth / Maps Satellite &bull; &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+    // 2. OpenStreetMap Vector Basemap
+    osmVectorLayer = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(worldMap);
+    });
+
+    // Default to Google Hybrid Satellite!
+    googleHybridLayer.addTo(worldMap);
 
     distanceMarkersLayer = window.L.layerGroup().addTo(worldMap);
     seaLanesLayer = window.L.layerGroup().addTo(worldMap);
@@ -668,11 +691,12 @@ function initWorldLocationsMap() {
         corridor.segments.forEach(seg => {
             seg.coords.forEach(pt => corridorPoints.push(pt));
 
-            // Create Polyline for the segment (Solid line as requested)
+            // Create Polyline for the segment
             const polyline = window.L.polyline(seg.coords, {
                 color: corridor.color,
-                weight: 3.5,
-                opacity: 0.9,
+                weight: corridor.type === 'air' ? 3.0 : 3.5,
+                opacity: 0.85,
+                dashArray: corridor.type === 'air' ? '5, 6' : '10, 6',
                 lineCap: 'round',
                 lineJoin: 'round'
             });
@@ -682,7 +706,7 @@ function initWorldLocationsMap() {
                 this.setStyle({ weight: 5.5, opacity: 1.0 });
             });
             polyline.on('mouseout', function () {
-                this.setStyle({ weight: 3.5, opacity: 0.9 });
+                this.setStyle({ weight: corridor.type === 'air' ? 3.0 : 3.5, opacity: 0.85 });
             });
 
             // Popup on line click
@@ -740,6 +764,25 @@ function initWorldLocationsMap() {
 }
 
 // Interactive Toggle Functions
+function setMapBasemap(mode) {
+    if (!worldMap || !googleHybridLayer || !osmVectorLayer) return;
+    const btnSat = document.getElementById('btnSatelliteMode');
+    const btnStr = document.getElementById('btnStreetMode');
+    if (mode === 'satellite') {
+        worldMap.removeLayer(osmVectorLayer);
+        googleHybridLayer.addTo(worldMap);
+        googleHybridLayer.bringToBack();
+        if (btnSat) btnSat.className = 'px-3.5 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnStr) btnStr.className = 'px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
+    } else {
+        worldMap.removeLayer(googleHybridLayer);
+        osmVectorLayer.addTo(worldMap);
+        osmVectorLayer.bringToBack();
+        if (btnSat) btnSat.className = 'px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnStr) btnStr.className = 'px-3.5 py-1 rounded-full bg-sage-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
+    }
+}
+
 function toggleRouteDistances() {
     if (!worldMap || !distanceMarkersLayer) return;
     isDistancesVisible = !isDistancesVisible;

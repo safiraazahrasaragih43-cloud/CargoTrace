@@ -719,9 +719,11 @@ function initShipmentMap() {
 
     const map = window.L.map('shipmentMap', { scrollWheelZoom: false }).setView([1.2644, 103.822], 3);
 
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    // Google Maps / Earth Hybrid Satellite Layer (Lush green forests, realistic blue ocean, coastlines & hybrid labels)
+    window.L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        subdomains: ['0', '1', '2', '3'],
+        maxZoom: 20,
+        attribution: '&copy; Google Earth / Maps Satellite &bull; &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
     const routeCoords = [];
@@ -757,10 +759,9 @@ function initShipmentMap() {
     if (routeCoords.length >= 2) {
         window.L.polyline(routeCoords, {
             color: '#F2994A',
-            weight: 3.5,
-            opacity: 0.9,
-            lineCap: 'round',
-            lineJoin: 'round'
+            weight: 3,
+            opacity: 0.85,
+            dashArray: '8, 6'
         }).addTo(map);
         map.fitBounds(routeCoords, { padding: [36, 36] });
     } else if (routeCoords.length === 1) {
