@@ -1,22 +1,22 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Notifikasi Sistem')
-@section('page_title', 'Pusat Notifikasi Operasional')
+@section('title', __('Notifikasi Sistem'))
+@section('page_title', __('Pusat Notifikasi Operasional'))
 
 @section('content')
 <div class="space-y-6 max-w-5xl mx-auto">
     <!-- Top Header & Mark All Action -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-espresso-900">Notifikasi Sistem</h1>
+            <h1 class="text-2xl font-extrabold text-espresso-900">{{ __('Notifikasi Sistem') }}</h1>
             <p class="text-xs text-espresso-500 mt-0.5">
-                Pembaruan status pengiriman, peringatan keterlambatan ETA, dan laporan kendala secara langsung.
+                {{ __('Pembaruan status pengiriman, peringatan keterlambatan ETA, dan laporan kendala secara langsung.') }}
             </p>
         </div>
 
         <div class="flex items-center gap-3">
             <span class="px-3.5 py-1.5 rounded-full glass-sage text-xs font-bold text-sage-800">
-                Belum Dibaca: <strong class="text-espresso-900">{{ $unreadCount ?? 0 }}</strong>
+                {{ __('Belum Dibaca:') }} <strong class="text-espresso-900">{{ $unreadCount ?? 0 }}</strong>
             </span>
 
             @if(($unreadCount ?? 0) > 0)
@@ -24,7 +24,7 @@
                     @csrf
                     <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sage-500 hover:bg-sage-600 text-white text-xs font-bold shadow-md transition-all cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span>Tandai Semua Dibaca</span>
+                        <span>{{ __('Tandai Semua Dibaca') }}</span>
                     </button>
                 </form>
             @endif
@@ -60,7 +60,7 @@
                         <div class="flex flex-wrap items-center gap-2">
                             <h3 class="text-sm font-extrabold text-espresso-900">{{ $notif->title }}</h3>
                             @if(!$notif->isRead())
-                                <span class="px-2 py-0.5 rounded-full bg-apricot-500 text-white text-[10px] font-bold uppercase tracking-wider">Baru</span>
+                                <span class="px-2 py-0.5 rounded-full bg-apricot-500 text-white text-[10px] font-bold uppercase tracking-wider">{{ __('Baru') }}</span>
                             @endif
                             <span class="px-2 py-0.5 rounded-full bg-cream-100 text-espresso-600 text-[10px] font-mono font-bold">{{ $notif->type }}</span>
                         </div>
@@ -71,7 +71,7 @@
                             <span>{{ $notif->created_at?->diffForHumans() }} ({{ $notif->created_at?->format('d M Y H:i') }})</span>
                             @if($notif->shipment)
                                 <a href="{{ route('shipments.show', $notif->shipment->tracking_number) }}" class="font-mono font-bold text-sage-700 hover:underline">
-                                    Resi: {{ $notif->shipment->tracking_number }} &rarr;
+                                    {{ __('Resi:') }} {{ $notif->shipment->tracking_number }} &rarr;
                                 </a>
                             @endif
                         </div>
@@ -84,26 +84,26 @@
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-sage-50 border border-cream-200 text-xs font-bold text-espresso-800 shadow-xs transition-colors cursor-pointer">
-                                Tandai Dibaca
+                                {{ __('Tandai Dibaca') }}
                             </button>
                         </form>
                     @else
                         <span class="px-3 py-1 rounded-full bg-cream-100 text-[11px] font-semibold text-espresso-500">
-                            Dibaca
+                            {{ __('Dibaca') }}
                         </span>
                     @endif
                 </div>
             </div>
         @empty
             <div class="p-12 text-center space-y-2">
-                <p class="text-sm font-bold text-espresso-800">Belum ada notifikasi saat ini</p>
-                <p class="text-xs text-espresso-500">Notifikasi otomatis muncul saat pengiriman dibuat, status berubah, atau terjadi kendala rute.</p>
+                <p class="text-sm font-bold text-espresso-800">{{ __('Belum ada notifikasi saat ini') }}</p>
+                <p class="text-xs text-espresso-500">{{ __('Notifikasi otomatis muncul saat pengiriman dibuat, status berubah, atau terjadi kendala rute.') }}</p>
             </div>
         @endforelse
     </div>
 
     @if($notifications->hasPages())
-        <div class="p-4 rounded-2xl glass-card">
+        <div class="p-4 rounded-3xl glass-card">
             {{ $notifications->links() }}
         </div>
     @endif

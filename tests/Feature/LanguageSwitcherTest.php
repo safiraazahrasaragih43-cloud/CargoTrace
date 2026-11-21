@@ -103,5 +103,63 @@ class LanguageSwitcherTest extends TestCase
         $response->assertSee('Administrator');
         $response->assertSee('Full Access');
     }
+
+    public function test_inner_console_pages_render_fully_in_english_when_switched(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // 1. Audit Logs Page
+        $auditResponse = $this->withSession(['locale' => 'en'])
+            ->actingAs($admin)
+            ->get('/audit-logs');
+        $auditResponse->assertStatus(200);
+        $auditResponse->assertSee('System Activity Audit Trail');
+        $auditResponse->assertSee('Admin Only');
+        $auditResponse->assertSee('Security &amp; Operational Compliance', false);
+
+        // 2. Carriers Page
+        $carrierResponse = $this->withSession(['locale' => 'en'])
+            ->actingAs($admin)
+            ->get('/carriers');
+        $carrierResponse->assertStatus(200);
+        $carrierResponse->assertSee('Global Carriers &amp; Airlines Directory', false);
+        $carrierResponse->assertSee('Register New Carrier');
+
+        // 3. Locations Page
+        $locationResponse = $this->withSession(['locale' => 'en'])
+            ->actingAs($admin)
+            ->get('/locations');
+        $locationResponse->assertStatus(200);
+        $locationResponse->assertSee('Global Ports &amp; Logistics Hubs Directory', false);
+        $locationResponse->assertSee('Global Ports &amp; Hubs Network Map', false);
+
+        // 4. Notifications Page
+        $notifResponse = $this->withSession(['locale' => 'en'])
+            ->actingAs($admin)
+            ->get('/notifications');
+        $notifResponse->assertStatus(200);
+        $notifResponse->assertSee('Operational Notifications Center');
+
+        // 5. Tracking Quick Page
+        $trackResponse = $this->withSession(['locale' => 'en'])
+            ->actingAs($admin)
+            ->get('/track');
+        $trackResponse->assertStatus(200);
+        $trackResponse->assertSee('Real-Time REST Telemetry');
+        $trackResponse->assertSee('Track Shipment');
+
+        // 6. Login & Register Pages (as guest)
+        auth()->logout();
+        $loginResponse = $this->withSession(['locale' => 'en'])->get('/login');
+        $loginResponse->assertStatus(200);
+        $loginResponse->assertSee('Sign in to CargoTrace');
+        $loginResponse->assertSee('Quick Demo Accounts');
+
+        $registerResponse = $this->withSession(['locale' => 'en'])->get('/register');
+        $registerResponse->assertStatus(200);
+        $registerResponse->assertSee('Create New Account');
+        $registerResponse->assertSee('Customer Registration');
+    }
 }
+
 

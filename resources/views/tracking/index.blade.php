@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Lacak Kargo Cepat')
-@section('page_title', 'Lacak Kargo Cepat')
+@section('title', __('Lacak Kargo Cepat'))
+@section('page_title', __('Lacak Kargo Cepat'))
 
 @section('content')
 <div class="space-y-6 max-w-5xl mx-auto">
@@ -12,7 +12,7 @@
         <div class="relative z-10 max-w-2xl space-y-5">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-xs font-bold">
                 <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                Telemetri REST Real-Time
+                {{ __('Telemetri REST Real-Time') }}
             </span>
             <h1 class="text-2xl sm:text-4xl font-extrabold leading-tight">
                 {{ __('Lacak pengiriman apa pun di seluruh pelabuhan & checkpoint global') }}
@@ -33,7 +33,7 @@
 
     <!-- Sample Quick Picks -->
     <div class="space-y-3">
-        <h2 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Pengiriman Terkini</h2>
+        <h2 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">{{ __('Pengiriman Terkini') }}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             @foreach($recentShipments as $sample)
                 <button type="button" onclick="selectTrack('{{ $sample->tracking_number }}')" class="text-left p-4 rounded-3xl bg-white hover:bg-cream-100/70 border border-cream-200 shadow-xs transition-all space-y-2 cursor-pointer">
@@ -42,7 +42,7 @@
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-apricot-100 text-apricot-600">{{ $sample->status }}</span>
                     </div>
                     <div class="text-xs font-bold text-espresso-900 truncate">
-                        {{ $sample->origin?->name ?? 'Asal' }} &rarr; {{ $sample->destination?->name ?? 'Tujuan' }}
+                        {{ $sample->origin?->name ?? __('Asal') }} &rarr; {{ $sample->destination?->name ?? __('Tujuan') }}
                     </div>
                 </button>
             @endforeach
@@ -69,7 +69,7 @@ async function liveTrackLookup() {
     const card = document.getElementById('liveTrackResult');
     const body = document.getElementById('liveTrackBody');
     card.classList.remove('hidden');
-    body.innerHTML = '<p class="text-sm text-espresso-500">Mengambil detail pengiriman secara langsung...</p>';
+    body.innerHTML = '<p class="text-sm text-espresso-500">' + @json(__('Mengambil detail pengiriman secara langsung...')) + '</p>';
 
     try {
         const res = await fetch('/api/v1/tracking/' + encodeURIComponent(val));
@@ -78,44 +78,54 @@ async function liveTrackLookup() {
         if (res.ok && json.success) {
             const s = json.data;
             const events = s.tracking_events || [];
+            const txtRef = @json(__('Referensi Nomor Resi'));
+            const txtTimeline = @json(__('Timeline Lengkap'));
+            const txtCarrier = @json(__('Ekspedisi'));
+            const txtOrigin = @json(__('Asal'));
+            const txtDest = @json(__('Tujuan'));
+            const txtCurrLoc = @json(__('Posisi Saat Ini'));
+            const txtNone = @json(__('Tidak Ada'));
+            const txtAtOrigin = @json(__('Di Lokasi Asal'));
+            const txtHistory = @json(__('Riwayat Checkpoint'));
+            const txtNoEvents = @json(__('Belum ada riwayat checkpoint tercatat.'));
 
             body.innerHTML = `
                 <div class="space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-cream-200">
                         <div>
-                            <span class="text-xs font-bold text-espresso-500 uppercase">Referensi Nomor Resi</span>
+                            <span class="text-xs font-bold text-espresso-500 uppercase">${txtRef}</span>
                             <h3 class="text-2xl font-extrabold font-mono text-sage-700">${esc(s.tracking_number)}</h3>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-sage-100 text-sage-700">${esc(s.status)}</span>
                             <a href="/shipments/${encodeURIComponent(s.tracking_number)}" class="px-4 py-2 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-md transition-all">
-                                Timeline Lengkap &rarr;
+                                ${txtTimeline} &rarr;
                             </a>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                            <span class="text-espresso-500 block font-semibold">Ekspedisi</span>
-                            <strong class="text-espresso-900">${s.carrier ? esc(s.carrier.name) : 'Tidak Ada'}</strong>
+                            <span class="text-espresso-500 block font-semibold">${txtCarrier}</span>
+                            <strong class="text-espresso-900">${s.carrier ? esc(s.carrier.name) : txtNone}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                            <span class="text-espresso-500 block font-semibold">Asal</span>
-                            <strong class="text-espresso-900">${s.origin ? esc(s.origin.name) : 'Tidak Ada'}</strong>
+                            <span class="text-espresso-500 block font-semibold">${txtOrigin}</span>
+                            <strong class="text-espresso-900">${s.origin ? esc(s.origin.name) : txtNone}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                            <span class="text-espresso-500 block font-semibold">Tujuan</span>
-                            <strong class="text-espresso-900">${s.destination ? esc(s.destination.name) : 'Tidak Ada'}</strong>
+                            <span class="text-espresso-500 block font-semibold">${txtDest}</span>
+                            <strong class="text-espresso-900">${s.destination ? esc(s.destination.name) : txtNone}</strong>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                            <span class="text-espresso-500 block font-semibold">Posisi Saat Ini</span>
-                            <strong class="text-sage-700">${s.current_location ? esc(s.current_location.name) : 'Di Lokasi Asal'}</strong>
+                            <span class="text-espresso-500 block font-semibold">${txtCurrLoc}</span>
+                            <strong class="text-sage-700">${s.current_location ? esc(s.current_location.name) : txtAtOrigin}</strong>
                         </div>
                     </div>
 
                     ${events.length ? `
                         <div class="space-y-2.5">
-                            <h4 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">Riwayat Checkpoint (${events.length})</h4>
+                            <h4 class="text-xs font-bold text-espresso-500 uppercase tracking-wider">${txtHistory} (${events.length})</h4>
                             <div class="space-y-2">
                                 ${events.slice().reverse().map(ev => `
                                     <div class="p-3.5 rounded-2xl bg-cream-50/70 border border-cream-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
@@ -124,19 +134,19 @@ async function liveTrackLookup() {
                                             <strong class="text-espresso-900">${esc(ev.location_name)}</strong>
                                             <p class="text-espresso-600 mt-1">${esc(ev.description)}</p>
                                         </div>
-                                        <span class="font-mono text-[11px] text-espresso-500 shrink-0">${esc(new Date(ev.event_time).toLocaleString('id-ID'))}</span>
+                                        <span class="font-mono text-[11px] text-espresso-500 shrink-0">${esc(new Date(ev.event_time).toLocaleString())}</span>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
-                    ` : '<p class="text-xs text-espresso-500">Belum ada riwayat checkpoint tercatat.</p>'}
+                    ` : `<p class="text-xs text-espresso-500">${txtNoEvents}</p>`}
                 </div>
             `;
         } else {
-            body.innerHTML = `<p class="text-sm font-bold text-rose-600">${esc(json.message) || 'Nomor resi pengiriman tidak ditemukan.'}</p>`;
+            body.innerHTML = `<p class="text-sm font-bold text-rose-600">${esc(json.message) || @json(__('Nomor resi pengiriman tidak ditemukan.'))}</p>`;
         }
     } catch (e) {
-        body.innerHTML = '<p class="text-sm font-bold text-rose-600">Terjadi kesalahan saat menghubungi API pelacakan.</p>';
+        body.innerHTML = '<p class="text-sm font-bold text-rose-600">' + @json(__('Terjadi kesalahan saat menghubungi API pelacakan.')) + '</p>';
     }
 }
 
