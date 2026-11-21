@@ -1,21 +1,21 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Daftar Pengiriman')
-@section('page_title', 'Daftar Pengiriman')
+@section('title', __('Daftar Pengiriman'))
+@section('page_title', __('Daftar Pengiriman'))
 
 @section('content')
 <div class="space-y-6 max-w-7xl mx-auto">
     <!-- Top Header & Actions -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-espresso-900">Daftar Pengiriman Global</h1>
-            <p class="text-xs text-espresso-500 mt-0.5">Cari, saring, buat pengiriman baru, dan pantau siklus perjalanan secara menyeluruh.</p>
+            <h1 class="text-2xl font-extrabold text-espresso-900">{{ __('Daftar Pengiriman Global') }}</h1>
+            <p class="text-xs text-espresso-500 mt-0.5">{{ __('Cari, saring, buat pengiriman baru, dan pantau siklus perjalanan secara menyeluruh.') }}</p>
         </div>
 
         @if(auth()->check() && auth()->user()->can('create', \App\Models\Shipment::class))
             <button onclick="document.getElementById('newShipmentModal').classList.remove('hidden')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/25 transition-all cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>Buat Pengiriman</span>
+                <span>{{ __('Buat Pengiriman') }}</span>
             </button>
         @endif
     </div>
@@ -48,21 +48,21 @@
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-espresso-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
-                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nomor resi, nama pelanggan, atau ekspedisi..."
+                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="{{ __('Cari nomor resi, nama pelanggan, atau ekspedisi...') }}"
                            class="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs text-espresso-900 placeholder-espresso-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
                 </div>
                 <select name="status" class="px-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs font-semibold text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
-                    <option value="">Semua Status</option>
+                    <option value="">{{ __('Semua Status') }}</option>
                     @foreach(\App\Models\Shipment::STATUSES as $st)
                         <option value="{{ $st }}" {{ ($filters['status'] ?? '') === $st ? 'selected' : '' }}>{{ $st }}</option>
                     @endforeach
                 </select>
                 <select name="sort_by" class="px-4 py-2.5 bg-white/80 border border-cream-200 rounded-2xl text-xs font-semibold text-espresso-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sage-500">
-                    <option value="latest" {{ ($filters['sort_by'] ?? 'latest') === 'latest' ? 'selected' : '' }}>Urutkan: Terbaru</option>
-                    <option value="oldest" {{ ($filters['sort_by'] ?? '') === 'oldest' ? 'selected' : '' }}>Urutkan: Terlama</option>
-                    <option value="eta_asc" {{ ($filters['sort_by'] ?? '') === 'eta_asc' ? 'selected' : '' }}>ETA Terdekat</option>
-                    <option value="eta_desc" {{ ($filters['sort_by'] ?? '') === 'eta_desc' ? 'selected' : '' }}>ETA Terjauh</option>
-                    <option value="delay_desc" {{ ($filters['sort_by'] ?? '') === 'delay_desc' ? 'selected' : '' }}>Keterlambatan Tertinggi</option>
+                    <option value="latest" {{ ($filters['sort_by'] ?? 'latest') === 'latest' ? 'selected' : '' }}>{{ __('Urutkan: Terbaru') }}</option>
+                    <option value="oldest" {{ ($filters['sort_by'] ?? '') === 'oldest' ? 'selected' : '' }}>{{ __('Urutkan: Terlama') }}</option>
+                    <option value="eta_asc" {{ ($filters['sort_by'] ?? '') === 'eta_asc' ? 'selected' : '' }}>{{ __('ETA Terdekat') }}</option>
+                    <option value="eta_desc" {{ ($filters['sort_by'] ?? '') === 'eta_desc' ? 'selected' : '' }}>{{ __('ETA Terjauh') }}</option>
+                    <option value="delay_desc" {{ ($filters['sort_by'] ?? '') === 'delay_desc' ? 'selected' : '' }}>{{ __('Keterlambatan Tertinggi') }}</option>
                 </select>
             </div>
 
@@ -144,14 +144,14 @@
             <table class="min-w-full divide-y divide-cream-200 text-left text-xs">
                 <thead class="bg-sage-50 text-espresso-600 font-bold uppercase tracking-wider">
                     <tr>
-                        <th class="px-5 py-3.5">Nomor Resi</th>
-                        <th class="px-5 py-3.5">Pelanggan</th>
-                        <th class="px-5 py-3.5">Ekspedisi</th>
-                        <th class="px-5 py-3.5">Jalur Rute</th>
-                        <th class="px-5 py-3.5">Status</th>
-                        <th class="px-5 py-3.5">Estimasi Tiba</th>
-                        <th class="px-5 py-3.5">Muatan</th>
-                        <th class="px-5 py-3.5 text-right">Aksi</th>
+                        <th class="px-5 py-3.5">{{ __('Nomor Resi') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Pelanggan') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Ekspedisi') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Jalur Rute') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Status') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Estimasi Tiba') }}</th>
+                        <th class="px-5 py-3.5">{{ __('Muatan') }}</th>
+                        <th class="px-5 py-3.5 text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-cream-100 text-espresso-800">

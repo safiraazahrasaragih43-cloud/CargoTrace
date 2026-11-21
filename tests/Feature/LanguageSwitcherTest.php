@@ -33,6 +33,16 @@ class LanguageSwitcherTest extends TestCase
         $dashboardResponse->assertStatus(200);
         $dashboardResponse->assertSee('Operational Dashboard');
         $dashboardResponse->assertSee('Shipments Manifest');
+        $dashboardResponse->assertSee('Cargo Operations Center');
+        $dashboardResponse->assertSee('Welcome back');
+        $dashboardResponse->assertSee('Active shipment cycles running');
+        $dashboardResponse->assertSee('Europe Route');
+        $dashboardResponse->assertSee('Shipment Status Distribution');
+        $dashboardResponse->assertSee('Volume by Carrier');
+        $dashboardResponse->assertSee('Route Exception Analysis');
+        $dashboardResponse->assertSee('Recent Shipments List');
+        $dashboardResponse->assertSee('Active Ocean &amp; Air Carriers', false);
+        $dashboardResponse->assertSee('Global Ports &amp; Logistics Hubs', false);
         $this->assertEquals('en', app()->getLocale());
     }
 

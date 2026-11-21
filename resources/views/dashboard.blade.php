@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Operasional')
-@section('page_title', 'Pusat Operasional Kargo')
+@section('title', __('Dashboard Operasional'))
+@section('page_title', __('Pusat Operasional Kargo'))
 
 @section('content')
 @php
@@ -18,20 +18,20 @@
             <div>
                 <div class="flex items-center gap-2 mb-2.5">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-xs text-white">
-                        {{ $isCustomer ? 'Layanan Pelanggan' : 'Peran: ' . ucfirst(Auth::user()->role) }}
+                        {{ $isCustomer ? __('Layanan Pelanggan') : __('Peran: :role', ['role' => ucfirst(Auth::user()->role)]) }}
                     </span>
                     @unless($isCustomer)
-                        <span class="text-xs text-sage-100 font-medium">Terautentikasi melalui Sanctum/Session</span>
+                        <span class="text-xs text-sage-100 font-medium">{{ __('Terautentikasi melalui Sanctum/Session') }}</span>
                     @endunless
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white">
-                    {{ $isCustomer ? 'Halo, ' . Auth::user()->name . '!' : 'Selamat datang kembali, ' . Auth::user()->name . '!' }}
+                    {{ $isCustomer ? __('Halo, :name!', ['name' => Auth::user()->name]) : __('Selamat datang kembali, :name!', ['name' => Auth::user()->name]) }}
                 </h1>
                 <p class="mt-1 text-sm text-sage-50">
                     @if($isCustomer)
-                        Pantau posisi dan estimasi kedatangan pengiriman kargo Anda dengan mudah.
+                        {{ __('Pantau posisi dan estimasi kedatangan pengiriman kargo Anda dengan mudah.') }}
                     @else
-                        Portal Visibilitas CargoTrace &mdash; {{ Auth::user()->company_name ?: 'Jaringan Rantai Pasok Global' }}
+                        {{ __('Portal Visibilitas CargoTrace') }} &mdash; {{ Auth::user()->company_name ?: __('Jaringan Rantai Pasok Global') }}
                     @endif
                 </p>
             </div>
@@ -39,7 +39,7 @@
             <!-- Quick Track Input Widget -->
             <div id="quick-track" class="w-full md:w-auto">
                 <form id="trackForm" onsubmit="event.preventDefault(); quickTrack();" class="flex items-center gap-2 bg-white/15 backdrop-blur-sm p-1.5 rounded-2xl border border-white/20">
-                    <input id="trackInput" type="text" placeholder="Masukkan Nomor Resi (CT-...)"
+                    <input id="trackInput" type="text" placeholder="{{ __('Masukkan Nomor Resi (CT-...)') }}"
                            class="w-full sm:w-64 px-3.5 py-2.5 bg-white rounded-xl text-xs font-mono placeholder-espresso-400 text-espresso-900 focus:outline-none focus:ring-2 focus:ring-apricot-400 transition-all">
                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-lg shadow-apricot-500/30 transition-all whitespace-nowrap cursor-pointer">
                         {{ __('Lacak Kargo') }}
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-espresso-900">{{ $stats['active'] ?? 0 }}</p>
-            <p class="text-[11px] font-semibold text-sage-600 mt-1">{{ $isCustomer ? 'Sedang diproses' : 'Siklus pengiriman berjalan' }}</p>
+            <p class="text-[11px] font-semibold text-sage-600 mt-1">{{ $isCustomer ? __('Sedang diproses') : __('Siklus pengiriman berjalan') }}</p>
         </div>
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-apricot-600">{{ $stats['in_transit'] ?? 0 }}</p>
-            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? 'Menuju pelabuhan tujuan' : 'Antar titik pelabuhan/hub' }}</p>
+            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? __('Menuju pelabuhan tujuan') : __('Antar titik pelabuhan/hub') }}</p>
         </div>
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
@@ -81,7 +81,7 @@
                 </div>
             </div>
             <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-rose-600">{{ $stats['delayed'] ?? 0 }}</p>
-            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? 'Mengalami penyesuaian ETA' : 'Terdeteksi aturan ETA' }}</p>
+            <p class="text-[11px] font-semibold text-espresso-500 mt-1">{{ $isCustomer ? __('Mengalami penyesuaian ETA') : __('Terdeteksi aturan ETA') }}</p>
         </div>
 
         <div class="p-5 sm:p-6 rounded-3xl glass-card-strong">
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <p class="mt-3 text-2xl sm:text-3xl font-extrabold text-sage-700">{{ $stats['delivered'] ?? 0 }}</p>
-            <p class="text-[11px] font-semibold text-sage-600 mt-1">Status selesai diterima</p>
+            <p class="text-[11px] font-semibold text-sage-600 mt-1">{{ __('Status selesai diterima') }}</p>
         </div>
     </div>
 
@@ -101,34 +101,34 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="p-4 rounded-2xl glass-sage flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">Ketepatan Tiba (On-Time Rate)</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-sage-700">{{ __('Ketepatan Tiba (On-Time Rate)') }}</p>
                     <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['on_time_delivery_rate'] ?? 100 }}%</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-sage-700">Rute Eropa</span>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-sage-700">{{ __('Rute Eropa') }}</span>
             </div>
 
             <div class="p-4 rounded-2xl glass-card border-apricot-200/80 flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">Rata-Rata Keterlambatan</p>
-                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} jam</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-apricot-600">{{ __('Rata-Rata Keterlambatan') }}</p>
+                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['average_delay_hours'] ?? 0 }} {{ __('jam') }}</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-apricot-600">Rute Amerika</span>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-apricot-600">{{ __('Rute Amerika') }}</span>
             </div>
 
             <div class="p-4 rounded-2xl glass-card flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">Waktu Penyelesaian Kendala</p>
-                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} jam</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-espresso-600">{{ __('Waktu Penyelesaian Kendala') }}</p>
+                    <p class="text-xl font-extrabold text-espresso-900 mt-0.5">{{ $kpis['avg_exception_resolution_hours'] ?? 0 }} {{ __('jam') }}</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-espresso-700">Rute Australia</span>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-espresso-700">{{ __('Rute Australia') }}</span>
             </div>
 
             <div class="p-4 rounded-2xl glass-card border-rose-200/80 flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Kendala Terbuka (Exceptions)</p>
-                    <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} aktif</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700">{{ __('Kendala Terbuka (Exceptions)') }}</p>
+                    <p class="text-xl font-extrabold text-rose-700 mt-0.5">{{ $kpis['open_exceptions_count'] ?? 0 }} {{ __('aktif') }}</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-rose-600">Perlu Tindak</span>
+                <span class="px-2.5 py-1 rounded-full bg-white/80 text-[10px] font-bold text-rose-600">{{ __('Perlu Tindak') }}</span>
             </div>
         </div>
 
@@ -138,14 +138,14 @@
             <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-sm font-extrabold text-espresso-900">Distribusi Status Pengiriman</h3>
-                        <p class="text-[11px] text-espresso-500">Proporsi status aktif &amp; selesai</p>
+                        <h3 class="text-sm font-extrabold text-espresso-900">{{ __('Distribusi Status Pengiriman') }}</h3>
+                        <p class="text-[11px] text-espresso-500">{{ __('Proporsi status aktif & selesai') }}</p>
                     </div>
                     <span class="px-2.5 py-1 rounded-full bg-sage-100/90 text-[10px] font-bold text-sage-700">Total: {{ $stats['total'] ?? 0 }}</span>
                 </div>
                 <div class="relative h-56 flex items-center justify-center">
                     <canvas id="statusChart"></canvas>
-                    <p id="statusChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data status pengiriman.</p>
+                    <p id="statusChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">{{ __('Belum ada data status pengiriman.') }}</p>
                 </div>
             </div>
 
@@ -153,14 +153,14 @@
             <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-sm font-extrabold text-espresso-900">Volume per Ekspedisi</h3>
-                        <p class="text-[11px] text-espresso-500">Muatan aktif tiap mitra angkutan</p>
+                        <h3 class="text-sm font-extrabold text-espresso-900">{{ __('Volume per Ekspedisi') }}</h3>
+                        <p class="text-[11px] text-espresso-500">{{ __('Muatan aktif tiap mitra angkutan') }}</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-apricot-100/90 text-[10px] font-bold text-apricot-600">Mitra Aktif</span>
+                    <span class="px-2.5 py-1 rounded-full bg-apricot-100/90 text-[10px] font-bold text-apricot-600">{{ __('Mitra Aktif') }}</span>
                 </div>
                 <div class="relative h-56 flex items-center justify-center">
                     <canvas id="carrierChart"></canvas>
-                    <p id="carrierChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Belum ada data volume ekspedisi.</p>
+                    <p id="carrierChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">{{ __('Belum ada data volume ekspedisi.') }}</p>
                 </div>
             </div>
 
@@ -168,14 +168,14 @@
             <div class="p-6 rounded-3xl glass-card-strong flex flex-col justify-between space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-sm font-extrabold text-espresso-900">Analisis Kendala Rute</h3>
-                        <p class="text-[11px] text-espresso-500">CUSTOMS, WEATHER, DOCS &amp; lainnya</p>
+                        <h3 class="text-sm font-extrabold text-espresso-900">{{ __('Analisis Kendala Rute') }}</h3>
+                        <p class="text-[11px] text-espresso-500">{{ __('CUSTOMS, WEATHER, DOCS & lainnya') }}</p>
                     </div>
                     <span class="px-2.5 py-1 rounded-full bg-rose-100/90 text-[10px] font-bold text-rose-700">Monitoring SLA</span>
                 </div>
                 <div class="relative h-56 flex items-center justify-center">
                     <canvas id="exceptionChart"></canvas>
-                    <p id="exceptionChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">Tidak ada catatan kendala saat ini.</p>
+                    <p id="exceptionChartEmpty" class="hidden text-xs text-espresso-400 font-semibold text-center">{{ __('Tidak ada catatan kendala saat ini.') }}</p>
                 </div>
             </div>
         </div>
@@ -186,9 +186,9 @@
             <div class="flex items-center justify-between">
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-rose-700 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                    Peringatan Kendala Operasional Aktif
+                    {{ __('Peringatan Kendala Operasional Aktif') }}
                 </h3>
-                <span class="text-[11px] font-mono text-espresso-500">{{ $openExceptions->count() }} terbuka</span>
+                <span class="text-[11px] font-mono text-espresso-500">{{ $openExceptions->count() }} {{ __('terbuka') }}</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
                 @foreach($openExceptions as $ex)
@@ -212,9 +212,9 @@
         <div class="flex items-center justify-between border-b border-cream-200 pb-3">
             <h3 class="text-sm font-extrabold text-espresso-900 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-sage-500 animate-ping"></span>
-                <span>Hasil Pelacakan Pengiriman Langsung</span>
+                <span>{{ __('Hasil Pelacakan Pengiriman Langsung') }}</span>
             </h3>
-            <button onclick="document.getElementById('trackResultModal').classList.add('hidden')" class="px-3 py-1 rounded-full bg-cream-100 hover:bg-cream-200 text-xs font-bold text-espresso-600 cursor-pointer">&times; Tutup</button>
+            <button onclick="document.getElementById('trackResultModal').classList.add('hidden')" class="px-3 py-1 rounded-full bg-cream-100 hover:bg-cream-200 text-xs font-bold text-espresso-600 cursor-pointer">&times; {{ __('Tutup') }}</button>
         </div>
         <div id="trackResultBody" class="text-xs text-espresso-800 font-mono"></div>
     </div>
@@ -223,19 +223,19 @@
     <div id="shipments-section" class="rounded-3xl glass-card-strong overflow-hidden">
         <div class="p-6 border-b border-cream-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-base font-extrabold text-espresso-900">Daftar Pengiriman Terkini</h2>
+                <h2 class="text-base font-extrabold text-espresso-900">{{ __('Daftar Pengiriman Terkini') }}</h2>
                 <p class="text-xs text-espresso-500 mt-0.5">
                     @if(Auth::user()->isCustomer())
-                        Menampilkan pengiriman yang terhubung langsung dengan akun pelanggan Anda.
+                        {{ __('Menampilkan pengiriman yang terhubung langsung dengan akun pelanggan Anda.') }}
                     @else
-                        Konsol operasional utama untuk memantau seluruh pengiriman pelanggan.
+                        {{ __('Konsol operasional utama untuk memantau seluruh pengiriman pelanggan.') }}
                     @endif
                 </p>
             </div>
             <div class="flex items-center gap-2.5">
                 <span class="px-3.5 py-1.5 rounded-full bg-cream-100 text-xs font-bold text-espresso-700">Total: <strong class="text-espresso-900">{{ $shipments->total() }}</strong></span>
                 <a href="{{ route('shipments.index') }}" class="px-4 py-1.5 rounded-full bg-sage-500 hover:bg-sage-600 text-white text-xs font-bold transition-colors">
-                    Buka Semua Daftar &rarr;
+                    {{ __('Buka Semua Daftar') }} &rarr;
                 </a>
             </div>
         </div>
@@ -244,16 +244,16 @@
             <table class="min-w-full divide-y divide-cream-200 text-left text-xs">
                 <thead class="bg-sage-50 text-espresso-600 font-bold uppercase tracking-wider">
                     <tr>
-                        <th scope="col" class="px-5 py-3.5">Nomor Resi</th>
+                        <th scope="col" class="px-5 py-3.5">{{ __('Nomor Resi') }}</th>
                         @unless($isCustomer)
-                            <th scope="col" class="px-5 py-3.5">Pelanggan</th>
+                            <th scope="col" class="px-5 py-3.5">{{ __('Pelanggan') }}</th>
                         @endunless
-                        <th scope="col" class="px-5 py-3.5">Ekspedisi</th>
-                        <th scope="col" class="px-5 py-3.5">Asal &rarr; Tujuan</th>
-                        <th scope="col" class="px-5 py-3.5">Status</th>
-                        <th scope="col" class="px-5 py-3.5">Estimasi Tiba</th>
-                        <th scope="col" class="px-5 py-3.5">Muatan</th>
-                        <th scope="col" class="px-5 py-3.5 text-right">Aksi</th>
+                        <th scope="col" class="px-5 py-3.5">{{ __('Ekspedisi') }}</th>
+                        <th scope="col" class="px-5 py-3.5">{!! __('Asal &rarr; Tujuan') !!}</th>
+                        <th scope="col" class="px-5 py-3.5">{{ __('Status') }}</th>
+                        <th scope="col" class="px-5 py-3.5">{{ __('Estimasi Tiba') }}</th>
+                        <th scope="col" class="px-5 py-3.5">{{ __('Muatan') }}</th>
+                        <th scope="col" class="px-5 py-3.5 text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-cream-100 text-espresso-800">
@@ -270,16 +270,16 @@
                             @endunless
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-full bg-cream-100 text-espresso-800 font-semibold">
-                                    {{ $shipment->carrier?->name ?: 'Belum Ditentukan' }}
+                                    {{ $shipment->carrier?->name ?: __('Belum Ditentukan') }}
                                 </span>
                             </td>
                             <td class="px-5 py-4">
                                 <div class="text-espresso-900 font-semibold">{{ $shipment->origin?->name }} &rarr; {{ $shipment->destination?->name }}</div>
                                 <div class="text-[11px] text-espresso-500">
                                     @if($shipment->currentLocation)
-                                        Posisi saat ini: <span class="text-sage-700 font-semibold">{{ $shipment->currentLocation->name }}</span>
+                                        {{ __('Posisi saat ini:') }} <span class="text-sage-700 font-semibold">{{ $shipment->currentLocation->name }}</span>
                                     @else
-                                        Menunggu keberangkatan awal
+                                        {{ __('Menunggu keberangkatan awal') }}
                                     @endif
                                 </div>
                             </td>
@@ -299,12 +299,12 @@
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 rounded-full bg-cream-100 text-espresso-700 font-semibold text-[11px]">
-                                    {{ $shipment->items->count() }} barang
+                                    {{ $shipment->items->count() }} {{ __('barang') }}
                                 </span>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-right">
                                 <a href="{{ route('shipments.show', $shipment->tracking_number) }}" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold bg-apricot-500 hover:bg-apricot-600 text-white shadow-sm transition-all">
-                                    <span>Periksa</span>
+                                    <span>{{ __('Periksa') }}</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 </a>
                             </td>
@@ -312,7 +312,7 @@
                     @empty
                         <tr>
                             <td colspan="{{ $isCustomer ? 7 : 8 }}" class="px-5 py-10 text-center text-espresso-500">
-                                Belum ada data pengiriman di sistem.
+                                {{ __('Belum ada data pengiriman di sistem.') }}
                             </td>
                         </tr>
                     @endforelse
@@ -337,16 +337,16 @@
                     <div class="w-9 h-9 rounded-2xl bg-apricot-100 text-apricot-600 flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <h3 class="text-sm font-extrabold text-espresso-900">Ekspedisi Laut &amp; Udara Aktif</h3>
+                    <h3 class="text-sm font-extrabold text-espresso-900">{{ __('Ekspedisi Laut & Udara Aktif') }}</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $carriersCount ?? 5 }} terdaftar</span>
+                    <span class="px-2.5 py-1 rounded-full bg-cream-100 text-[11px] font-mono font-bold text-espresso-600">{{ $carriersCount ?? 5 }} {{ __('terdaftar') }}</span>
                     @if(Auth::user()->can('viewAny', \App\Models\Carrier::class))
-                        <a href="{{ route('carriers.index') }}" class="px-3 py-1 rounded-full bg-apricot-100 hover:bg-apricot-500 hover:text-white text-apricot-600 text-[11px] font-bold transition-colors">Kelola &rarr;</a>
+                        <a href="{{ route('carriers.index') }}" class="px-3 py-1 rounded-full bg-apricot-100 hover:bg-apricot-500 hover:text-white text-apricot-600 text-[11px] font-bold transition-colors">{{ __('Kelola') }} &rarr;</a>
                     @endif
                 </div>
             </div>
-            <p class="text-xs text-espresso-500">Jalur pelayaran dan kargo udara global dengan kode standar serta URL pelacakan otomatis.</p>
+            <p class="text-xs text-espresso-500">{{ __('Jalur pelayaran dan kargo udara global dengan kode standar serta URL pelacakan otomatis.') }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                 <div class="p-3 rounded-2xl bg-cream-50 border border-cream-200 flex items-center justify-between">
                     <span class="font-bold text-espresso-900">A.P. Moller - Maersk</span>
@@ -374,14 +374,14 @@
                     <div class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                     </div>
-                    <h3 class="text-sm font-extrabold text-espresso-900">Pelabuhan &amp; Hub Logistik Global</h3>
+                    <h3 class="text-sm font-extrabold text-espresso-900">{{ __('Pelabuhan & Hub Logistik Global') }}</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-1 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $locationsCount ?? 8 }} hub</span>
-                    <a href="{{ route('locations.index') }}" class="px-3 py-1 rounded-full bg-sage-100 hover:bg-sage-500 hover:text-white text-sage-700 text-[11px] font-bold transition-colors">Lihat Semua &rarr;</a>
+                    <span class="px-2.5 py-1 rounded-full bg-sage-100 text-[11px] font-mono font-bold text-sage-700">{{ $locationsCount ?? 8 }} {{ __('hub') }}</span>
+                    <a href="{{ route('locations.index') }}" class="px-3 py-1 rounded-full bg-sage-100 hover:bg-sage-500 hover:text-white text-sage-700 text-[11px] font-bold transition-colors">{{ __('Lihat Semua') }} &rarr;</a>
                 </div>
             </div>
-            <p class="text-xs text-espresso-500">Hub pelabuhan standar UN/LOCODE dilengkapi koordinat lintang dan bujur siap untuk peta interaktif.</p>
+            <p class="text-xs text-espresso-500">{{ __('Hub pelabuhan standar UN/LOCODE dilengkapi koordinat lintang dan bujur siap untuk peta interaktif.') }}</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                 <div class="p-3 rounded-2xl bg-cream-50 border border-cream-200 flex items-center justify-between">
                     <span class="font-bold text-espresso-900">Port of Tanjung Priok</span>
@@ -407,24 +407,24 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <a href="{{ route('shipments.index') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-extrabold text-espresso-900">Semua Pengiriman Saya</p>
-                    <p class="text-[11px] text-espresso-500 mt-0.5">Filter rute &amp; riwayat pengiriman</p>
+                    <p class="text-xs font-extrabold text-espresso-900">{{ __('Semua Pengiriman Saya') }}</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">{{ __('Filter rute & riwayat pengiriman') }}</p>
                 </div>
                 <span class="w-9 h-9 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
             </a>
 
             <a href="{{ route('tracking.page') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-extrabold text-espresso-900">Lacak Resi Lainnya</p>
-                    <p class="text-[11px] text-espresso-500 mt-0.5">Pencarian resi instan real-time</p>
+                    <p class="text-xs font-extrabold text-espresso-900">{{ __('Lacak Resi Lainnya') }}</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">{{ __('Pencarian resi instan real-time') }}</p>
                 </div>
                 <span class="w-9 h-9 rounded-2xl bg-apricot-100 text-apricot-600 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
             </a>
 
             <a href="{{ route('notifications.index') }}" class="p-5 rounded-3xl glass-card hover:bg-white/90 transition-all flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-extrabold text-espresso-900">Notifikasi Status</p>
-                    <p class="text-[11px] text-espresso-500 mt-0.5">Pantau update perjalanan &amp; kendala</p>
+                    <p class="text-xs font-extrabold text-espresso-900">{{ __('Notifikasi Status') }}</p>
+                    <p class="text-[11px] text-espresso-500 mt-0.5">{{ __('Pantau update perjalanan & kendala') }}</p>
                 </div>
                 <span class="w-9 h-9 rounded-2xl bg-cream-200 text-espresso-700 flex items-center justify-center group-hover:translate-x-0.5 transition-transform">&rarr;</span>
             </a>
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: {
                         labels: carrierEntries.map(([k]) => k),
                         datasets: [{
-                            label: 'Jumlah Pengiriman',
+                            label: @json(__('Jumlah Pengiriman')),
                             data: carrierEntries.map(([, v]) => v),
                             backgroundColor: 'rgba(135, 152, 128, 0.85)',
                             borderRadius: 10,
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: {
                         labels: excEntries.map(([k]) => k.replace(/_/g, ' ')),
                         datasets: [{
-                            label: 'Total Kasus',
+                            label: @json(__('Total Kasus')),
                             data: excEntries.map(([, v]) => v),
                             backgroundColor: 'rgba(242, 153, 74, 0.85)',
                             borderRadius: 10,
@@ -577,7 +577,7 @@ async function quickTrack() {
     const modal = document.getElementById('trackResultModal');
     const body = document.getElementById('trackResultBody');
     modal.classList.remove('hidden');
-    body.innerHTML = '<span class="text-espresso-500">Memeriksa endpoint REST API (/api/v1/tracking/' + esc(input) + ')...</span>';
+    body.innerHTML = '<span class="text-espresso-500">' + @json(__('Memeriksa endpoint REST API...')) + '</span>';
 
     try {
         const res = await fetch('/api/v1/tracking/' + encodeURIComponent(input));
@@ -585,45 +585,55 @@ async function quickTrack() {
 
         if (res.ok && data.success) {
             const s = data.data;
+            const txtResi = @json(__('Nomor Resi'));
+            const txtStatus = @json(__('Status'));
+            const txtCarrier = @json(__('Ekspedisi'));
+            const txtOrigin = @json(__('Pelabuhan Asal'));
+            const txtDest = @json(__('Pelabuhan Tujuan'));
+            const txtEta = @json(__('Estimasi Tiba'));
+            const txtNone = @json(__('Tidak Ada'));
+            const txtPending = @json(__('Menunggu'));
+            const txtOpen = @json(__('Buka Timeline Lengkap'));
+
             body.innerHTML = `
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs font-sans">
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Nomor Resi</span>
+                        <span class="text-espresso-500 block font-semibold">${txtResi}</span>
                         <strong class="text-sage-700 font-mono text-sm">${esc(s.tracking_number)}</strong>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Status</span>
+                        <span class="text-espresso-500 block font-semibold">${txtStatus}</span>
                         <span class="text-apricot-600 font-extrabold">${esc(s.status)}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Ekspedisi</span>
-                        <span class="text-espresso-900 font-bold">${s.carrier ? esc(s.carrier.name) : 'Tidak Ada'}</span>
+                        <span class="text-espresso-500 block font-semibold">${txtCarrier}</span>
+                        <span class="text-espresso-900 font-bold">${s.carrier ? esc(s.carrier.name) : txtNone}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Pelabuhan Asal</span>
-                        <span class="text-espresso-900 font-bold">${s.origin ? esc(s.origin.name) : 'Tidak Ada'}</span>
+                        <span class="text-espresso-500 block font-semibold">${txtOrigin}</span>
+                        <span class="text-espresso-900 font-bold">${s.origin ? esc(s.origin.name) : txtNone}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Pelabuhan Tujuan</span>
-                        <span class="text-espresso-900 font-bold">${s.destination ? esc(s.destination.name) : 'Tidak Ada'}</span>
+                        <span class="text-espresso-500 block font-semibold">${txtDest}</span>
+                        <span class="text-espresso-900 font-bold">${s.destination ? esc(s.destination.name) : txtNone}</span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <span class="text-espresso-500 block font-semibold">Estimasi Tiba</span>
-                        <span class="text-espresso-800 font-semibold">${s.estimated_delivery_at ? esc(new Date(s.estimated_delivery_at).toLocaleString('id-ID')) : 'Menunggu'}</span>
+                        <span class="text-espresso-500 block font-semibold">${txtEta}</span>
+                        <span class="text-espresso-800 font-semibold">${s.estimated_delivery_at ? esc(new Date(s.estimated_delivery_at).toLocaleString()) : txtPending}</span>
                     </div>
                 </div>
                 <div class="pt-3 border-t border-cream-200 flex justify-end">
                     <a href="/shipments/${encodeURIComponent(s.tracking_number)}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-apricot-500 hover:bg-apricot-600 text-white text-xs font-bold shadow-md transition-all">
-                        <span>Buka Timeline Lengkap</span>
+                        <span>${txtOpen}</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 </div>
             `;
         } else {
-            body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">${esc(data.message) || 'Pengiriman tidak ditemukan untuk nomor resi tersebut.'}</span>`;
+            body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">${esc(data.message) || @json(__('Pengiriman tidak ditemukan untuk nomor resi tersebut.'))}</span>`;
         }
     } catch (e) {
-        body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">Gagal mengambil data pengiriman.</span>`;
+        body.innerHTML = `<span class="text-rose-600 font-sans font-semibold">${@json(__('Gagal mengambil data pengiriman.'))}</span>`;
     }
 }
 </script>
