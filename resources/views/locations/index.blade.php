@@ -53,13 +53,13 @@
 
             <!-- Controls & Toggles -->
             <div class="flex items-center gap-2 flex-wrap">
-                <!-- Map Layer Switcher: Google Satellite vs Vector -->
+                <!-- Map Layer Switcher: Satelit vs Default -->
                 <div class="inline-flex p-1 rounded-full bg-cream-100 border border-cream-200 text-xs font-bold shadow-2xs">
-                    <button type="button" id="btnSatelliteMode" onclick="setMapBasemap('satellite')" class="px-3.5 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
-                        <span>🛰️ {{ __('Citra Satelit Google') }}</span>
+                    <button type="button" id="btnSatelliteMode" onclick="setMapBasemap('satellite')" class="px-3.5 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer" title="{{ __('Mode Citra Satelit Google') }}">
+                        <span>🛰️ {{ __('Satelit') }}</span>
                     </button>
-                    <button type="button" id="btnStreetMode" onclick="setMapBasemap('street')" class="px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer">
-                        <span>🗺️ {{ __('Peta Vektor') }}</span>
+                    <button type="button" id="btnDefaultMode" onclick="setMapBasemap('default')" class="px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer" title="{{ __('Mode Peta Default OpenStreetMap') }}">
+                        <span>🗺️ {{ __('Default') }}</span>
                     </button>
                 </div>
 
@@ -767,19 +767,19 @@ function initWorldLocationsMap() {
 function setMapBasemap(mode) {
     if (!worldMap || !googleHybridLayer || !osmVectorLayer) return;
     const btnSat = document.getElementById('btnSatelliteMode');
-    const btnStr = document.getElementById('btnStreetMode');
+    const btnDef = document.getElementById('btnDefaultMode') || document.getElementById('btnStreetMode');
     if (mode === 'satellite') {
         worldMap.removeLayer(osmVectorLayer);
         googleHybridLayer.addTo(worldMap);
         googleHybridLayer.bringToBack();
         if (btnSat) btnSat.className = 'px-3.5 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
-        if (btnStr) btnStr.className = 'px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnDef) btnDef.className = 'px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
     } else {
         worldMap.removeLayer(googleHybridLayer);
         osmVectorLayer.addTo(worldMap);
         osmVectorLayer.bringToBack();
         if (btnSat) btnSat.className = 'px-3.5 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
-        if (btnStr) btnStr.className = 'px-3.5 py-1 rounded-full bg-sage-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnDef) btnDef.className = 'px-3.5 py-1 rounded-full bg-sage-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
     }
 }
 

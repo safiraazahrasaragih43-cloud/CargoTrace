@@ -628,5 +628,7 @@
     "Jarak ke Hub Terhubung:": "Distance to Connected Hubs:",
     "Rute:": "Route:",
     "Citra Satelit Google": "Google Satellite",
-    "Peta Vektor": "Vector Map"
+    "Peta Vektor": "Vector Map",
+    "Satelit": "Satellite",
+    "Default": "Default"
 }

@@ -236,10 +236,22 @@
                         <p class="text-[11px] text-espresso-500">{{ __('Visualisasi pelabuhan asal, checkpoint perjalanan, dan tujuan via OpenStreetMap.') }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3 text-[10px] font-bold">
-                    <span class="inline-flex items-center gap-1.5 text-sage-700"><span class="w-2.5 h-2.5 rounded-full bg-sage-600"></span> {{ __('Asal') }}</span>
-                    <span class="inline-flex items-center gap-1.5 text-apricot-600"><span class="w-2.5 h-2.5 rounded-full bg-apricot-500"></span> {{ __('Checkpoint') }}</span>
-                    <span class="inline-flex items-center gap-1.5 text-espresso-900"><span class="w-2.5 h-2.5 rounded-full bg-espresso-900"></span> {{ __('Tujuan') }}</span>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <!-- 2-Mode Map Switcher: Satelit vs Default -->
+                    <div class="inline-flex p-1 rounded-full bg-cream-100 border border-cream-200 text-xs font-bold shadow-2xs">
+                        <button type="button" id="btnShipmentSatMode" onclick="setShipmentBasemap('satellite')" class="px-3 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer" title="{{ __('Mode Citra Satelit Google') }}">
+                            <span>🛰️ {{ __('Satelit') }}</span>
+                        </button>
+                        <button type="button" id="btnShipmentDefMode" onclick="setShipmentBasemap('default')" class="px-3 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer" title="{{ __('Mode Peta Default OpenStreetMap') }}">
+                            <span>🗺️ {{ __('Default') }}</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-[10px] font-bold">
+                        <span class="inline-flex items-center gap-1.5 text-sage-700"><span class="w-2.5 h-2.5 rounded-full bg-sage-600"></span> {{ __('Asal') }}</span>
+                        <span class="inline-flex items-center gap-1.5 text-apricot-600"><span class="w-2.5 h-2.5 rounded-full bg-apricot-500"></span> {{ __('Checkpoint') }}</span>
+                        <span class="inline-flex items-center gap-1.5 text-espresso-900"><span class="w-2.5 h-2.5 rounded-full bg-espresso-900"></span> {{ __('Tujuan') }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -709,6 +721,29 @@ function createPinIcon(bgColor, borderColor, label) {
     });
 }
 
+let shipmentMapInstance = null;
+let shipmentGoogleHybridLayer = null;
+let shipmentOsmLayer = null;
+
+function setShipmentBasemap(mode) {
+    if (!shipmentMapInstance || !shipmentGoogleHybridLayer || !shipmentOsmLayer) return;
+    const btnSat = document.getElementById('btnShipmentSatMode');
+    const btnDef = document.getElementById('btnShipmentDefMode');
+    if (mode === 'satellite') {
+        shipmentMapInstance.removeLayer(shipmentOsmLayer);
+        shipmentGoogleHybridLayer.addTo(shipmentMapInstance);
+        shipmentGoogleHybridLayer.bringToBack();
+        if (btnSat) btnSat.className = 'px-3 py-1 rounded-full bg-emerald-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnDef) btnDef.className = 'px-3 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
+    } else {
+        shipmentMapInstance.removeLayer(shipmentGoogleHybridLayer);
+        shipmentOsmLayer.addTo(shipmentMapInstance);
+        shipmentOsmLayer.bringToBack();
+        if (btnSat) btnSat.className = 'px-3 py-1 rounded-full text-espresso-700 hover:text-espresso-900 transition-all flex items-center gap-1.5 cursor-pointer';
+        if (btnDef) btnDef.className = 'px-3 py-1 rounded-full bg-sage-600 text-white shadow-xs transition-all flex items-center gap-1.5 cursor-pointer';
+    }
+}
+
 function initShipmentMap() {
     const mapContainer = document.getElementById('shipmentMap');
     if (!mapContainer || typeof window.L === 'undefined') return;
@@ -717,14 +752,23 @@ function initShipmentMap() {
     const destination = {{ Illuminate\Support\Js::from($mapDestination) }};
     const events = {{ Illuminate\Support\Js::from($mapEvents) }};
 
-    const map = window.L.map('shipmentMap', { scrollWheelZoom: false }).setView([1.2644, 103.822], 3);
+    shipmentMapInstance = window.L.map('shipmentMap', { scrollWheelZoom: false }).setView([1.2644, 103.822], 3);
 
-    // Google Maps / Earth Hybrid Satellite Layer (Lush green forests, realistic blue ocean, coastlines & hybrid labels)
-    window.L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    // 1. Google Maps / Earth Hybrid Satellite Layer (Lush green forests, realistic blue ocean, coastlines & hybrid labels)
+    shipmentGoogleHybridLayer = window.L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         subdomains: ['0', '1', '2', '3'],
         maxZoom: 20,
         attribution: '&copy; Google Earth / Maps Satellite &bull; &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    });
+
+    // 2. OpenStreetMap Vector Basemap (Default layer)
+    shipmentOsmLayer = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+    // Default to Google Hybrid Satellite!
+    shipmentGoogleHybridLayer.addTo(shipmentMapInstance);
 
     const routeCoords = [];
     const esc = window.escapeHtml || ((v) => String(v ?? '').replace(/[&<>"'`]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])));
@@ -733,7 +777,7 @@ function initShipmentMap() {
         const pt = [parseFloat(origin.lat), parseFloat(origin.lng)];
         routeCoords.push(pt);
         window.L.marker(pt, { icon: createPinIcon('#6B7D64', '#FFFFFF', 'A') })
-            .addTo(map)
+            .addTo(shipmentMapInstance)
             .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>{{ __('Asal:') }} ${esc(origin.name)} (${esc(origin.code)})</strong><br/>Status: ORIGIN HUB<br/>{{ __('Negara:') }} ${esc(origin.country)}</div>`);
     }
 
@@ -743,7 +787,7 @@ function initShipmentMap() {
             routeCoords.push(pt);
             const pinColor = ev.status === 'EXCEPTION' ? '#E11D48' : (ev.status === 'DELIVERED' ? '#4F5E4A' : '#F2994A');
             window.L.marker(pt, { icon: createPinIcon(pinColor, '#FFFFFF', idx + 1) })
-                .addTo(map)
+                .addTo(shipmentMapInstance)
                 .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>${esc(ev.location_name)}</strong><br/>Status: <b>${esc(ev.status)}</b><br/>{{ __('Waktu:') }} ${esc(ev.time)}<br/><span style="color:#665E57;">${esc(ev.description)}</span></div>`);
         }
     });
@@ -752,20 +796,20 @@ function initShipmentMap() {
         const pt = [parseFloat(destination.lat), parseFloat(destination.lng)];
         routeCoords.push(pt);
         window.L.marker(pt, { icon: createPinIcon('#2C2724', '#FFFFFF', 'T') })
-            .addTo(map)
+            .addTo(shipmentMapInstance)
             .bindPopup(`<div style="font-family:sans-serif;font-size:12px;"><strong>{{ __('Tujuan:') }} ${esc(destination.name)} (${esc(destination.code)})</strong><br/>Status: DESTINATION PORT<br/>{{ __('Negara:') }} ${esc(destination.country)}</div>`);
     }
 
     if (routeCoords.length >= 2) {
+        // Solid continuous line (garis lurus solid)
         window.L.polyline(routeCoords, {
             color: '#F2994A',
-            weight: 3,
-            opacity: 0.85,
-            dashArray: '8, 6'
-        }).addTo(map);
-        map.fitBounds(routeCoords, { padding: [36, 36] });
+            weight: 3.5,
+            opacity: 0.95
+        }).addTo(shipmentMapInstance);
+        shipmentMapInstance.fitBounds(routeCoords, { padding: [36, 36] });
     } else if (routeCoords.length === 1) {
-        map.setView(routeCoords[0], 7);
+        shipmentMapInstance.setView(routeCoords[0], 7);
     }
 }
 
