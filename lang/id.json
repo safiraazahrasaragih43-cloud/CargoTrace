@@ -630,5 +630,14 @@
     "Citra Satelit Google": "Citra Satelit Google",
     "Peta Vektor": "Peta Vektor",
     "Satelit": "Satelit",
-    "Default": "Default"
+    "Default": "Default",
+    "Sesi halaman Anda telah kedaluwarsa karena lama tidak aktif. Token keamanan telah disegarkan otomatis, silakan coba lagi.": "Sesi halaman Anda telah kedaluwarsa karena lama tidak aktif. Token keamanan telah disegarkan otomatis, silakan coba lagi.",
+    "419 - Sesi Halaman Berakhir": "419 - Sesi Halaman Berakhir",
+    "Sesi Kedaluwarsa": "Sesi Kedaluwarsa",
+    "Sesi Halaman Telah Berakhir": "Sesi Halaman Telah Berakhir",
+    "Halaman ini dibiarkan terbuka terlalu lama sehingga token keamanan kedaluwarsa demi melindungi keamanan data Anda.": "Halaman ini dibiarkan terbuka terlalu lama sehingga token keamanan kedaluwarsa demi melindungi keamanan data Anda.",
+    "Solusi Cepat:": "Solusi Cepat:",
+    "Cukup muat ulang halaman atau klik tombol di bawah untuk mendapatkan sesi baru dan melanjutkan.": "Cukup muat ulang halaman atau klik tombol di bawah untuk mendapatkan sesi baru dan melanjutkan.",
+    "Muat Ulang Halaman": "Muat Ulang Halaman",
+    "Masuk Kembali": "Masuk Kembali"
 }

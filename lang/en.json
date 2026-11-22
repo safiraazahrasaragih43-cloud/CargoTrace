@@ -630,5 +630,14 @@
     "Citra Satelit Google": "Google Satellite",
     "Peta Vektor": "Vector Map",
     "Satelit": "Satellite",
-    "Default": "Default"
+    "Default": "Default",
+    "Sesi halaman Anda telah kedaluwarsa karena lama tidak aktif. Token keamanan telah disegarkan otomatis, silakan coba lagi.": "Your page session has expired due to inactivity. Security token has been refreshed automatically, please try again.",
+    "419 - Sesi Halaman Berakhir": "419 - Page Session Expired",
+    "Sesi Kedaluwarsa": "Session Expired",
+    "Sesi Halaman Telah Berakhir": "Page Session Has Expired",
+    "Halaman ini dibiarkan terbuka terlalu lama sehingga token keamanan kedaluwarsa demi melindungi keamanan data Anda.": "This page was left open for too long and the security token has expired to protect your data.",
+    "Solusi Cepat:": "Quick Solution:",
+    "Cukup muat ulang halaman atau klik tombol di bawah untuk mendapatkan sesi baru dan melanjutkan.": "Simply reload the page or click the button below to get a fresh session and continue.",
+    "Muat Ulang Halaman": "Reload Page",
+    "Masuk Kembali": "Sign In Again"
 }

@@ -86,5 +86,23 @@ class AuthTest extends TestCase
         $response->assertRedirect('/login');
         $this->assertGuest();
     }
+
+    public function test_expired_session_or_csrf_token_mismatch_redirects_gracefully_with_message(): void
+    {
+        $request = \Illuminate\Http\Request::create('/login', 'POST', [
+            '_token' => 'invalid-token',
+            'email' => 'admin@cargotrace.com',
+        ]);
+        app()->instance('request', $request);
+        $request->setLaravelSession(app('session')->driver());
+        $request->headers->set('referer', 'http://localhost/login');
+
+        $exception = new \Illuminate\Session\TokenMismatchException('CSRF token mismatch.');
+        $response = app(\Illuminate\Contracts\Debug\ExceptionHandler::class)->render($request, $exception);
+
+        $this->assertNotNull($response);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://localhost/login', $response->headers->get('Location'));
+    }
 }
 
