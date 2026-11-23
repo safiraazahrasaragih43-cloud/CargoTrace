@@ -1,14 +1,14 @@
 # CargoTrace — Platform Visibilitas & Pelacakan Pengiriman Global
 
-> 🌐 **Pilihan Bahasa:** [🇮🇩 Versi Bahasa Indonesia (Halaman Ini)](#) | [🇬🇧 Read English Documentation in README.md](README.md)
+> **Pilihan Bahasa:** [Versi Bahasa Indonesia (Halaman Ini)](#) | [Read English Documentation in README.md](README.md)
 
 **CargoTrace** adalah aplikasi pelacakan kargo internasional real-time (*global cargo visibility*), evaluasi keterlambatan estimasi kedatangan (*deterministic ETA delay evaluation*), manajemen anomali logistik (*operational exception management*), serta visualisasi rute maritim berbasis peta interaktif. 
 
-Aplikasi ini dibangun menggunakan arsitektur **Laravel 12**, **PHP 8.2+**, **Tailwind CSS v4**, **Leaflet.js (Peta Satelit & Default)**, dan **Chart.js** untuk memenuhi standar proyek UAS Pemrograman Web tingkat lanjut.
+Aplikasi ini dibangun menggunakan arsitektur **Laravel 12**, **PHP 8.2+**, **Tailwind CSS v4**, **Leaflet.js**, dan **Chart.js** untuk memenuhi standar proyek UAS Pemrograman Web tingkat lanjut.
 
 ---
 
-## 🌐 Akses Live & Tautan Deployment
+## Akses Live & Tautan Deployment
 
 | Layanan | Tautan / URL |
 | :--- | :--- |
@@ -18,15 +18,15 @@ Aplikasi ini dibangun menggunakan arsitektur **Laravel 12**, **PHP 8.2+**, **Tai
 
 ---
 
-## 👥 Akun Demo & Matriks Hak Akses (RBAC)
+## Akun Demo & Matriks Hak Akses (RBAC)
 
 Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / RBAC) dengan akun bawaan (kata sandi untuk semua akun: `password`):
 
 | Role | Email | Tampilan Antarmuka | Hak Akses & Fitur Utama |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Bilah Sisi Kaca (*Konsol Admin*) | Akses penuh CRUD, Hapus data pelabuhan & kargo, Log Audit Sistem, Manajemen Pengguna |
-| **Operator Logistik** | `operator@cargotrace.com` | Bilah Sisi Kaca (*Konsol Operator*) | Input kargo baru, update status & pos pemeriksaan (checkpoints), kelola kendala/exception, tambah rute |
-| **Pelanggan / Klien** | `customer@cargotrace.com` | Navigasi Atas (*Portal Klien*) | Melacak kargo milik pribadi, melihat timeline riwayat, cek kondisi cuaca pelabuhan tujuan, notifikasi |
+| **Administrator** | `admin@cargotrace.com` | Bilah Sisi (Konsol Admin) | Akses penuh CRUD, Hapus data pelabuhan & kargo, Log Audit Sistem, Manajemen Pengguna |
+| **Operator Logistik** | `operator@cargotrace.com` | Bilah Sisi (Konsol Operator) | Input kargo baru, update status & pos pemeriksaan (checkpoints), kelola kendala/exception, tambah rute |
+| **Pelanggan / Klien** | `customer@cargotrace.com` | Navigasi Atas (Portal Klien) | Melacak kargo milik pribadi, melihat timeline riwayat, cek kondisi cuaca pelabuhan tujuan, notifikasi |
 
 ### Contoh Nomor Resi untuk Uji Pelacakan Publik:
 - `TRK-EXP-2026-001` — Koridor Asia Tenggara → Eropa (Tanjung Priok ke Rotterdam)
@@ -35,7 +35,7 @@ Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / 
 
 ---
 
-## ✨ Fitur-Fitur Utama
+## Fitur-Fitur Utama
 
 ### 1. Pelacakan Kargo Publik (Quick Track)
 - Pelanggan dapat melacak status kargo kapan saja tanpa perlu login cukup dengan memasukkan nomor resi.
@@ -43,12 +43,12 @@ Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / 
 - Informasi terperinci mengenai kapal/maskapai, estimasi kedatangan (ETA), serta integrasi **data cuaca real-time** di pelabuhan tujuan via Open-Meteo API.
 
 ### 2. Peta Interaktif 2 Mode (Satelit & Default)
-- **Mode 🛰️ Satelit (Google Earth / Citra Satelit Nyata):** Menampilkan pemandangan permukaan bumi yang realistis dengan laut biru bertekstur dan daratan hijau asri.
-- **Mode 🗺️ Default:** Peta jalan bersih berstandar OpenStreetMap.
+- **Mode Satelit (Citra Satelit Nyata):** Menampilkan pemandangan permukaan bumi yang realistis dengan laut biru bertekstur dan daratan hijau asri.
+- **Mode Default:** Peta jalan bersih berstandar OpenStreetMap.
 - **Rute Maritim Padat:** Menghubungkan pelabuhan asal dan tujuan dengan garis lurus yang tegas.
 - **Telemetri Jarak GPS Otomatis:** Menghitung jarak tempuh maritim akurat menggunakan **Formula Matematis Haversine** dalam satuan Kilometer (km) dan Mil Laut (Nautical Miles / NM).
 
-### 3. Dukungan Dua Bahasa (Bilingual: 🇮🇩 ID & 🇬🇧 EN)
+### 3. Dukungan Dua Bahasa (Bilingual: Indonesia & English)
 - Tombol pengganti bahasa 1-klik di bagian atas navigasi.
 - Seluruh antarmuka—mulai dari Beranda, Form Pencarian, Login, Dashboard, Manifest, Peta, hingga Footer—sepenuhnya diterjemahkan secara dinamis.
 
@@ -74,7 +74,7 @@ Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / 
 
 ---
 
-## 🏗️ Arsitektur & Dokumentasi Teknis
+## Arsitektur & Dokumentasi Teknis
 
 - **Dokumentasi ERD & Kamus Data:** Lihat [`docs/ERD.md`](docs/ERD.md).
 - **Dokumentasi Arsitektur & Atribusi:** Lihat [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
@@ -83,7 +83,7 @@ Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / 
 
 ---
 
-## 💻 Panduan Instalasi Lokal (Local Development)
+## Panduan Instalasi Lokal
 
 ### Kebutuhan Sistem
 - **PHP >= 8.2** (ekstensi: `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo`, `sqlite3`)
@@ -130,7 +130,7 @@ Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / 
 
 ---
 
-## 🧪 Pengujian Otomatis (Automated Testing)
+## Pengujian Otomatis (Automated Testing)
 
 Seluruh pengujian unit dan fitur dijalankan menggunakan **PHPUnit** dengan konfigurasi database SQLite in-memory:
 
@@ -144,7 +144,14 @@ php vendor/phpunit/phpunit/phpunit
 
 ---
 
-## 🔒 Standar Keamanan Aplikasi
+## Koleksi Postman & Dokumentasi API
+
+- **Koleksi Postman:** File siap pakai dapat diimpor langsung dari [`docs/CargoTrace_API_v1.postman_collection.json`](docs/CargoTrace_API_v1.postman_collection.json).
+- **Dokumentasi Lengkap Endpoint:** Tersedia pada file [`docs/API_DOCS.md`](docs/API_DOCS.md).
+
+---
+
+## Standar Keamanan Aplikasi
 
 - **CSRF Token:** Seluruh form dilindungi dari serangan Cross-Site Request Forgery.
 - **SQL Injection Prevention:** Menggunakan PDO Parameterized Queries dan Eloquent ORM.

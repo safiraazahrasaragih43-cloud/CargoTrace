@@ -1,12 +1,12 @@
 # CargoTrace — Global Shipment Visibility & Tracking Platform
 
-> 🌐 **Language / Bahasa:** **[🇬🇧 English Version (Current)](#)** | **[🇮🇩 Baca Dokumentasi Bahasa Indonesia di README_ID.md](README_ID.md)**
+> **Language / Bahasa:** [English Version (Current)](#) | [Baca Dokumentasi Bahasa Indonesia di README_ID.md](README_ID.md)
 
-CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tracking, deterministic ETA delay evaluation, and operational exception management platform built with **Laravel 12**, **PHP 8.2+**, **MySQL / MariaDB**, **Tailwind CSS v4**, **Leaflet.js (Dual Satellite & Default Map Layers)**, and **Chart.js**.
+CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tracking, deterministic ETA delay evaluation, and operational exception management platform built with **Laravel 12**, **PHP 8.2+**, **MySQL / MariaDB**, **Tailwind CSS v4**, **Leaflet.js**, and **Chart.js**.
 
 ---
 
-## 🌐 Live Access & Deployment
+## Live Access & Deployment
 
 | Service | URL |
 | :--- | :--- |
@@ -16,15 +16,15 @@ CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tr
 
 ---
 
-## 👥 Demo Accounts & Role-Based Access Control (RBAC)
+## Demo Accounts & Role-Based Access Control (RBAC)
 
 The system enforces strict server-side authorization across 3 user roles (password for all demo accounts: `password`):
 
 | Role | Email | Interface Layout | Key Permissions |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Glass Sidebar (`Konsol Admin`) | Full CRUD, Carrier/Location/Shipment delete, System Audit Logs, User management |
-| **Logistics Operator** | `operator@cargotrace.com` | Glass Sidebar (`Konsol Staff`) | Create/update shipments, append tracking checkpoints, manage exceptions & routes |
-| **Customer** | `customer@cargotrace.com` | Glass Topbar (`Portal Klien`) | Read-only scoped strictly to own shipments, view timelines, weather telemetry & notifications |
+| **Administrator** | `admin@cargotrace.com` | Sidebar (Konsol Admin) | Full CRUD, Carrier/Location/Shipment delete, System Audit Logs, User management |
+| **Logistics Operator** | `operator@cargotrace.com` | Sidebar (Konsol Staff) | Create/update shipments, append tracking checkpoints, manage exceptions & routes |
+| **Customer** | `customer@cargotrace.com` | Topbar (Portal Klien) | Read-only scoped strictly to own shipments, view timelines, weather telemetry & notifications |
 
 ### Sample Tracking Numbers for Public Demo
 - `TRK-EXP-2026-001` (SEA → Europe Corridor: Tanjung Priok to Rotterdam)
@@ -33,7 +33,7 @@ The system enforces strict server-side authorization across 3 user roles (passwo
 
 ---
 
-## ✨ Key Features & Configured Worldwide Corridors
+## Key Features & Configured Worldwide Corridors
 
 CargoTrace implements an **Individual All-Routes Configuration** combining three international logistics corridors:
 
@@ -52,18 +52,18 @@ CargoTrace implements an **Individual All-Routes Configuration** combining three
   - `7–24h` = MEDIUM Severity
   - `> 24h` = HIGH Severity
 - **Interactive Leaflet Maps with Dual Modes:**
-  - **🛰️ Satellite Mode:** High-resolution realistic satellite imagery (ESRI World Imagery / Google Earth style) with textured oceans and green landmasses.
-  - **🗺️ Default Mode:** Clean OpenStreetMap Carto routing.
+  - **Satellite Mode:** High-resolution realistic satellite imagery (ESRI World Imagery / Google Earth style) with textured oceans and green landmasses.
+  - **Default Mode:** Clean OpenStreetMap Carto routing.
   - **Solid Geodesic Route Lines:** Clean continuous maritime shipping lines.
   - **Automatic Haversine GPS Telemetry:** Accurate maritime distance calculation in both Kilometers (km) and Nautical Miles (NM).
-- **Full Bilingual Support (🇮🇩 Indonesian & 🇬🇧 English):** Instant 1-click language switcher with localized Blade views, notifications, and navigation.
+- **Full Bilingual Support (Indonesian & English):** Instant 1-click language switcher with localized Blade views, notifications, and navigation.
 - **Live Destination Weather Telemetry:** Real-time port weather integration via **Open-Meteo API** with graceful timeout and fallback handling.
 - **Role-Segmented Operational Dashboard:** Live KPI statistics, Chart.js visualizations, server-side multi-filtering, sorting, and pagination.
 - **System Audit Logs & In-App Notifications:** Complete before/after change tracking and contextual alerts.
 
 ---
 
-## 🏗️ Technical Documentation
+## Technical Documentation
 
 - **Entity-Relationship Diagram (ERD) & Data Dictionary:** [`docs/ERD.md`](docs/ERD.md)
 - **Architecture Documentation & Attribution:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
@@ -73,7 +73,7 @@ CargoTrace implements an **Individual All-Routes Configuration** combining three
 
 ---
 
-## 💻 Local Setup & Installation
+## Local Setup & Installation
 
 ### Requirements
 - **PHP >= 8.2** (extensions: `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo`, `sqlite3`)
@@ -120,7 +120,7 @@ CargoTrace implements an **Individual All-Routes Configuration** combining three
 
 ---
 
-## 🧪 Automated Testing Suite
+## Automated Testing Suite
 
 All unit and feature tests run cleanly via **PHPUnit** using an isolated in-memory SQLite database configuration:
 
@@ -134,7 +134,7 @@ php vendor/phpunit/phpunit/phpunit
 
 ---
 
-## 🔒 Security Hardening
+## Security Hardening
 
 - **CSRF Protection:** Verified on all state-changing web requests.
 - **SQL Injection Prevention:** Enforced via PDO Parameterized Queries and Eloquent ORM.
