@@ -1,7 +1,5 @@
 # CargoTrace — Global Shipment Visibility & Tracking Platform
 
-> **Language / Bahasa:** [English Version (Current)](#) | [Baca Dokumentasi Bahasa Indonesia di README_ID.md](README_ID.md)
-
 CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tracking, deterministic ETA delay evaluation, and operational exception management platform built with **Laravel 12**, **PHP 8.2+**, **MySQL / MariaDB**, **Tailwind CSS v4**, **Leaflet.js**, and **Chart.js**.
 
 ---
@@ -22,9 +20,9 @@ The system enforces strict server-side authorization across 3 user roles (passwo
 
 | Role | Email | Interface Layout | Key Permissions |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Sidebar (Konsol Admin) | Full CRUD, Carrier/Location/Shipment delete, System Audit Logs, User management |
-| **Logistics Operator** | `operator@cargotrace.com` | Sidebar (Konsol Staff) | Create/update shipments, append tracking checkpoints, manage exceptions & routes |
-| **Customer** | `customer@cargotrace.com` | Topbar (Portal Klien) | Read-only scoped strictly to own shipments, view timelines, weather telemetry & notifications |
+| **Administrator** | `admin@cargotrace.com` | Sidebar (Admin Console) | Full CRUD, Carrier/Location/Shipment delete, System Audit Logs, User management |
+| **Logistics Operator** | `operator@cargotrace.com` | Sidebar (Operator Console) | Create/update shipments, append tracking checkpoints, manage exceptions & routes |
+| **Customer** | `customer@cargotrace.com` | Topbar (Customer Portal) | Read-only scoped strictly to own shipments, view timelines, weather telemetry & notifications |
 
 ### Sample Tracking Numbers for Public Demo
 - `TRK-EXP-2026-001` (SEA → Europe Corridor: Tanjung Priok to Rotterdam)
@@ -56,7 +54,7 @@ CargoTrace implements an **Individual All-Routes Configuration** combining three
   - **Default Mode:** Clean OpenStreetMap Carto routing.
   - **Solid Geodesic Route Lines:** Clean continuous maritime shipping lines.
   - **Automatic Haversine GPS Telemetry:** Accurate maritime distance calculation in both Kilometers (km) and Nautical Miles (NM).
-- **Full Bilingual Support (Indonesian & English):** Instant 1-click language switcher with localized Blade views, notifications, and navigation.
+- **Full Bilingual Support:** Instant 1-click language switcher with localized Blade views, notifications, and navigation.
 - **Live Destination Weather Telemetry:** Real-time port weather integration via **Open-Meteo API** with graceful timeout and fallback handling.
 - **Role-Segmented Operational Dashboard:** Live KPI statistics, Chart.js visualizations, server-side multi-filtering, sorting, and pagination.
 - **System Audit Logs & In-App Notifications:** Complete before/after change tracking and contextual alerts.

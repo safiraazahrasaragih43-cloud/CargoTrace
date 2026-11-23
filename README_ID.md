@@ -1,7 +1,5 @@
 # CargoTrace — Platform Visibilitas & Pelacakan Pengiriman Global
 
-> **Pilihan Bahasa:** [Versi Bahasa Indonesia (Halaman Ini)](#) | [Read English Documentation in README.md](README.md)
-
 **CargoTrace** adalah aplikasi pelacakan kargo internasional real-time (*global cargo visibility*), evaluasi keterlambatan estimasi kedatangan (*deterministic ETA delay evaluation*), manajemen anomali logistik (*operational exception management*), serta visualisasi rute maritim berbasis peta interaktif. 
 
 Aplikasi ini dibangun menggunakan arsitektur **Laravel 12**, **PHP 8.2+**, **Tailwind CSS v4**, **Leaflet.js**, dan **Chart.js** untuk memenuhi standar proyek UAS Pemrograman Web tingkat lanjut.
