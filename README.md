@@ -1,155 +1,163 @@
-# CargoTrace — Global Shipment Visibility & Tracking Platform
+# CargoTrace — Platform Visibilitas & Pelacakan Pengiriman Global
 
-CargoTrace is an enterprise-ready global cargo visibility, real-time shipment tracking, deterministic ETA delay evaluation, and operational exception management platform built with **Laravel 12**, **PHP 8.2+**, **MySQL / MariaDB**, **Tailwind CSS v4**, **Leaflet.js (OpenStreetMap)**, and **Chart.js**.
+**CargoTrace** adalah aplikasi pelacakan kargo internasional real-time (*global cargo visibility*), evaluasi keterlambatan estimasi kedatangan (*deterministic ETA delay evaluation*), manajemen anomali logistik (*operational exception management*), serta visualisasi rute maritim berbasis peta interaktif. 
 
----
-
-## Key Features & Configured Worldwide Corridors
-
-CargoTrace implements an **Individual All-Routes Configuration** combining three international logistics corridors:
-
-| Corridor | Origin Region | Destination Focus | Delay Threshold | Primary Exception | Core KPI Focus |
-| :--- | :--- | :--- | :---: | :--- | :--- |
-| **SEA → Europe** | Indonesia / Singapore / SEA | Netherlands / Germany / UK | **12 Hours** | `CUSTOMS_HOLD` | On-Time Delivery Rate |
-| **Asia → North America** | China / Japan / Korea / SEA | United States / Canada | **18 Hours** | `WEATHER_DELAY` | Average Delay Duration |
-| **SEA → Australia** | Singapore / Indonesia / SEA | Australia / New Zealand | **24 Hours** | `DOCUMENTATION_ISSUE` | Exception Resolution Time |
-
-### Core Capabilities
-- **Strict Shipment Lifecycle State Machine:** Enforces sequential transitions (`CREATED → BOOKED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED`), exception recovery (`IN_TRANSIT → EXCEPTION → IN_TRANSIT`), and immutable terminal states (`DELIVERED`, `CANCELLED`).
-- **Append-Only Chronological Tracking Timeline:** Immutable location checkpoints (`TrackingEvent`) with GPS coordinates and live status updates.
-- **Deterministic ETA & Delay Engine (`EtaService`):** Automatically computes delay hours and maps severity tiers (`0h = ON_TIME`, `1–6h = LOW`, `7–24h = MEDIUM`, `>24h = HIGH`).
-- **Interactive Maps & External Integrations:** Interactive Leaflet.js OpenStreetMap route visualization + live destination weather telemetry (**Open-Meteo**) and UN/LOCODE port lookup (**Nominatim OpenStreetMap**) via Laravel HTTP Client with graceful failure handling.
-- **Role-Segmented UI:**
-  - **Public Landing Page:** Soft Earthy Glassmorphism UI with an interactive **Hero Corridor Selector** and a **12-Column Bento Grid**.
-  - **Admin & Staff Operators:** Glassmorphic **Left Sidebar Layout** (`Konsol Admin` / `Konsol Staff`) with full operational tooling and **Chart.js** database analytics.
-  - **Customers:** Clean **Glassmorphic Topbar Layout** (`Portal Klien`) scoped strictly to their own shipments and notifications.
-- **Server-Side Search, Multi-Filter & Sorting:** Search by tracking number/customer/carrier plus filters for status, carrier, origin, destination, delayed status, date ranges, and sorting (`latest`, `oldest`, `eta_asc`, `eta_desc`, `delay_desc`).
-- **In-App Notifications & Admin Audit Logs:** Automatic stakeholder alerts on shipment creation, status updates, ETA delays, and exceptions, alongside full before/after change audit trails restricted exclusively to Administrators.
-- **Security Hardening:** Role escalation prevention on registration, FormRequest validation, parameterized queries with SQL wildcard escaping and bounded pagination, HTML escaping on DOM/Leaflet sinks (`window.escapeHtml`), PII stripping on public tracking endpoints, CSRF tokens, Sanctum Bearer tokens with scoped abilities, and defensive HTTP security headers.
+Aplikasi ini dibangun menggunakan arsitektur **Laravel 12**, **PHP 8.2+**, **Tailwind CSS v4**, **Leaflet.js (Peta Satelit & Default)**, dan **Chart.js** untuk memenuhi standar proyek UAS Pemrograman Web tingkat lanjut.
 
 ---
 
-## Architecture Overview
+## 🌐 Akses Live & Tautan Deployment
 
-CargoTrace follows an **MVC + Service Layer Pattern** cleanly separating HTTP handling from domain rules:
-
-- `app/Http/Controllers/Web/*` & `Api/V1/*` — Thin HTTP controllers delegating authorization to Policies/FormRequests and domain execution to Services.
-- `app/Services/*` — Dedicated domain services (`AuthService`, `ShipmentService`, `TrackingService`, `EtaService`, `ExceptionService`, `CarrierService`, `LocationService`, `NotificationService`, `AuditLogService`, `WeatherService`, `GeocodingService`).
-- `app/Policies/*` — Granular authorization policies (`ShipmentPolicy`, `CarrierPolicy`, `LocationPolicy`, `TrackingEventPolicy`, `ShipmentExceptionPolicy`).
-- `app/Traits/*` — `ApiResponseTrait` (standardized JSON envelope) and `SanitizesQueriesTrait` (LIKE wildcard escaping + bounded pagination).
-- `app/Http/Middleware/*` — `RoleMiddleware` and `SecurityHeadersMiddleware`.
+| Layanan | Tautan / URL |
+| :--- | :--- |
+| **Website Produksi (Vercel)** | [https://cargo-trace-teal.vercel.app](https://cargo-trace-teal.vercel.app) |
+| **Repository GitHub** | [https://github.com/safiraazahrasaragih43-cloud/CargoTrace](https://github.com/safiraazahrasaragih43-cloud/CargoTrace) |
+| **Status REST API v1** | [https://cargo-trace-teal.vercel.app/api/v1/health](https://cargo-trace-teal.vercel.app/api/v1/health) |
 
 ---
 
-## Role Matrix & Demo Credentials
+## 👥 Akun Demo & Matriks Hak Akses (RBAC)
 
-After running the database seeders, the following accounts are available (password for all accounts: `password`):
+Sistem menerapkan pembagian hak akses bertingkat (*Role-Based Access Control* / RBAC) dengan akun bawaan (kata sandi untuk semua akun: `password`):
 
-| Role | Email | Layout | Key Permissions |
+| Role | Email | Tampilan Antarmuka | Hak Akses & Fitur Utama |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | Glass Sidebar (`Konsol Admin`) | Full CRUD, Carriers/Locations delete, Shipments delete, System Audit Logs |
-| **Logistics Operator** | `operator@cargotrace.com` | Glass Sidebar (`Konsol Staff`) | Create/update shipments, append tracking events, update ETA, manage exceptions, add locations |
-| **Customer** | `customer@cargotrace.com` | Glass Topbar (`Portal Klien`) | Read own shipments, view timelines & weather, view/read own notifications |
+| **Administrator** | `admin@cargotrace.com` | Bilah Sisi Kaca (*Konsol Admin*) | Akses penuh CRUD, Hapus data pelabuhan & kargo, Log Audit Sistem, Manajemen Pengguna |
+| **Operator Logistik** | `operator@cargotrace.com` | Bilah Sisi Kaca (*Konsol Operator*) | Input kargo baru, update status & pos pemeriksaan (checkpoints), kelola kendala/exception, tambah rute |
+| **Pelanggan / Klien** | `customer@cargotrace.com` | Navigasi Atas (*Portal Klien*) | Melacak kargo milik pribadi, melihat timeline riwayat, cek kondisi cuaca pelabuhan tujuan, notifikasi |
 
-### Sample Seeded Tracking Numbers
-- `CT-20261101-9821` (SEA → Europe Corridor)
-- `CT-20261105-4412` (Asia → North America Corridor)
-- `CT-20261020-1109` (SEA → Australia Corridor)
+### Contoh Nomor Resi untuk Uji Pelacakan Publik:
+- `TRK-EXP-2026-001` — Koridor Asia Tenggara → Eropa (Tanjung Priok ke Rotterdam)
+- `TRK-SEA-2026-002` — Koridor Asia → Amerika Utara (Shanghai ke Los Angeles)
+- `TRK-AIR-2026-003` — Koridor Asia Tenggara → Australia (Changi ke Sydney)
 
 ---
 
-## Local Setup & Installation
+## ✨ Fitur-Fitur Utama
 
-### Requirements
-- **PHP >= 8.2** (with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo` extensions)
+### 1. Pelacakan Kargo Publik (Quick Track)
+- Pelanggan dapat melacak status kargo kapan saja tanpa perlu login cukup dengan memasukkan nomor resi.
+- Menampilkan timeline pos pemeriksaan kronologis (*append-only chronological tracking timeline*).
+- Informasi terperinci mengenai kapal/maskapai, estimasi kedatangan (ETA), serta integrasi **data cuaca real-time** di pelabuhan tujuan via Open-Meteo API.
+
+### 2. Peta Interaktif 2 Mode (Satelit & Default)
+- **Mode 🛰️ Satelit (Google Earth / Citra Satelit Nyata):** Menampilkan pemandangan permukaan bumi yang realistis dengan laut biru bertekstur dan daratan hijau asri.
+- **Mode 🗺️ Default:** Peta jalan bersih berstandar OpenStreetMap.
+- **Rute Maritim Padat:** Menghubungkan pelabuhan asal dan tujuan dengan garis lurus yang tegas.
+- **Telemetri Jarak GPS Otomatis:** Menghitung jarak tempuh maritim akurat menggunakan **Formula Matematis Haversine** dalam satuan Kilometer (km) dan Mil Laut (Nautical Miles / NM).
+
+### 3. Dukungan Dua Bahasa (Bilingual: 🇮🇩 ID & 🇬🇧 EN)
+- Tombol pengganti bahasa 1-klik di bagian atas navigasi.
+- Seluruh antarmuka—mulai dari Beranda, Form Pencarian, Login, Dashboard, Manifest, Peta, hingga Footer—sepenuhnya diterjemahkan secara dinamis.
+
+### 4. Siklus Hidup Pengiriman & Evaluasi Keterlambatan (ETA Engine)
+- Menjalankan mesin status (*State Machine*) berurutan: `CREATED → BOOKED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED`.
+- Penanganan anomali operasional: `IN_TRANSIT → EXCEPTION → IN_TRANSIT`.
+- Penghitungan otomatis keterlambatan kedatangan:
+  - `0 jam` : Tepat Waktu (*On-Time*)
+  - `1–6 jam` : Keterlambatan Rendah (*Low*)
+  - `7–24 jam` : Keterlambatan Sedang (*Medium*)
+  - `> 24 jam` : Keterlambatan Tinggi (*High*)
+
+### 5. Koridor Logistik Internasional Terkonfigurasi
+| Koridor | Wilayah Asal | Wilayah Tujuan | Ambang Delay | Exception Utama | Fokus KPI |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| **SEA → Eropa** | Indonesia / Singapura / Asia Tenggara | Belanda / Jerman / Inggris | **12 Jam** | `CUSTOMS_HOLD` (Bea Cukai) | Ketepatan Waktu (On-Time) |
+| **Asia → Amerika Utara** | Tiongkok / Jepang / Korea | Amerika Serikat / Kanada | **18 Jam** | `WEATHER_DELAY` (Cuaca Ekstrem) | Rata-rata Durasi Delay |
+| **SEA → Australia** | Singapura / Indonesia | Australia / Selandia Baru | **24 Jam** | `DOCUMENTATION_ISSUE` (Dokumen) | Kecepatan Resolusi Kendala |
+
+### 6. Layanan REST API v1
+- Dilengkapi endpoint publik dan terproteksi token Bearer (*Laravel Sanctum*).
+- Halaman status interaktif di `/api/v1/health` untuk uji coba pemanggilan API langsung melalui browser.
+
+---
+
+## 🏗️ Arsitektur & Struktur Kode
+
+Aplikasi ini menggunakan pola arsitektur **MVC + Service Layer** yang rapi:
+- `app/Http/Controllers/Web/*` & `Api/V1/*` — Mengatur alur HTTP request dan menyerahkan logika bisnis ke Service.
+- `app/Services/*` — Menampung logika domain (`AuthService`, `ShipmentService`, `TrackingService`, `EtaService`, `ExceptionService`, `CarrierService`, `LocationService`, `WeatherService`, `AuditLogService`).
+- `app/Policies/*` — Menegakkan hak akses data secara granular (`ShipmentPolicy`, `CarrierPolicy`, `LocationPolicy`).
+- `app/Http/Middleware/*` — Proteksi rute dengan `RoleMiddleware` dan `SecurityHeadersMiddleware`.
+
+---
+
+## 💻 Panduan Instalasi Lokal (Local Development)
+
+### Kebutuhan Sistem
+- **PHP >= 8.2** (ekstensi: `pdo_mysql`, `mbstring`, `openssl`, `curl`, `fileinfo`, `sqlite3`)
 - **Composer**
-- **MySQL 8+ / MariaDB 10.4+**
 - **Node.js 18+ & npm**
+- **MySQL 8+ / MariaDB**
 
-### Step-by-Step Setup
+### Langkah-Langkah Instalasi
 
-1. **Clone the repository and install dependencies:**
+1. **Clone repository dan masuk ke direktori proyek:**
    ```bash
-   git clone <your-repo-url> cargotrace
-   cd cargotrace
+   git clone https://github.com/safiraazahrasaragih43-cloud/CargoTrace.git
+   cd CargoTrace
+   ```
+
+2. **Pasang dependensi PHP dan JavaScript:**
+   ```bash
    composer install
    npm install
    ```
 
-2. **Configure environment variables:**
+3. **Konfigurasi Environment (`.env`):**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-   Edit `.env` to match your local MySQL credentials (`DB_DATABASE=cargotrace_db`, `DB_USERNAME=root`, `DB_PASSWORD=`). Ensure the database `cargotrace_db` exists in MySQL.
+   Sesuaikan konfigurasi database lokal pada file `.env` (misalnya: `DB_DATABASE=cargotrace_db`, `DB_USERNAME=root`, `DB_PASSWORD=`).
 
-3. **Run database migrations & seed realistic demo data:**
+4. **Jalankan migrasi database dan pengisian data contoh (seeder):**
    ```bash
    php artisan migrate --seed
    ```
 
-4. **Build frontend assets (Tailwind CSS v4, Leaflet, Chart.js):**
+5. **Kompilasi asset antarmuka (Tailwind CSS v4 & Leaflet):**
    ```bash
    npm run build
    ```
 
-5. **Start the local development server:**
+6. **Jalankan server lokal:**
    ```bash
    php artisan serve
    ```
-   *(Windows helper scripts `serve.bat` and `artisan.bat` are also included if multiple PHP versions are installed.)*
-
-Open `http://127.0.0.1:8000` in your browser.
+   Buka peramban (*browser*) dan akses `http://127.0.0.1:8000`.
 
 ---
 
-## Running Automated Tests
+## 🧪 Pengujian Otomatis (Automated Testing)
 
-All unit and feature suites run cleanly via PHPUnit using an isolated in-memory SQLite testing configuration (`phpunit.xml`):
+Seluruh pengujian unit dan fitur dijalankan menggunakan **PHPUnit** dengan konfigurasi database SQLite in-memory:
 
 ```bash
 php vendor/phpunit/phpunit/phpunit
 ```
 
-**Verified Test Coverage (77 tests, 394 assertions):**
-- Authentication & Sanctum API tokens (`AuthTest`, `ApiAuthTest`)
-- Role Middleware & RBAC Policies (`RoleMiddlewareTest`, `CarrierCrudTest`, `LocationCrudTest`)
-- Shipment CRUD & State Machine (`ShipmentCrudTest`, `TrackingTimelineTest`)
-- Deterministic ETA, Delay & Exceptions (`EtaAndDelayRulesTest`, `ExceptionManagementTest`)
-- External Integrations & Map Views (`ExternalIntegrationsTest`)
-- Web Navigation, Chart.js Dashboard, Search/Sort, Notifications & Audit Logs (`WebPagesNavigationTest`, `P13DashboardSearchNotificationAuditTest`)
-- P14 Security QA — Mass Assignment, XSS, SQLi/Wildcards, PII & Full Authorization/ETA Matrix (`P14SecurityAndQualityAssuranceTest`)
+**Status Pengujian:**
+- **84 Tests, 482 Assertions (Lulus 100% / Passed)**
+- Cakupan uji meliputi: Autentikasi token, Role Middleware, Hak Akses Policy, Siklus Hidup Kargo, Perhitungan Delay ETA, Peta & Integrasi Cuaca Eksternal, Form Validation, serta Pencegahan Kerentanan Keamanan (SQLi, XSS, CSRF, PII Leaks).
 
 ---
 
-## API Documentation & Postman Collection
+## 📦 Koleksi Postman & Dokumentasi API
 
-All REST API endpoints are prefixed under `/api/v1` and return standard JSON responses:
-- **Postman Collection:** Import [`docs/CargoTrace_API_v1.postman_collection.json`](docs/CargoTrace_API_v1.postman_collection.json) directly into Postman.
-- **Full Endpoint Reference:** See [`docs/API_DOCS.md`](docs/API_DOCS.md).
-- **Live Demo & Ownership Guide:** See [`docs/DEMO_AND_INTERVIEW_GUIDE.md`](docs/DEMO_AND_INTERVIEW_GUIDE.md).
+- **Koleksi Postman:** File siap pakai dapat diimpor langsung dari [`docs/CargoTrace_API_v1.postman_collection.json`](docs/CargoTrace_API_v1.postman_collection.json).
+- **Dokumentasi Lengkap Endpoint:** Tersedia pada file [`docs/API_DOCS.md`](docs/API_DOCS.md).
 
 ---
 
-## Production Deployment Checklist
+## 🔒 Standar Keamanan Aplikasi
 
-1. Set production `.env` variables:
-   ```env
-   APP_ENV=production
-   APP_DEBUG=false
-   APP_URL=https://your-domain.com
-   ```
-2. Install optimized dependencies and build assets:
-   ```bash
-   composer install --no-dev --optimize-autoloader
-   npm ci && npm run build
-   ```
-3. Run migrations cleanly and optimize Laravel caches:
-   ```bash
-   php artisan migrate --force
-   php artisan config:cache
-   php artisan route:cache
-   php artisan view:cache
-   ```
-4. Point Nginx/Apache document root to `public/` and configure HTTPS/TLS termination.
-5. Never commit `.env` or private secrets (already excluded via `.gitignore`).
+- **CSRF Token:** Seluruh form dilindungi dari serangan Cross-Site Request Forgery.
+- **SQL Injection Prevention:** Menggunakan PDO Parameterized Queries dan Eloquent ORM.
+- **Sanitasi Output (Anti-XSS):** Semua data dinamis di-escape dengan aman pada Blade maupun DOM/Leaflet.
+- **Proteksi Akses Role:** Pencegahan manipulasi role saat registrasi akun baru.
+- **Header Keamanan HTTP:** Menegakkan `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, dan `X-Frame-Options: SAMEORIGIN`.
+
+---
+
+© 2026 **CargoTrace** — Dibuat untuk pemenuhan Ujian Akhir Semester (UAS) Pemrograman Web.
