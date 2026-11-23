@@ -30,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production') || !empty($_ENV['VERCEL']) || isset($_SERVER['VERCEL'])) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Gate::policy(Carrier::class, CarrierPolicy::class);
         Gate::policy(Location::class, LocationPolicy::class);
         Gate::policy(Shipment::class, ShipmentPolicy::class);
