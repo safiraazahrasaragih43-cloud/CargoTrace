@@ -59,10 +59,9 @@ if (empty($_ENV['LOG_CHANNEL']) && empty(getenv('LOG_CHANNEL'))) {
     $_ENV['LOG_CHANNEL'] = 'stderr';
 }
 
-// Fix Vercel URI stripping on /api routes
-if (isset($_SERVER['REQUEST_URI']) && str_starts_with($_SERVER['REQUEST_URI'], '/v1/')) {
-    $_SERVER['REQUEST_URI'] = '/api' . $_SERVER['REQUEST_URI'];
-}
+// Prevent Symfony from treating /api as script folder and stripping it from PathInfo
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
 
 // Auto-fallback to bundled SQLite in /tmp if no external MySQL database is configured
 $hasExternalDb = !empty(getenv('DB_HOST')) && getenv('DB_HOST') !== '127.0.0.1' && getenv('DB_HOST') !== 'localhost';
