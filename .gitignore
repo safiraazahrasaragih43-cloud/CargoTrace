@@ -20,6 +20,7 @@
 /storage/pail
 /vendor
 *.sqlite
+!database/database.sqlite
 *.sqlite-journal
 Homestead.json
 Homestead.yaml

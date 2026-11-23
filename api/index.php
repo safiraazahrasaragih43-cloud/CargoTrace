@@ -59,6 +59,23 @@ if (empty($_ENV['LOG_CHANNEL']) && empty(getenv('LOG_CHANNEL'))) {
     $_ENV['LOG_CHANNEL'] = 'stderr';
 }
 
+// Auto-fallback to bundled SQLite in /tmp if no external MySQL database is configured
+$hasExternalDb = !empty(getenv('DB_HOST')) && getenv('DB_HOST') !== '127.0.0.1' && getenv('DB_HOST') !== 'localhost';
+if (!$hasExternalDb) {
+    $sqliteSource = $basePath . '/database/database.sqlite';
+    $sqliteTarget = '/tmp/database.sqlite';
+
+    if (file_exists($sqliteSource) && (!file_exists($sqliteTarget) || filesize($sqliteTarget) === 0)) {
+        @copy($sqliteSource, $sqliteTarget);
+        @chmod($sqliteTarget, 0666);
+    }
+
+    putenv('DB_CONNECTION=sqlite');
+    putenv('DB_DATABASE=' . $sqliteTarget);
+    $_ENV['DB_CONNECTION'] = 'sqlite';
+    $_ENV['DB_DATABASE'] = $sqliteTarget;
+}
+
 // Register Composer autoloader
 require $basePath . '/vendor/autoload.php';
 
