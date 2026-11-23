@@ -38,6 +38,27 @@ $_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
 $_ENV['APP_ROUTES_CACHE'] = '/tmp/routes.php';
 $_ENV['APP_SERVICES_CACHE'] = '/tmp/services.php';
 
+// Safe serverless defaults for Vercel
+if (empty($_ENV['APP_KEY']) && empty(getenv('APP_KEY'))) {
+    putenv('APP_KEY=base64:U5CcQ9IJmDW/UrUdJARhzx3CYXerXaCRv3dHE1yY2CU=');
+    $_ENV['APP_KEY'] = 'base64:U5CcQ9IJmDW/UrUdJARhzx3CYXerXaCRv3dHE1yY2CU=';
+}
+
+if (empty($_ENV['SESSION_DRIVER']) && empty(getenv('SESSION_DRIVER'))) {
+    putenv('SESSION_DRIVER=cookie');
+    $_ENV['SESSION_DRIVER'] = 'cookie';
+}
+
+if (empty($_ENV['CACHE_STORE']) && empty(getenv('CACHE_STORE'))) {
+    putenv('CACHE_STORE=array');
+    $_ENV['CACHE_STORE'] = 'array';
+}
+
+if (empty($_ENV['LOG_CHANNEL']) && empty(getenv('LOG_CHANNEL'))) {
+    putenv('LOG_CHANNEL=stderr');
+    $_ENV['LOG_CHANNEL'] = 'stderr';
+}
+
 // Register Composer autoloader
 require $basePath . '/vendor/autoload.php';
 

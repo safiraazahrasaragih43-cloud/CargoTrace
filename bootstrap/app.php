@@ -67,6 +67,19 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->with('error', __('Sesi halaman Anda telah kedaluwarsa karena lama tidak aktif. Token keamanan telah disegarkan otomatis, silakan coba lagi.'));
         });
 
+        $exceptions->render(function (\Illuminate\Database\QueryException|\PDOException $e, Request $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Koneksi database cloud belum siap. Harap konfigurasi variabel DB di Vercel.',
+                ], 503);
+            }
+
+            return response()->view('errors.db', [
+                'errorMessage' => $e->getMessage(),
+            ], 503);
+        });
+
         $exceptions->render(function (Throwable $e, Request $request) {
             if (! $request->is('api/*')) {
                 return null;
