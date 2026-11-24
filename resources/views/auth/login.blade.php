@@ -59,33 +59,7 @@
                     </button>
                 </div>
             </form>
-
-            <!-- Quick Demo Credentials Box -->
-            <div class="mt-7 pt-6 border-t border-cream-200">
-                <p class="text-[11px] font-bold text-espresso-500 uppercase tracking-wider mb-3 text-center">{{ __('Akun Demo Cepat') }}</p>
-                <div class="grid grid-cols-1 gap-2 text-xs">
-                    <button type="button" onclick="fillCreds('admin@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-apricot-50 border border-cream-200 hover:border-apricot-200 transition-all flex items-center justify-between cursor-pointer">
-                        <span class="font-bold text-apricot-600">{{ __('Admin:') }} admin@cargotrace.com</span>
-                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
-                    </button>
-                    <button type="button" onclick="fillCreds('operator@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-sage-50 border border-cream-200 hover:border-sage-200 transition-all flex items-center justify-between cursor-pointer">
-                        <span class="font-bold text-sage-700">{{ __('Operator:') }} operator@cargotrace.com</span>
-                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
-                    </button>
-                    <button type="button" onclick="fillCreds('customer@cargotrace.com', 'password')" class="text-left px-3.5 py-2.5 rounded-2xl bg-cream-50 hover:bg-cream-100 border border-cream-200 transition-all flex items-center justify-between cursor-pointer">
-                        <span class="font-bold text-espresso-800">{{ __('Pelanggan:') }} customer@cargotrace.com</span>
-                        <span class="text-espresso-500 font-mono text-[10px]">password</span>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 </div>
-
-<script>
-function fillCreds(email, password) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = password;
-}
-</script>
 @endsection
