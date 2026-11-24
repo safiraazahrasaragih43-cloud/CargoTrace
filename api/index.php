@@ -40,8 +40,10 @@ $_ENV['APP_SERVICES_CACHE'] = '/tmp/services.php';
 
 // Safe serverless defaults for Vercel
 if (empty($_ENV['APP_KEY']) && empty(getenv('APP_KEY'))) {
-    putenv('APP_KEY=base64:U5CcQ9IJmDW/UrUdJARhzx3CYXerXaCRv3dHE1yY2CU=');
-    $_ENV['APP_KEY'] = 'base64:U5CcQ9IJmDW/UrUdJARhzx3CYXerXaCRv3dHE1yY2CU=';
+    // Generate secure dynamic runtime key if not explicitly set in Vercel environment variables
+    $runtimeKey = 'base64:' . base64_encode(hash('sha256', (getenv('VERCEL_URL') ?: 'CargoTrace-Production-Salt'), true));
+    putenv("APP_KEY={$runtimeKey}");
+    $_ENV['APP_KEY'] = $runtimeKey;
 }
 
 if (empty($_ENV['SESSION_DRIVER']) && empty(getenv('SESSION_DRIVER'))) {
