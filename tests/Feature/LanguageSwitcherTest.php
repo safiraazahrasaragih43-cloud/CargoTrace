@@ -153,7 +153,7 @@ class LanguageSwitcherTest extends TestCase
         $loginResponse = $this->withSession(['locale' => 'en'])->get('/login');
         $loginResponse->assertStatus(200);
         $loginResponse->assertSee('Sign in to CargoTrace');
-        $loginResponse->assertSee('Quick Demo Accounts');
+        $loginResponse->assertSee('Remember Me');
 
         $registerResponse = $this->withSession(['locale' => 'en'])->get('/register');
         $registerResponse->assertStatus(200);

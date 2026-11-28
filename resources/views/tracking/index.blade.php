@@ -72,7 +72,11 @@ async function liveTrackLookup() {
     body.innerHTML = '<p class="text-sm text-espresso-500">' + @json(__('Mengambil detail pengiriman secara langsung...')) + '</p>';
 
     try {
-        const res = await fetch('/api/v1/tracking/' + encodeURIComponent(val));
+        const res = await fetch('/api/v1/tracking/' + encodeURIComponent(val) + '?format=json', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
         const json = await res.json();
 
         if (res.ok && json.success) {

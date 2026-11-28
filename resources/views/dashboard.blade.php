@@ -580,7 +580,11 @@ async function quickTrack() {
     body.innerHTML = '<span class="text-espresso-500">' + @json(__('Memeriksa endpoint REST API...')) + '</span>';
 
     try {
-        const res = await fetch('/api/v1/tracking/' + encodeURIComponent(input));
+        const res = await fetch('/api/v1/tracking/' + encodeURIComponent(input) + '?format=json', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
         const data = await res.json();
 
         if (res.ok && data.success) {
